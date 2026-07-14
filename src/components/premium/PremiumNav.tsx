@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useAppState } from '../../hooks/useAppState';
 import { Magnetic } from '../Magnetic';
-import { appConfig } from '../../lib/config';
+import { BrandLogo } from '../BrandLogo';
 
 const megaMenu = [
   {
@@ -81,14 +81,7 @@ export function PremiumNav() {
             : 'bg-transparent'
         }`}>
         <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-4 px-5 lg:px-10">
-          <Link to="/" className="group">
-            <span className="font-serif text-2xl tracking-tight text-charcoal dark:text-ivory">
-              {appConfig.brandName}
-            </span>
-            <span className="mt-0.5 hidden text-[0.52rem] uppercase tracking-luxe text-charcoal/45 group-hover:text-gold dark:text-ivory/45 sm:block">
-              {appConfig.brandTagline}
-            </span>
-          </Link>
+          <BrandLogo to="/" size="md" className="dark:rounded-lg dark:bg-ivory/90 dark:px-2 dark:py-0.5" />
 
           <nav className="hidden items-center gap-8 lg:flex">
             <div
@@ -220,7 +213,7 @@ export function PremiumNav() {
             className="fixed inset-0 z-[80] glass-dark lg:hidden">
             <div className="flex h-full flex-col p-6 text-ivory">
               <div className="flex justify-between">
-                <span className="font-serif text-2xl">Hautoria</span>
+                <BrandLogo to="/" size="md" onDark />
                 <button onClick={() => setMenuOpen(false)} aria-label="Close">
                   <XIcon />
                 </button>

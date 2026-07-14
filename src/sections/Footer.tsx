@@ -9,6 +9,7 @@ import {
 'lucide-react';
 import { Reveal, RevealWords } from '../components/Reveal';
 import { Magnetic } from '../components/Magnetic';
+import { BrandLogo } from '../components/BrandLogo';
 import { COLLECTIONS } from '../lib/data';
 import { appConfig } from '../lib/config';
 const LUXE = [0.22, 1, 0.36, 1] as const;
@@ -142,10 +143,7 @@ export function Footer() {
         {/* Link columns */}
         <div className="grid grid-cols-2 gap-10 py-16 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
-            <span className="font-serif text-3xl">{appConfig.brandName}</span>
-            <p className="mt-2 text-[0.62rem] uppercase tracking-luxe text-gold">
-              {appConfig.brandTagline}
-            </p>
+            <BrandLogo to="/" size="lg" onDark />
             <p className="mt-4 max-w-xs text-sm font-light leading-relaxed text-ivory/50">
               Premium authentic skincare and cosmetics — curated for results that
               endure.

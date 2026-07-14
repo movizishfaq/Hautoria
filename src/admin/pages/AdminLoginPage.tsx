@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useAdminAuth } from '../AdminAuthContext';
 import { AdminButton, AdminInput } from '../components/ui';
-import { appConfig } from '../../lib/config';
+import { BrandLogo } from '../../components/BrandLogo';
 
 export function AdminLoginPage() {
   const { login, isAuthenticated } = useAdminAuth();
@@ -29,9 +29,9 @@ export function AdminLoginPage() {
   return (
     <div className="grid min-h-screen place-items-center bg-[var(--admin-bg)] px-6">
       <div className="w-full max-w-md">
-        <p className="mb-2 text-center text-[10px] uppercase tracking-[0.35em] text-[var(--admin-muted)]">
-          {appConfig.brandName}
-        </p>
+        <div className="mb-6 flex justify-center">
+          <BrandLogo to="/" size="lg" />
+        </div>
         <h1 className="mb-2 text-center text-3xl font-semibold text-[var(--admin-fg)]">
           Command Center
         </h1>

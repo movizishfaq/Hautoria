@@ -11,6 +11,7 @@ import.meta.env as RuntimeEnvironment :
 export const appConfig = {
   brandName: 'Hautoria',
   brandTagline: 'Crafted for Timeless Skin.',
+  logoUrl: '/hautoria-logo.png',
   heroImage: '/hero-fit-me-real-hd.png',
   apiBaseUrl: runtimeEnvironment.VITE_API_BASE_URL ?? '',
   stripePublishableKey: runtimeEnvironment.VITE_STRIPE_PUBLISHABLE_KEY ?? '',

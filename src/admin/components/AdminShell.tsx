@@ -7,7 +7,7 @@ import { useAdminTheme } from '../AdminThemeProvider';
 import { ADMIN_NAV_GROUPS } from '../nav';
 import { cn } from '../utils';
 import { AdminInput } from './ui';
-import { appConfig } from '../../lib/config';
+import { BrandLogo } from '../../components/BrandLogo';
 
 function Icon({ name, size = 16 }: { name: string; size?: number }) {
   const Cmp = (Icons as Record<string, React.ComponentType<{ size?: number; strokeWidth?: number }>>)[name] || Icons.Circle;
@@ -50,14 +50,12 @@ export function AdminShell() {
       <div className="flex items-center justify-between gap-2 border-b border-[var(--admin-border)] p-4">
         {!collapsed && (
           <div className="min-w-0">
-            <p className="font-serif text-2xl leading-none tracking-tight text-[var(--admin-fg)]">
-              {appConfig.brandName}
-            </p>
+            <BrandLogo to="/admin" size="sm" />
             <p className="mt-1 text-xs text-[var(--admin-muted)]">Admin</p>
           </div>
         )}
         {collapsed && (
-          <p className="mx-auto font-serif text-xl text-[var(--admin-fg)]">H</p>
+          <BrandLogo to="/admin" size="sm" className="mx-auto" />
         )}
         <button
           type="button"

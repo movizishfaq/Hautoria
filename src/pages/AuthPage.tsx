@@ -8,6 +8,7 @@ import {
 'lucide-react';
 import { authService } from '../services/authService';
 import { useAppState } from '../hooks/useAppState';
+import { BrandLogo } from '../components/BrandLogo';
 type Mode = 'signin' | 'signup' | 'forgot' | 'verify' | 'reset';
 export function AuthPage() {
   const [params] = useSearchParams();
@@ -65,7 +66,7 @@ export function AuthPage() {
   return (
     <main className="grid min-h-screen grid-cols-1 bg-ivory lg:grid-cols-2 dark:bg-[#181818]">
       <section className="hidden bg-charcoal p-14 text-ivory lg:flex lg:flex-col lg:justify-between">
-        <div className="font-serif text-3xl">Hautoria</div>
+        <BrandLogo to="/" size="lg" onDark />
         <div>
           <SparklesIcon className="h-8 w-8 text-gold" />
           <h1 className="mt-6 max-w-md font-serif text-6xl font-light leading-tight">
@@ -83,9 +84,7 @@ export function AuthPage() {
       </section>
       <section className="flex items-center justify-center px-6 py-16">
         <div className="w-full max-w-md">
-          <Link to="/" className="font-serif text-2xl lg:hidden">
-            Hautoria
-          </Link>
+          <BrandLogo to="/" size="md" className="lg:hidden" />
           <p className="mt-12 text-[.62rem] uppercase tracking-luxe text-gold">
             Account
           </p>
