@@ -1,0 +1,19 @@
+---
+description: Auto-commit and push Hautoria changes to GitHub after each completed task
+alwaysApply: true
+---
+
+# Auto-push to GitHub
+
+After completing any user-requested code change in this project:
+
+1. Run `git status` and `git diff` to review changes.
+2. Stage all relevant files. Never commit `.env`, secrets, or credentials.
+3. Create a concise commit message focused on why the change was made.
+4. Push to `origin/main` with `git push origin main`.
+5. Confirm the push succeeded and share the commit hash with the user.
+
+Skip auto-push only when:
+- The user explicitly says not to push
+- There are no file changes to commit
+- Push fails (report the error and do not force-push)

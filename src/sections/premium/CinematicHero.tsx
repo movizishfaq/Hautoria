@@ -87,15 +87,26 @@ export function CinematicHero() {
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gold/25 bg-gradient-to-r from-gold/10 via-beige/60 to-sage/30 px-4 py-3 dark:border-gold/20 dark:from-gold/5 dark:via-white/5 dark:to-white/5">
-          <p className="flex items-center gap-2 text-[0.62rem] uppercase tracking-luxe text-charcoal dark:text-ivory">
-            <BadgePercentIcon className="h-4 w-4 text-gold" />
-            Use code <strong className="text-gold">GLOW10</strong> — 10% off your first ritual
-          </p>
-          <p className="flex items-center gap-2 text-[0.62rem] uppercase tracking-luxe text-charcoal/70 dark:text-ivory/70">
-            <TruckIcon className="h-4 w-4 text-gold" />
-            Free shipping over {formatPrice(5000)}
-          </p>
+          className="mb-8 flex flex-col gap-3 rounded-2xl border border-gold/25 bg-gradient-to-r from-gold/10 via-beige/60 to-sage/30 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 dark:border-gold/20 dark:from-gold/5 dark:via-white/5 dark:to-white/5">
+          <div className="flex items-center gap-3 sm:min-w-0 sm:flex-1">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold/15">
+              <BadgePercentIcon className="h-4 w-4 text-gold" />
+            </span>
+            <p className="min-w-0 text-left text-[0.65rem] uppercase leading-snug tracking-wide text-charcoal sm:text-[0.62rem] sm:tracking-luxe dark:text-ivory">
+              <span className="whitespace-nowrap">Use code </span>
+              <strong className="whitespace-nowrap text-gold">GLOW10</strong>
+              <span className="hidden sm:inline"> — </span>
+              <span className="block sm:inline">10% off your first ritual</span>
+            </p>
+          </div>
+          <div className="flex items-center gap-3 border-t border-charcoal/8 pt-3 sm:shrink-0 sm:border-t-0 sm:pt-0 dark:border-white/10">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold/15">
+              <TruckIcon className="h-4 w-4 text-gold" />
+            </span>
+            <p className="text-left text-[0.65rem] uppercase leading-snug tracking-wide text-charcoal/80 sm:text-[0.62rem] sm:tracking-luxe dark:text-ivory/80">
+              Free shipping over {formatPrice(5000)}
+            </p>
+          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-12 lg:gap-8">
