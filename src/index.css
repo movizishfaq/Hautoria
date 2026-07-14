@@ -1,0 +1,74 @@
+/* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORTS — DO NOT DELETE THIS COMMENT */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Jost:wght@300;400;500&display=swap');
+
+/* CRITICAL: THE FOLLOWING TAILWIND IMPORTS MUST NEVER BE DELETED OR REORDERED — DO NOT DELETE THIS COMMENT */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* END TAILWIND IMPORTS — ALL OTHER CSS MUST GO BELOW THIS LINE */
+
+:root {
+  --ivory: #FAF7F2;
+  --beige: #F3EDE4;
+  --blush: #F8DDE6;
+  --sage: #DCE8DD;
+  --gold: #C8A96A;
+  --charcoal: #2B2B2B;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background-color: var(--ivory);
+  color: var(--charcoal);
+  font-family: 'Jost', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+/* Custom cursor: hide default on desktop pointer devices */
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+}
+::selection {
+  background: var(--gold);
+  color: #fff;
+}
+/* Elegant thin scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--beige); }
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 999px;
+}
+.glass {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+.text-gradient-gold {
+  background: linear-gradient(90deg, #C8A96A, #e8d4a3, #C8A96A);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dark {
+  color-scheme: dark;
+}
+.dark body {
+  background-color: #181818;
+  color: #FAF7F2;
+}
+.dark .glass {
+  background: rgba(32, 32, 32, 0.66);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+:focus-visible {
+  outline: 2px solid #C8A96A;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
