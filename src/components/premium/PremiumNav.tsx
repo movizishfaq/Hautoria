@@ -42,7 +42,6 @@ const megaMenu = [
       { label: 'Foundations', to: '/shop?q=foundation' },
       { label: 'Mascara', to: '/shop?q=mascara' },
       { label: 'Primers', to: '/shop?q=primer' },
-      { label: 'MAC Collection', to: '/shop?q=mac' },
     ],
   },
 ];
