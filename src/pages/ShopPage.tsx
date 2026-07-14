@@ -1,10 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { SearchIcon, SlidersHorizontalIcon } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { catalogProducts } from '../lib/mockData';
-import { ProductCard } from '../features/catalog/ProductCard';
+import { useCatalog } from '../context/CatalogContext';
+import { LuxuryProductCard } from '../features/catalog/LuxuryProductCard';
 import { EmptyState } from '../components/ui/EmptyState';
+import { appConfig } from '../lib/config';
 export function ShopPage() {
+  const { products: catalogProducts, loading } = useCatalog();
   const [params, setParams] = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const query = params.get('q') ?? '';
@@ -48,14 +50,14 @@ export function ShopPage() {
   ) :
   undefined;
   return (
-    <div className="min-h-screen bg-ivory dark:bg-[#181818]">
-      <section className="border-b border-charcoal/10 px-6 pb-12 pt-16 dark:border-white/10">
+    <div className="min-h-screen bg-ivory pt-20 dark:bg-graphite">
+      <section className="border-b border-charcoal/10 px-6 pb-12 pt-8 dark:border-white/10">
         <div className="mx-auto max-w-7xl">
           <p className="text-[.64rem] uppercase tracking-luxe text-gold">
-            The apothecary
+            {appConfig.brandTagline}
           </p>
-          <h1 className="mt-3 font-serif text-5xl sm:text-6xl">
-            Find your daily <i>ritual.</i>
+          <h1 className="mt-3 font-serif text-5xl font-light sm:text-6xl">
+            Curated for the <em className="text-gradient-gold">exceptional.</em>
           </h1>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <div className="flex flex-1 items-center gap-3 rounded-2xl border border-charcoal/15 bg-white/55 px-4 py-3 dark:border-white/15 dark:bg-white/5">
@@ -144,9 +146,9 @@ export function ShopPage() {
           {products.length} considered formulas
         </p>
         {products.length ?
-        <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) =>
-          <ProductCard key={product.id} product={product} />
+          <LuxuryProductCard key={product.id} product={product} />
           )}
           </div> :
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Reveal } from '../components/Reveal';
-import { SHOWCASE } from '../lib/data';
+import { SHOWCASE, formatPrice } from '../lib/data';
 const LUXE = [0.22, 1, 0.36, 1] as const;
 /**
  * Interactive curved carousel. Center product is largest; side products
@@ -156,7 +156,7 @@ export function Carousel() {
             {SHOWCASE[index].name}
           </h3>
           <p className="mt-1 text-[0.66rem] uppercase tracking-luxe text-ivory/50">
-            {SHOWCASE[index].tagline} · ${SHOWCASE[index].price}
+            {formatPrice(SHOWCASE[index].price)}
           </p>
         </motion.div>
 

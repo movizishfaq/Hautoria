@@ -1,0 +1,1141 @@
+[
+  {
+    "id": "fit-me-matte-tube-foundation-18ml",
+    "slug": "fit-me-matte-tube-foundation-18ml",
+    "name": "Fit Me Matte Tube Foundation 18ml",
+    "tagline": "Fit",
+    "description": "Authentic Fit Me Matte Tube Foundation 18ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 1599,
+    "compareAtPrice": 1899,
+    "rating": 4.7,
+    "reviewCount": 50,
+    "stock": 15,
+    "image": "/catalog/fit-me-matte-tube-foundation-18ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "16% Off"
+    ],
+    "ingredients": [],
+    "featured": true
+  },
+  {
+    "id": "the-ordinary-hyaluronic-acid-2-b5-30ml",
+    "slug": "the-ordinary-hyaluronic-acid-2-b5-30ml",
+    "name": "The Ordinary Hyaluronic Acid 2% + B5 30ml",
+    "tagline": "The",
+    "description": "Authentic The Ordinary Hyaluronic Acid 2% + B5 30ml \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 3899,
+    "compareAtPrice": 4499,
+    "rating": 4.7,
+    "reviewCount": 63,
+    "stock": 22,
+    "image": "/catalog/the-ordinary-hyaluronic-acid-2-b5-30ml.png",
+    "accent": "bg-beige",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": true
+  },
+  {
+    "id": "the-ordinary-salicylic-acid-2-solution-serum-30ml",
+    "slug": "the-ordinary-salicylic-acid-2-solution-serum-30ml",
+    "name": "The Ordinary Salicylic Acid 2% Solution Serum 30ml",
+    "tagline": "The",
+    "description": "Authentic The Ordinary Salicylic Acid 2% Solution Serum 30ml \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 3599,
+    "compareAtPrice": 4199,
+    "rating": 4.7,
+    "reviewCount": 76,
+    "stock": 29,
+    "image": "/catalog/the-ordinary-salicylic-acid-2-solution-serum-30ml.png",
+    "accent": "bg-sage",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "mac-prep-prime-tube-primer-45ml",
+    "slug": "mac-prep-prime-tube-primer-45ml",
+    "name": "MAC Prep + Prime Tube Primer 45ml",
+    "tagline": "MAC",
+    "description": "Authentic MAC Prep + Prime Tube Primer 45ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 999,
+    "compareAtPrice": 1099,
+    "rating": 4.7,
+    "reviewCount": 89,
+    "stock": 36,
+    "image": "/catalog/mac-prep-prime-tube-primer-45ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "9% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "mac-nc15-foundation",
+    "slug": "mac-nc15-foundation",
+    "name": "MAC NC15 Foundation",
+    "tagline": "MAC",
+    "description": "Authentic MAC NC15 Foundation \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 13399,
+    "compareAtPrice": 15399,
+    "rating": 4.7,
+    "reviewCount": 102,
+    "stock": 43,
+    "image": "/catalog/mac-nc15-foundation.png",
+    "accent": "bg-beige",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "mac-matchmaster-foundation-50ml",
+    "slug": "mac-matchmaster-foundation-50ml",
+    "name": "MAC Matchmaster Foundation 50ml",
+    "tagline": "MAC",
+    "description": "Authentic MAC Matchmaster Foundation 50ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 14099,
+    "compareAtPrice": 16199,
+    "rating": 4.7,
+    "reviewCount": 115,
+    "stock": 20,
+    "image": "/catalog/mac-matchmaster-foundation-50ml.png",
+    "accent": "bg-sage",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "mac-nc20-foundation-30ml",
+    "slug": "mac-nc20-foundation-30ml",
+    "name": "MAC NC20 Foundation 30ml",
+    "tagline": "MAC",
+    "description": "Authentic MAC NC20 Foundation 30ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 16099,
+    "compareAtPrice": 18499,
+    "rating": 4.7,
+    "reviewCount": 128,
+    "stock": 27,
+    "image": "/catalog/mac-nc20-foundation-30ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "mac-black-foundation-30ml",
+    "slug": "mac-black-foundation-30ml",
+    "name": "MAC Black Foundation 30ml",
+    "tagline": "MAC",
+    "description": "Authentic MAC Black Foundation 30ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 12799,
+    "compareAtPrice": 14799,
+    "rating": 4.7,
+    "reviewCount": 141,
+    "stock": 34,
+    "image": "/catalog/mac-black-foundation-30ml.png",
+    "accent": "bg-beige",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "maybelline-sky-high-mascara",
+    "slug": "maybelline-sky-high-mascara",
+    "name": "Maybelline Sky High Mascara",
+    "tagline": "Maybelline",
+    "description": "Authentic Maybelline Sky High Mascara \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 3499,
+    "compareAtPrice": 3999,
+    "rating": 4.7,
+    "reviewCount": 154,
+    "stock": 41,
+    "image": "/catalog/maybelline-sky-high-mascara.png",
+    "accent": "bg-sage",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": true
+  },
+  {
+    "id": "giorgio-armani-mascara",
+    "slug": "giorgio-armani-mascara",
+    "name": "Giorgio Armani Mascara",
+    "tagline": "Giorgio",
+    "description": "Authentic Giorgio Armani Mascara \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 6499,
+    "compareAtPrice": 7399,
+    "rating": 4.7,
+    "reviewCount": 167,
+    "stock": 18,
+    "image": "/catalog/giorgio-armani-mascara.png",
+    "accent": "bg-blush",
+    "badges": [
+      "12% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "dior-mascara",
+    "slug": "dior-mascara",
+    "name": "Dior Mascara",
+    "tagline": "Dior",
+    "description": "Authentic Dior Mascara \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 16099,
+    "compareAtPrice": 18599,
+    "rating": 4.7,
+    "reviewCount": 180,
+    "stock": 25,
+    "image": "/catalog/dior-mascara.png",
+    "accent": "bg-beige",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "chanel-mascara",
+    "slug": "chanel-mascara",
+    "name": "Chanel Mascara",
+    "tagline": "Chanel",
+    "description": "Authentic Chanel Mascara \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 13299,
+    "compareAtPrice": 15299,
+    "rating": 4.7,
+    "reviewCount": 193,
+    "stock": 32,
+    "image": "/catalog/chanel-mascara.png",
+    "accent": "bg-sage",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "chanel-mascara-golden",
+    "slug": "chanel-mascara-golden",
+    "name": "Chanel Mascara Golden",
+    "tagline": "Chanel",
+    "description": "Authentic Chanel Mascara Golden \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 15499,
+    "compareAtPrice": 17799,
+    "rating": 4.7,
+    "reviewCount": 206,
+    "stock": 39,
+    "image": "/catalog/chanel-mascara-golden.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "axis-y-dark-spot-correcting-tube-serum-50ml",
+    "slug": "axis-y-dark-spot-correcting-tube-serum-50ml",
+    "name": "Axis-Y Dark Spot Correcting Tube Serum 50ml",
+    "tagline": "Axis-Y",
+    "description": "Authentic Axis-Y Dark Spot Correcting Tube Serum 50ml \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 3499,
+    "compareAtPrice": 3999,
+    "rating": 4.7,
+    "reviewCount": 219,
+    "stock": 16,
+    "image": "/catalog/axis-y-dark-spot-correcting-tube-serum-50ml.png",
+    "accent": "bg-beige",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "vegan-axis-y-serum",
+    "slug": "vegan-axis-y-serum",
+    "name": "Vegan Axis-Y Serum",
+    "tagline": "Vegan",
+    "description": "Authentic Vegan Axis-Y Serum \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 3499,
+    "compareAtPrice": 4099,
+    "rating": 4.7,
+    "reviewCount": 232,
+    "stock": 23,
+    "image": "/catalog/vegan-axis-y-serum.png",
+    "accent": "bg-sage",
+    "badges": [
+      "15% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "anua-heartleaf-silky-moisture-sunblock-50-50ml",
+    "slug": "anua-heartleaf-silky-moisture-sunblock-50-50ml",
+    "name": "Anua Heartleaf Silky Moisture Sunblock 50+ 50ml",
+    "tagline": "Anua",
+    "description": "Authentic Anua Heartleaf Silky Moisture Sunblock 50+ 50ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 4599,
+    "compareAtPrice": 5299,
+    "rating": 4.7,
+    "reviewCount": 245,
+    "stock": 30,
+    "image": "/catalog/anua-heartleaf-silky-moisture-sunblock-50-50ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "anua-peach-70-niacin-serum-30ml",
+    "slug": "anua-peach-70-niacin-serum-30ml",
+    "name": "Anua Peach 70% Niacin Serum 30ml",
+    "tagline": "Anua",
+    "description": "Authentic Anua Peach 70% Niacin Serum 30ml \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 4799,
+    "compareAtPrice": 5599,
+    "rating": 4.7,
+    "reviewCount": 258,
+    "stock": 37,
+    "image": "/catalog/anua-peach-70-niacin-serum-30ml.png",
+    "accent": "bg-beige",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "the-ordinary-high-adherence-silicone-primer",
+    "slug": "the-ordinary-high-adherence-silicone-primer",
+    "name": "The Ordinary High Adherence Silicone Primer",
+    "tagline": "The",
+    "description": "Authentic The Ordinary High Adherence Silicone Primer \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 3399,
+    "compareAtPrice": 3899,
+    "rating": 4.7,
+    "reviewCount": 271,
+    "stock": 44,
+    "image": "/catalog/the-ordinary-high-adherence-silicone-primer.png",
+    "accent": "bg-sage",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "the-ordinary-natural-moisturizing-factor-ha-100ml",
+    "slug": "the-ordinary-natural-moisturizing-factor-ha-100ml",
+    "name": "The Ordinary Natural Moisturizing Factor + HA 100ml",
+    "tagline": "The",
+    "description": "Authentic The Ordinary Natural Moisturizing Factor + HA 100ml \u2014 premium beauty, competitively priced.",
+    "category": "moisturizer",
+    "concerns": [
+      "hydration",
+      "sensitivity"
+    ],
+    "price": 5399,
+    "compareAtPrice": 6199,
+    "rating": 4.7,
+    "reviewCount": 284,
+    "stock": 21,
+    "image": "/catalog/the-ordinary-natural-moisturizing-factor-ha-100ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cosrx-aloe-soothing-sun-cream-spf-50",
+    "slug": "cosrx-aloe-soothing-sun-cream-spf-50",
+    "name": "COSRX Aloe Soothing Sun Cream SPF 50+",
+    "tagline": "COSRX",
+    "description": "Authentic COSRX Aloe Soothing Sun Cream SPF 50+ \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 3599,
+    "compareAtPrice": 4199,
+    "rating": 4.7,
+    "reviewCount": 297,
+    "stock": 28,
+    "image": "/catalog/cosrx-aloe-soothing-sun-cream-spf-50.png",
+    "accent": "bg-beige",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cosrx-centella-water-alcohol-free-toner-150ml",
+    "slug": "cosrx-centella-water-alcohol-free-toner-150ml",
+    "name": "COSRX Centella Water Alcohol-Free Toner 150ml",
+    "tagline": "COSRX",
+    "description": "Authentic COSRX Centella Water Alcohol-Free Toner 150ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 4099,
+    "compareAtPrice": 4699,
+    "rating": 4.7,
+    "reviewCount": 310,
+    "stock": 35,
+    "image": "/catalog/cosrx-centella-water-alcohol-free-toner-150ml.png",
+    "accent": "bg-sage",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cosrx-hyaluronic-acid-hydra-power-essence-100ml",
+    "slug": "cosrx-hyaluronic-acid-hydra-power-essence-100ml",
+    "name": "COSRX Hyaluronic Acid Hydra Power Essence 100ml",
+    "tagline": "COSRX",
+    "description": "Authentic COSRX Hyaluronic Acid Hydra Power Essence 100ml \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 3799,
+    "compareAtPrice": 4399,
+    "rating": 4.7,
+    "reviewCount": 323,
+    "stock": 42,
+    "image": "/catalog/cosrx-hyaluronic-acid-hydra-power-essence-100ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cosrx-hyaluronic-acid-intensive-cream-100g",
+    "slug": "cosrx-hyaluronic-acid-intensive-cream-100g",
+    "name": "COSRX Hyaluronic Acid Intensive Cream 100g",
+    "tagline": "COSRX",
+    "description": "Authentic COSRX Hyaluronic Acid Intensive Cream 100g \u2014 premium beauty, competitively priced.",
+    "category": "moisturizer",
+    "concerns": [
+      "hydration",
+      "sensitivity"
+    ],
+    "price": 4699,
+    "compareAtPrice": 5499,
+    "rating": 4.7,
+    "reviewCount": 336,
+    "stock": 19,
+    "image": "/catalog/cosrx-hyaluronic-acid-intensive-cream-100g.png",
+    "accent": "bg-beige",
+    "badges": [
+      "15% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cosrx-snail-92-all-in-one-cream",
+    "slug": "cosrx-snail-92-all-in-one-cream",
+    "name": "COSRX Snail 92 All In One Cream",
+    "tagline": "COSRX",
+    "description": "Authentic COSRX Snail 92 All In One Cream \u2014 premium beauty, competitively priced.",
+    "category": "moisturizer",
+    "concerns": [
+      "hydration",
+      "sensitivity"
+    ],
+    "price": 3799,
+    "compareAtPrice": 4399,
+    "rating": 4.7,
+    "reviewCount": 349,
+    "stock": 26,
+    "image": "/catalog/cosrx-snail-92-all-in-one-cream.png",
+    "accent": "bg-sage",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": true
+  },
+  {
+    "id": "la-roche-posay-sun-block-50",
+    "slug": "la-roche-posay-sun-block-50",
+    "name": "La Roche-Posay Sun Block 50+",
+    "tagline": "La",
+    "description": "Authentic La Roche-Posay Sun Block 50+ \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 6299,
+    "compareAtPrice": 7299,
+    "rating": 4.7,
+    "reviewCount": 362,
+    "stock": 33,
+    "image": "/catalog/la-roche-posay-sun-block-50.png",
+    "accent": "bg-blush",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cerave-facial-moisturizing-lotion-pm",
+    "slug": "cerave-facial-moisturizing-lotion-pm",
+    "name": "CeraVe Facial Moisturizing Lotion PM",
+    "tagline": "CeraVe",
+    "description": "Authentic CeraVe Facial Moisturizing Lotion PM \u2014 premium beauty, competitively priced.",
+    "category": "moisturizer",
+    "concerns": [
+      "hydration",
+      "sensitivity"
+    ],
+    "price": 4799,
+    "compareAtPrice": 5499,
+    "rating": 4.7,
+    "reviewCount": 375,
+    "stock": 40,
+    "image": "/catalog/cerave-facial-moisturizing-lotion-pm.png",
+    "accent": "bg-beige",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cosrx-aha-bha-clarifying-treatment-toner",
+    "slug": "cosrx-aha-bha-clarifying-treatment-toner",
+    "name": "COSRX AHA/BHA Clarifying Treatment Toner",
+    "tagline": "COSRX",
+    "description": "Authentic COSRX AHA/BHA Clarifying Treatment Toner \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 4199,
+    "compareAtPrice": 4799,
+    "rating": 4.7,
+    "reviewCount": 388,
+    "stock": 17,
+    "image": "/catalog/cosrx-aha-bha-clarifying-treatment-toner.png",
+    "accent": "bg-sage",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cosrx-propolis-synergy-vitamin-c-toner-280ml",
+    "slug": "cosrx-propolis-synergy-vitamin-c-toner-280ml",
+    "name": "COSRX Propolis Synergy & Vitamin C Toner 280ml",
+    "tagline": "COSRX",
+    "description": "Authentic COSRX Propolis Synergy & Vitamin C Toner 280ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 4599,
+    "compareAtPrice": 5299,
+    "rating": 4.7,
+    "reviewCount": 401,
+    "stock": 24,
+    "image": "/catalog/cosrx-propolis-synergy-vitamin-c-toner-280ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "anua-heartleaf-cleansing-oil-200ml",
+    "slug": "anua-heartleaf-cleansing-oil-200ml",
+    "name": "Anua Heartleaf Cleansing Oil 200ml",
+    "tagline": "Anua",
+    "description": "Authentic Anua Heartleaf Cleansing Oil 200ml \u2014 premium beauty, competitively priced.",
+    "category": "cleanser",
+    "concerns": [
+      "clarity",
+      "sensitivity"
+    ],
+    "price": 6299,
+    "compareAtPrice": 7299,
+    "rating": 4.7,
+    "reviewCount": 414,
+    "stock": 31,
+    "image": "/catalog/anua-heartleaf-cleansing-oil-200ml.png",
+    "accent": "bg-beige",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "anua-soothing-toner-77-250ml",
+    "slug": "anua-soothing-toner-77-250ml",
+    "name": "Anua Soothing Toner 77% 250ml",
+    "tagline": "Anua",
+    "description": "Authentic Anua Soothing Toner 77% 250ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 5299,
+    "compareAtPrice": 6099,
+    "rating": 4.7,
+    "reviewCount": 427,
+    "stock": 38,
+    "image": "/catalog/anua-soothing-toner-77-250ml.png",
+    "accent": "bg-sage",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cerave-acne-control-cleanser-236ml",
+    "slug": "cerave-acne-control-cleanser-236ml",
+    "name": "CeraVe Acne Control Cleanser 236ml",
+    "tagline": "CeraVe",
+    "description": "Authentic CeraVe Acne Control Cleanser 236ml \u2014 premium beauty, competitively priced.",
+    "category": "cleanser",
+    "concerns": [
+      "clarity",
+      "sensitivity"
+    ],
+    "price": 1299,
+    "compareAtPrice": 1499,
+    "rating": 4.7,
+    "reviewCount": 440,
+    "stock": 15,
+    "image": "/catalog/cerave-acne-control-cleanser-236ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cosrx-low-ph-good-morning-gentle-cleanser",
+    "slug": "cosrx-low-ph-good-morning-gentle-cleanser",
+    "name": "COSRX Low pH Good Morning Gentle Cleanser",
+    "tagline": "COSRX",
+    "description": "Authentic COSRX Low pH Good Morning Gentle Cleanser \u2014 premium beauty, competitively priced.",
+    "category": "cleanser",
+    "concerns": [
+      "clarity",
+      "sensitivity"
+    ],
+    "price": 3699,
+    "compareAtPrice": 4299,
+    "rating": 4.7,
+    "reviewCount": 53,
+    "stock": 22,
+    "image": "/catalog/cosrx-low-ph-good-morning-gentle-cleanser.png",
+    "accent": "bg-beige",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cerave-foaming-cleanser",
+    "slug": "cerave-foaming-cleanser",
+    "name": "CeraVe Foaming Cleanser",
+    "tagline": "CeraVe",
+    "description": "Authentic CeraVe Foaming Cleanser \u2014 premium beauty, competitively priced.",
+    "category": "cleanser",
+    "concerns": [
+      "clarity",
+      "sensitivity"
+    ],
+    "price": 5899,
+    "compareAtPrice": 6799,
+    "rating": 4.7,
+    "reviewCount": 66,
+    "stock": 29,
+    "image": "/catalog/cerave-foaming-cleanser.png",
+    "accent": "bg-sage",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cerave-sa-cream-bumpy-skin-340g",
+    "slug": "cerave-sa-cream-bumpy-skin-340g",
+    "name": "CeraVe SA Cream Bumpy Skin 340g",
+    "tagline": "CeraVe",
+    "description": "Authentic CeraVe SA Cream Bumpy Skin 340g \u2014 premium beauty, competitively priced.",
+    "category": "moisturizer",
+    "concerns": [
+      "hydration",
+      "sensitivity"
+    ],
+    "price": 6799,
+    "compareAtPrice": 7799,
+    "rating": 4.7,
+    "reviewCount": 79,
+    "stock": 36,
+    "image": "/catalog/cerave-sa-cream-bumpy-skin-340g.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cerave-hydrating-cleanser-236ml",
+    "slug": "cerave-hydrating-cleanser-236ml",
+    "name": "CeraVe Hydrating Cleanser 236ml",
+    "tagline": "CeraVe",
+    "description": "Authentic CeraVe Hydrating Cleanser 236ml \u2014 premium beauty, competitively priced.",
+    "category": "cleanser",
+    "concerns": [
+      "clarity",
+      "sensitivity"
+    ],
+    "price": 4499,
+    "compareAtPrice": 5199,
+    "rating": 4.7,
+    "reviewCount": 92,
+    "stock": 43,
+    "image": "/catalog/cerave-hydrating-cleanser-236ml.png",
+    "accent": "bg-beige",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cerave-itch-relief-moisturizing-lotion",
+    "slug": "cerave-itch-relief-moisturizing-lotion",
+    "name": "CeraVe Itch Relief Moisturizing Lotion",
+    "tagline": "CeraVe",
+    "description": "Authentic CeraVe Itch Relief Moisturizing Lotion \u2014 premium beauty, competitively priced.",
+    "category": "moisturizer",
+    "concerns": [
+      "hydration",
+      "sensitivity"
+    ],
+    "price": 4899,
+    "compareAtPrice": 5699,
+    "rating": 4.7,
+    "reviewCount": 105,
+    "stock": 20,
+    "image": "/catalog/cerave-itch-relief-moisturizing-lotion.png",
+    "accent": "bg-sage",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "la-roche-posay-vitamin-c-serum",
+    "slug": "la-roche-posay-vitamin-c-serum",
+    "name": "La Roche-Posay Vitamin C Serum",
+    "tagline": "La",
+    "description": "Authentic La Roche-Posay Vitamin C Serum \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 7999,
+    "compareAtPrice": 9199,
+    "rating": 4.7,
+    "reviewCount": 118,
+    "stock": 27,
+    "image": "/catalog/la-roche-posay-vitamin-c-serum.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cerave-moisturising-cream-340g-jar",
+    "slug": "cerave-moisturising-cream-340g-jar",
+    "name": "CeraVe Moisturising Cream 340g Jar",
+    "tagline": "CeraVe",
+    "description": "Authentic CeraVe Moisturising Cream 340g Jar \u2014 premium beauty, competitively priced.",
+    "category": "moisturizer",
+    "concerns": [
+      "hydration",
+      "sensitivity"
+    ],
+    "price": 6599,
+    "compareAtPrice": 7599,
+    "rating": 4.7,
+    "reviewCount": 131,
+    "stock": 34,
+    "image": "/catalog/cerave-moisturising-cream-340g-jar.png",
+    "accent": "bg-beige",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": true
+  },
+  {
+    "id": "la-roche-posay-hyalu-b5-serum",
+    "slug": "la-roche-posay-hyalu-b5-serum",
+    "name": "La Roche-Posay Hyalu B5 Serum",
+    "tagline": "La",
+    "description": "Authentic La Roche-Posay Hyalu B5 Serum \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 11199,
+    "compareAtPrice": 12999,
+    "rating": 4.7,
+    "reviewCount": 144,
+    "stock": 41,
+    "image": "/catalog/la-roche-posay-hyalu-b5-serum.png",
+    "accent": "bg-sage",
+    "badges": [
+      "14% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cerave-moisturising-cream-454g-jar",
+    "slug": "cerave-moisturising-cream-454g-jar",
+    "name": "CeraVe Moisturising Cream 454g Jar",
+    "tagline": "CeraVe",
+    "description": "Authentic CeraVe Moisturising Cream 454g Jar \u2014 premium beauty, competitively priced.",
+    "category": "moisturizer",
+    "concerns": [
+      "hydration",
+      "sensitivity"
+    ],
+    "price": 5799,
+    "compareAtPrice": 6699,
+    "rating": 4.7,
+    "reviewCount": 157,
+    "stock": 18,
+    "image": "/catalog/cerave-moisturising-cream-454g-jar.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "la-roche-posay-retinol-b3-serum",
+    "slug": "la-roche-posay-retinol-b3-serum",
+    "name": "La Roche-Posay Retinol B3 Serum",
+    "tagline": "La",
+    "description": "Authentic La Roche-Posay Retinol B3 Serum \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 11899,
+    "compareAtPrice": 13699,
+    "rating": 4.7,
+    "reviewCount": 170,
+    "stock": 25,
+    "image": "/catalog/la-roche-posay-retinol-b3-serum.png",
+    "accent": "bg-beige",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "la-roche-posay-niacinamide-10-serum",
+    "slug": "la-roche-posay-niacinamide-10-serum",
+    "name": "La Roche-Posay Niacinamide 10 Serum",
+    "tagline": "La",
+    "description": "Authentic La Roche-Posay Niacinamide 10 Serum \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 3599,
+    "compareAtPrice": 4099,
+    "rating": 4.7,
+    "reviewCount": 183,
+    "stock": 32,
+    "image": "/catalog/la-roche-posay-niacinamide-10-serum.png",
+    "accent": "bg-sage",
+    "badges": [
+      "12% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "cerave-deep-cleaning-moisturising-massage-cream-100ml",
+    "slug": "cerave-deep-cleaning-moisturising-massage-cream-100ml",
+    "name": "CeraVe Deep Cleaning Moisturising Massage Cream 100ml",
+    "tagline": "CeraVe",
+    "description": "Authentic CeraVe Deep Cleaning Moisturising Massage Cream 100ml \u2014 premium beauty, competitively priced.",
+    "category": "moisturizer",
+    "concerns": [
+      "hydration",
+      "sensitivity"
+    ],
+    "price": 4899,
+    "compareAtPrice": 5599,
+    "rating": 4.7,
+    "reviewCount": 196,
+    "stock": 39,
+    "image": "/catalog/cerave-deep-cleaning-moisturising-massage-cream-100ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "la-roche-posay-50-sunscreen-long-50ml",
+    "slug": "la-roche-posay-50-sunscreen-long-50ml",
+    "name": "La Roche-Posay 50+ Sunscreen Long 50ml",
+    "tagline": "La",
+    "description": "Authentic La Roche-Posay 50+ Sunscreen Long 50ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 5799,
+    "compareAtPrice": 6599,
+    "rating": 4.7,
+    "reviewCount": 209,
+    "stock": 16,
+    "image": "/catalog/la-roche-posay-50-sunscreen-long-50ml.png",
+    "accent": "bg-beige",
+    "badges": [
+      "12% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "the-ordinary-tubes-30ml-all-variants",
+    "slug": "the-ordinary-tubes-30ml-all-variants",
+    "name": "The Ordinary Tubes 30ml (All Variants)",
+    "tagline": "The",
+    "description": "Authentic The Ordinary Tubes 30ml (All Variants) \u2014 premium beauty, competitively priced.",
+    "category": "serum",
+    "concerns": [
+      "hydration",
+      "radiance",
+      "aging"
+    ],
+    "price": 3599,
+    "compareAtPrice": 4099,
+    "rating": 4.7,
+    "reviewCount": 222,
+    "stock": 23,
+    "image": "/catalog/the-ordinary-tubes-30ml-all-variants.png",
+    "accent": "bg-sage",
+    "badges": [
+      "12% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "mac-black-primer-30ml",
+    "slug": "mac-black-primer-30ml",
+    "name": "MAC Black Primer 30ml",
+    "tagline": "MAC",
+    "description": "Authentic MAC Black Primer 30ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 1399,
+    "compareAtPrice": 1599,
+    "rating": 4.7,
+    "reviewCount": 235,
+    "stock": 30,
+    "image": "/catalog/mac-black-primer-30ml.png",
+    "accent": "bg-blush",
+    "badges": [
+      "13% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  },
+  {
+    "id": "mac-prep-prime-35ml",
+    "slug": "mac-prep-prime-35ml",
+    "name": "MAC Prep + Prime 35ml",
+    "tagline": "MAC",
+    "description": "Authentic MAC Prep + Prime 35ml \u2014 premium beauty, competitively priced.",
+    "category": "treatment",
+    "concerns": [
+      "clarity",
+      "radiance"
+    ],
+    "price": 999,
+    "compareAtPrice": 1199,
+    "rating": 4.7,
+    "reviewCount": 248,
+    "stock": 37,
+    "image": "/catalog/mac-prep-prime-35ml.png",
+    "accent": "bg-beige",
+    "badges": [
+      "17% Off"
+    ],
+    "ingredients": [],
+    "featured": false
+  }
+]

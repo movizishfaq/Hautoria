@@ -13,7 +13,9 @@ import type {
   User,
   WishlistItem } from
 '../types/domain';
-import { demoOrders, demoUser } from '../lib/mockData';
+import { isApiEnabled } from '../services/api';
+import { authService } from '../services/authService';
+import { userService } from '../services/userService';
 import { usePersistedState } from './usePersistedState';
 type Toast = {
   id: string;
@@ -30,7 +32,10 @@ type AppState = {
   notifications: AppNotification[];
   theme: 'light' | 'dark';
   toasts: Toast[];
+  authReady: boolean;
   cartOpen: boolean;
+  wishlistOpen: boolean;
+  searchOpen: boolean;
   addToCart: (product: Product, variantId?: string, quantity?: number) => void;
   updateQuantity: (
   productId: string,
@@ -44,6 +49,8 @@ type AppState = {
   setUser: (user: User | null) => void;
   addOrder: (order: Order) => void;
   setCartOpen: (open: boolean) => void;
+  setWishlistOpen: (open: boolean) => void;
+  setSearchOpen: (open: boolean) => void;
   notify: (message: string, tone?: Toast['tone']) => void;
   dismissToast: (id: string) => void;
   toggleTheme: () => void;
@@ -65,12 +72,20 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
   );
   const [user, setUser] = usePersistedState<User | null>(
     'hautoria_user',
-    demoUser
+    isApiEnabled() ? null : {
+      id: 'usr_demo',
+      name: 'Amara Laurent',
+      email: 'amara@example.com',
+      loyaltyPoints: 1240,
+      tier: 'Gold',
+      addresses: [],
+    }
   );
   const [orders, setOrders] = usePersistedState<Order[]>(
     'hautoria_orders',
-    demoOrders
+    []
   );
+  const [authReady, setAuthReady] = useState(!isApiEnabled());
   const [notifications, setNotifications] = usePersistedState<
     AppNotification[]>(
     'hautoria_notifications', [
@@ -89,9 +104,35 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
   );
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [wishlistOpen, setWishlistOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
+
+  useEffect(() => {
+    if (!isApiEnabled()) {
+      setAuthReady(true);
+      return;
+    }
+    let active = true;
+    (async () => {
+      try {
+        const me = await authService.getMe();
+        if (!active) return;
+        if (me) setUser(me);
+        const remoteOrders = await userService.getOrders();
+        if (active && remoteOrders.length) setOrders(remoteOrders);
+        const remoteNotes = await userService.getNotifications();
+        if (active && remoteNotes.length) setNotifications(remoteNotes);
+      } finally {
+        if (active) setAuthReady(true);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [setUser, setOrders, setNotifications]);
   const notify = (message: string, tone: Toast['tone'] = 'success') => {
     const id = crypto.randomUUID();
     setToasts((list) => [
@@ -118,7 +159,10 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
       notifications,
       theme,
       toasts,
+      authReady,
       cartOpen,
+      wishlistOpen,
+      searchOpen,
       addToCart: (
       product,
       variantId = product.variants[0].id,
@@ -207,6 +251,8 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
       setUser,
       addOrder: (order) => setOrders((items) => [order, ...items]),
       setCartOpen,
+      setWishlistOpen,
+      setSearchOpen,
       notify,
       dismissToast: (id) =>
       setToasts((items) => items.filter((toast) => toast.id !== id)),
@@ -223,7 +269,10 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
     notifications,
     theme,
     toasts,
-    cartOpen]
+    authReady,
+    cartOpen,
+    wishlistOpen,
+    searchOpen]
 
   );
   return <Context.Provider value={value}>{children}</Context.Provider>;

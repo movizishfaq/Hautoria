@@ -1,290 +1,354 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  CheckIcon,
   HeartIcon,
-  PlayIcon,
-  ScaleIcon,
-  Share2Icon,
+  MinusIcon,
+  PlusIcon,
+  ShieldCheckIcon,
+  ShoppingBagIcon,
+  StarIcon,
   TruckIcon,
-  ZoomInIcon } from
-'lucide-react';
-import { catalogProducts, demoReviews } from '../lib/mockData';
+  ZoomInIcon,
+} from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
+import { useCatalog } from '../context/CatalogContext';
+import { catalogService } from '../services/catalogService';
+import { isApiEnabled } from '../services/api';
+import type { Product } from '../types/domain';
 import { useAppState } from '../hooks/useAppState';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Price } from '../components/ui/Price';
 import { QuantitySelector } from '../components/ui/QuantitySelector';
 import { RatingStars } from '../components/ui/RatingStars';
-import { ProductCard } from '../features/catalog/ProductCard';
+import { LuxuryProductCard } from '../features/catalog/LuxuryProductCard';
+import { BlurReveal } from '../components/premium/BlurReveal';
+import { discountPercent, formatPrice } from '../lib/formatPrice';
+import { FAQS } from '../lib/data';
+
+export function StickyAddToCart({
+  product,
+  quantity,
+  onAdd,
+  visible,
+}: {
+  product: Product;
+  quantity: number;
+  onAdd: () => void;
+  visible: boolean;
+}) {
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-charcoal/10 glass px-4 py-3 shadow-luxe-lg dark:glass-dark lg:bottom-6 lg:left-auto lg:right-6 lg:max-w-md lg:rounded-2xl lg:border">
+          <div className="mx-auto flex max-w-7xl items-center gap-4">
+            <div className={`hidden h-12 w-12 shrink-0 rounded-xl sm:block ${product.accent} p-1.5`}>
+              <img src={product.image} alt="" className="h-full object-contain" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-serif text-sm">{product.name}</p>
+              <p className="text-sm text-gold">{formatPrice(product.price * quantity)}</p>
+            </div>
+            <button
+              onClick={onAdd}
+              className="flex shrink-0 items-center gap-2 rounded-full bg-charcoal px-6 py-3 text-[0.58rem] uppercase tracking-luxe text-ivory dark:bg-ivory dark:text-charcoal">
+              <ShoppingBagIcon className="h-4 w-4" />
+              Add to Cart
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export function ProductPage() {
   const { slug } = useParams();
-  const product = catalogProducts.find((item) => item.slug === slug);
-  const {
-    addToCart,
-    toggleWishlist,
-    wishlist,
-    toggleCompare,
-    compare,
-    viewProduct,
-    notify
-  } = useAppState();
+  const { getBySlug, products, ready } = useCatalog();
+  const [product, setProduct] = useState<Product | undefined>();
+  const { addToCart, toggleWishlist, wishlist, viewProduct, notify } = useAppState();
   const [quantity, setQuantity] = useState(1);
   const [image, setImage] = useState(0);
   const [zoom, setZoom] = useState(false);
-  const [question, setQuestion] = useState('');
+  const [stickyVisible, setStickyVisible] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [variant, setVariant] = useState(0);
+
+  useEffect(() => {
+    if (!slug) return;
+    const local = getBySlug(slug);
+    if (local) {
+      setProduct(local);
+      return;
+    }
+    if (isApiEnabled() && ready) {
+      void catalogService.bySlug(slug).then((remote) => setProduct(remote));
+    }
+  }, [slug, getBySlug, ready]);
+
   useEffect(() => {
     if (product) viewProduct(product.id);
-  }, [product?.id]);
-  if (!product)
-  return (
-    <main className="mx-auto max-w-5xl px-6 py-28">
-        <EmptyState
-        title="That ritual is elsewhere"
-        body="The product may have been retired or moved." />
-      
-      </main>);
+  }, [product?.id, viewProduct]);
 
-  const wished = wishlist.some((item) => item.productId === product.id);
+  useEffect(() => {
+    const onScroll = () => setStickyVisible(window.scrollY > 500);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  if (!product) {
+    return (
+      <main className="mx-auto max-w-5xl px-6 py-28 flex justify-center">
+        {!ready ? (
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent" />
+        ) : (
+          <EmptyState title="Product not found" body="This item may no longer be available." />
+        )}
+      </main>
+    );
+  }
+
+  const wished = wishlist.some((w) => w.productId === product.id);
+  const discount = discountPercent(product.price, product.compareAtPrice);
+  const gallery = product.gallery.length ? product.gallery : [product.image];
+  const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const boughtTogether = products.filter((p) => p.id !== product.id).slice(0, 3);
+
+  const handleAdd = () => {
+    addToCart(product, product.variants[variant]?.id ?? product.variants[0].id, quantity);
+  };
+
   return (
-    <main className="mx-auto max-w-7xl px-6 py-10">
-      <p className="mb-8 text-[.64rem] uppercase tracking-luxe text-charcoal/45 dark:text-ivory/45">
-        <Link to="/shop">Shop</Link> / {product.category} / {product.name}
-      </p>
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_.95fr]">
-        <div>
-          <div
-            className={`relative aspect-square overflow-hidden rounded-[2rem] ${product.accent}`}>
-            
-            <img
-              src={product.gallery[image]}
-              alt={product.name}
-              className="h-full w-full object-contain p-10" />
-            
-            <button
-              onClick={() => setZoom(true)}
-              className="absolute bottom-5 right-5 rounded-full bg-white/80 p-3 text-charcoal">
-              
-              <ZoomInIcon className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="mt-4 flex gap-3">
-            {product.gallery.slice(0, 4).map((source, index) =>
-            <button
-              onClick={() => setImage(index)}
-              key={`${source}-${index}`}
-              className={`h-20 w-20 rounded-xl p-2 ${image === index ? 'ring-1 ring-gold' : 'bg-beige dark:bg-white/5'}`}>
-              
-                <img
-                src={source}
-                alt=""
-                className="h-full w-full object-contain" />
-              
+    <>
+      <main className="mx-auto max-w-7xl px-6 pb-32 pt-24 lg:pb-20 lg:pt-28">
+        <p className="mb-8 text-[.58rem] uppercase tracking-luxe text-charcoal/40 dark:text-ivory/40">
+          <Link to="/shop">Shop</Link> / <span className="capitalize">{product.category}</span>
+        </p>
+
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+          <div>
+            <motion.div
+              layout
+              className={`relative aspect-square overflow-hidden rounded-[2rem] ${product.accent} shadow-luxe`}>
+              {discount && (
+                <span className="absolute left-5 top-5 z-10 rounded-full bg-charcoal px-4 py-1.5 text-[0.58rem] uppercase tracking-luxe text-ivory">
+                  {discount}% Off
+                </span>
+              )}
+              <motion.img
+                key={gallery[image]}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                src={gallery[image]}
+                alt={product.name}
+                className="h-full w-full cursor-zoom-in object-contain p-10"
+                onClick={() => setZoom(true)}
+              />
+              <button
+                onClick={() => setZoom(true)}
+                className="absolute bottom-5 right-5 rounded-full glass p-3">
+                <ZoomInIcon className="h-4 w-4" />
               </button>
-            )}
-            <button
-              className="flex h-20 w-20 items-center justify-center rounded-xl bg-charcoal text-ivory"
-              aria-label="Play product film">
-              
-              <PlayIcon className="h-5 w-5 fill-current" />
-            </button>
+            </motion.div>
+            <div className="mt-4 flex gap-3">
+              {gallery.slice(0, 4).map((src, i) => (
+                <button
+                  key={src}
+                  onClick={() => setImage(i)}
+                  className={`h-20 w-20 rounded-xl p-2 transition-all ${
+                    image === i ? 'ring-2 ring-gold' : 'bg-beige/50 dark:bg-white/5'
+                  }`}>
+                  <img src={src} alt="" className="h-full w-full object-contain" loading="lazy" />
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-        <section>
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[.64rem] uppercase tracking-luxe text-gold">
-                {product.tagline}
+
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <BlurReveal>
+              <div className="flex items-start justify-between gap-4">
+                <h1 className="font-serif text-3xl leading-tight sm:text-4xl lg:text-5xl">
+                  {product.name}
+                </h1>
+                <button
+                  onClick={() => {
+                    toggleWishlist(product.id);
+                    notify(wished ? 'Removed from wishlist' : 'Saved');
+                  }}
+                  className="shrink-0 rounded-full border border-charcoal/15 p-3 dark:border-white/15">
+                  <HeartIcon className={`h-5 w-5 ${wished ? 'fill-gold text-gold' : ''}`} />
+                </button>
+              </div>
+
+              <div className="mt-4 flex items-center gap-3">
+                <RatingStars rating={product.rating} count={product.reviewCount} />
+              </div>
+
+              <div className="mt-6">
+                <Price value={product.price} compareAtPrice={product.compareAtPrice} size="lg" />
+              </div>
+
+              {product.stock <= 8 && (
+                <p className="mt-4 text-sm text-gold">Only {product.stock} left in stock</p>
+              )}
+
+              <p className="mt-6 text-base font-light leading-relaxed text-charcoal/65 dark:text-ivory/65">
+                {product.description}
               </p>
-              <h1 className="mt-2 font-serif text-5xl">{product.name}</h1>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  toggleWishlist(product.id);
-                  notify(wished ? 'Removed from wishlist' : 'Saved to wishlist');
-                }}
-                aria-label="Save product"
-                className="rounded-full border border-charcoal/15 p-3 dark:border-white/15">
-                
-                <HeartIcon className={wished ? 'fill-gold text-gold' : ''} />
-              </button>
-              <button
-                onClick={() => {
-                  toggleCompare(product.id);
-                  notify('Comparison list updated');
-                }}
-                aria-label="Compare product"
-                className="rounded-full border border-charcoal/15 p-3 dark:border-white/15">
-                
-                <ScaleIcon
-                  className={compare.includes(product.id) ? 'text-gold' : ''} />
-                
-              </button>
-              <button
-                onClick={() => {
-                  navigator.clipboard?.writeText(window.location.href);
-                  notify('Product link copied');
-                }}
-                aria-label="Share product"
-                className="rounded-full border border-charcoal/15 p-3 dark:border-white/15">
-                
-                <Share2Icon />
-              </button>
-            </div>
-          </div>
-          <div className="mt-4">
-            <RatingStars rating={product.rating} count={product.reviewCount} />
-          </div>
-          <div className="mt-5">
-            <Price
-              value={product.price}
-              compareAtPrice={product.compareAtPrice}
-              size="lg" />
-            
-          </div>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-charcoal/65 dark:text-ivory/65">
-            {product.description}
-          </p>
-          <p
-            className={`mt-5 text-sm ${product.stock <= 8 ? 'text-gold' : 'text-charcoal/65 dark:text-ivory/65'}`}>
-            
-            {product.stock <= 8 ?
-            `Only ${product.stock} rituals remaining` :
-            'In stock · prepared within 24 hours'}
-          </p>
-          <div className="mt-6 flex gap-3">
-            {product.variants.map((variant) =>
-            <span
-              key={variant.id}
-              className="rounded-full border border-gold bg-gold/10 px-4 py-2 text-xs">
-              
-                {variant.name}
-              </span>
-            )}
-          </div>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <QuantitySelector
-              value={quantity}
-              max={product.stock}
-              onChange={setQuantity} />
-            
-            <button
-              onClick={() =>
-              addToCart(product, product.variants[0].id, quantity)
-              }
-              className="flex-1 rounded-full bg-charcoal px-8 py-4 text-[.68rem] uppercase tracking-luxe text-ivory dark:bg-ivory dark:text-charcoal">
-              
-              Add to bag · ${(product.price * quantity).toFixed(2)}
-            </button>
-          </div>
-          <div className="mt-7 grid grid-cols-1 gap-3 rounded-2xl bg-beige p-5 text-sm dark:bg-white/5">
-            <p className="flex gap-3">
-              <TruckIcon className="h-5 w-5 text-gold" /> Complimentary delivery
-              over $150 · Estimated Jul 16–18
-            </p>
-            <p className="flex gap-3">
-              <CheckIcon className="h-5 w-5 text-gold" /> 30-day ritual
-              guarantee · Authentic formula promise
-            </p>
-          </div>
-        </section>
-      </div>
-      <section className="mt-20 grid grid-cols-1 gap-10 border-t border-charcoal/10 pt-14 lg:grid-cols-2 dark:border-white/10">
-        <div>
-          <h2 className="font-serif text-3xl">Ingredient transparency</h2>
-          <div className="mt-6 space-y-3">
-            {product.ingredients.map((ingredient) =>
-            <div
-              key={ingredient}
-              className="rounded-xl border border-charcoal/10 p-4 dark:border-white/10">
-              
-                <p className="font-serif text-lg">{ingredient}</p>
-                <p className="mt-1 text-sm text-charcoal/60 dark:text-ivory/60">
-                  Chosen for clinically considered efficacy and a comfortable
-                  sensory finish.
+
+              {product.variants.length > 1 && (
+                <div className="mt-8">
+                  <p className="mb-3 text-[0.58rem] uppercase tracking-luxe text-charcoal/45">Size</p>
+                  <div className="flex flex-wrap gap-2">
+                    {product.variants.map((v, i) => (
+                      <motion.button
+                        key={v.id}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setVariant(i)}
+                        className={`rounded-full border px-5 py-2.5 text-sm transition-all ${
+                          variant === i
+                            ? 'border-gold bg-gold/10 text-charcoal'
+                            : 'border-charcoal/15 dark:border-white/15'
+                        }`}>
+                        {v.name}
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <QuantitySelector value={quantity} max={product.stock} onChange={setQuantity} />
+                <button
+                  onClick={handleAdd}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full bg-charcoal px-8 py-4 text-[0.62rem] uppercase tracking-luxe text-ivory transition-colors hover:bg-gold hover:text-charcoal dark:bg-ivory dark:text-charcoal">
+                  <ShoppingBagIcon className="h-4 w-4" />
+                  Add to Cart · {formatPrice(product.price * quantity)}
+                </button>
+              </div>
+
+              <div className="mt-8 grid gap-3 rounded-2xl bg-beige/60 p-5 text-sm dark:bg-white/5">
+                <p className="flex items-center gap-3">
+                  <TruckIcon className="h-4 w-4 text-gold" />
+                  Free delivery on orders over Rs. 5,000
+                </p>
+                <p className="flex items-center gap-3">
+                  <ShieldCheckIcon className="h-4 w-4 text-gold" />
+                  100% authentic · verified supplier
+                </p>
+                <p className="flex items-center gap-3">
+                  <StarIcon className="h-4 w-4 text-gold" />
+                  {product.rating} rating from {product.reviewCount} reviews
                 </p>
               </div>
-            )}
+            </BlurReveal>
           </div>
         </div>
-        <div>
-          <h2 className="font-serif text-3xl">Reviews & questions</h2>
-          <div className="mt-5 space-y-4">
-            {demoReviews.map((review) =>
-            <article
-              key={review.id}
-              className="rounded-2xl bg-beige p-5 dark:bg-white/5">
-              
-                <div className="flex justify-between">
-                  <p className="font-medium">
-                    {review.author}{' '}
-                    {review.verified &&
-                  <span className="ml-2 text-[.58rem] uppercase tracking-luxe text-gold">
-                        Verified buyer
-                      </span>
-                  }
-                  </p>
-                  <RatingStars rating={review.rating} />
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-charcoal/65 dark:text-ivory/65">
-                  {review.text}
-                </p>
-              </article>
-            )}
-          </div>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (question.trim()) {
-                notify('Question submitted for our formula team');
-                setQuestion('');
-              }
-            }}
-            className="mt-5 rounded-2xl border border-charcoal/10 p-4 dark:border-white/10">
-            
-            <label className="text-xs uppercase tracking-luxe">
-              Ask the formula team
-            </label>
-            <div className="mt-3 flex gap-3">
-              <input
-                required
-                value={question}
-                onChange={(event) => setQuestion(event.target.value)}
-                className="min-w-0 flex-1 bg-transparent outline-none"
-                placeholder="What would you like to know?" />
-              
-              <button className="text-xs uppercase tracking-luxe text-gold">
-                Send
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
-      <section className="mt-20">
-        <h2 className="font-serif text-4xl">Frequently paired</h2>
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
-          {catalogProducts.
-          filter((item) => item.id !== product.id).
-          slice(0, 3).
-          map((item) =>
-          <ProductCard key={item.id} product={item} />
-          )}
-        </div>
-      </section>
-      {zoom &&
-      <div
-        role="dialog"
-        aria-modal="true"
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-charcoal/85 p-6"
-        onClick={() => setZoom(false)}>
-        
-          <img
-          src={product.gallery[image]}
-          alt={`${product.name} enlarged`}
-          className="max-h-full max-w-full object-contain" />
-        
-        </div>
-      }
-    </main>);
 
+        <section className="mt-24 border-t border-charcoal/10 pt-16 dark:border-white/10">
+          <BlurReveal>
+            <h2 className="font-serif text-3xl">Frequently bought together</h2>
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {boughtTogether.map((item) => (
+                <LuxuryProductCard key={item.id} product={item} />
+              ))}
+            </div>
+          </BlurReveal>
+        </section>
+
+        <section className="mt-24">
+          <BlurReveal>
+            <h2 className="font-serif text-3xl">Customer reviews</h2>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              {[
+                { author: 'Ayesha K.', text: 'Genuine product, fast delivery. Price was better than every other store I checked.', rating: 5 },
+                { author: 'Sara M.', text: 'Exactly as described. Packaging was premium and the product is 100% authentic.', rating: 5 },
+                { author: 'Fatima R.', text: 'Been ordering from Hautoria for months. Consistent quality every time.', rating: 4 },
+              ].map((review) => (
+                <div key={review.author} className="rounded-2xl bg-beige/50 p-6 dark:bg-white/5">
+                  <div className="flex justify-between">
+                    <p className="font-medium">{review.author}</p>
+                    <RatingStars rating={review.rating} />
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-charcoal/65 dark:text-ivory/65">
+                    {review.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </BlurReveal>
+        </section>
+
+        <section className="mt-24">
+          <BlurReveal>
+            <h2 className="font-serif text-3xl">Questions & answers</h2>
+            <div className="mt-6 space-y-2">
+              {FAQS.slice(0, 4).map((faq, i) => (
+                <div
+                  key={faq.q}
+                  className="overflow-hidden rounded-2xl border border-charcoal/10 dark:border-white/10">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="flex w-full items-center justify-between p-5 text-left">
+                    <span className="font-serif text-lg">{faq.q}</span>
+                    {openFaq === i ? (
+                      <MinusIcon className="h-4 w-4 shrink-0" />
+                    ) : (
+                      <PlusIcon className="h-4 w-4 shrink-0" />
+                    )}
+                  </button>
+                  <AnimatePresence>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden">
+                        <p className="px-5 pb-5 text-sm leading-relaxed text-charcoal/65 dark:text-ivory/65">
+                          {faq.a}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
+          </BlurReveal>
+        </section>
+
+        <section className="mt-24">
+          <h2 className="font-serif text-3xl">You may also like</h2>
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {related.map((item) => (
+              <LuxuryProductCard key={item.id} product={item} />
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <StickyAddToCart product={product} quantity={quantity} onAdd={handleAdd} visible={stickyVisible} />
+
+      <AnimatePresence>
+        {zoom && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setZoom(false)}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-charcoal/90 p-8 backdrop-blur-sm">
+            <motion.img
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              src={gallery[image]}
+              alt={product.name}
+              className="max-h-full max-w-full object-contain"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }

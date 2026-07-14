@@ -9,13 +9,16 @@ import.meta.env as RuntimeEnvironment :
 {};
 
 export const appConfig = {
+  brandName: 'Hautoria',
+  brandTagline: 'Crafted for Timeless Skin.',
+  heroImage: '/hero-fit-me-real-hd.png',
   apiBaseUrl: runtimeEnvironment.VITE_API_BASE_URL ?? '',
   stripePublishableKey: runtimeEnvironment.VITE_STRIPE_PUBLISHABLE_KEY ?? '',
   paypalClientId: runtimeEnvironment.VITE_PAYPAL_CLIENT_ID ?? '',
   gaId: runtimeEnvironment.VITE_GA_ID ?? '',
   metaPixelId: runtimeEnvironment.VITE_META_PIXEL_ID ?? '',
   whatsappNumber: runtimeEnvironment.VITE_WHATSAPP_NUMBER ?? '',
-  currency: 'USD'
+  currency: 'PKR'
 } as const;
 
 export const isIntegrationConfigured = (value: string) => Boolean(value.trim());

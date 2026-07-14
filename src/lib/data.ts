@@ -1,145 +1,105 @@
 // Shared content data for the Hautoria luxury skincare experience.
+import { catalogProducts } from './mockData';
+import { formatPrice } from './formatPrice';
+import { appConfig } from './config';
 
 export type Product = {
   id: string;
   name: string;
   tagline: string;
   price: number;
+  compareAtPrice?: number;
   image: string;
-  accent: string; // tailwind bg tint
+  accent: string;
 };
 
-export const HERO_BOTTLE = "/cb059319-2785-445b-869c-2f62ff3008f8.jpg";
+const toDisplayProduct = (product: (typeof catalogProducts)[number]): Product => ({
+  id: product.id,
+  name: product.name,
+  tagline: product.name.split(' ').slice(0, 2).join(' '),
+  price: product.price,
+  compareAtPrice: product.compareAtPrice,
+  image: product.image,
+  accent: product.accent
+});
 
+export const HERO_BOTTLE = appConfig.heroImage;
 
-export const PRODUCTS: Product[] = [
-{
-  id: 'resurrection-serum',
-  name: 'Lumière Céleste',
-  tagline: 'Résurrection Sérum',
-  price: 148,
-  image: HERO_BOTTLE,
-  accent: 'bg-blush'
-},
-{
-  id: 'renewal-cream',
-  name: 'Velours Nuit',
-  tagline: 'Renewal Night Crème',
-  price: 132,
-  image: "/48fc0826-b7fe-432d-9bd9-d33a0a941841.jpg",
+export const PRODUCTS: Product[] = catalogProducts
+  .filter((product) => product.featured)
+  .slice(0, 3)
+  .map(toDisplayProduct);
 
-  accent: 'bg-beige'
-},
-{
-  id: 'botanical-oil',
-  name: 'Élixir Botanique',
-  tagline: 'Radiance Facial Oil',
-  price: 96,
-  image: "/6543add9-3e90-4701-9487-939f86d9cccd.jpg",
+export const SHOWCASE: Product[] = catalogProducts.slice(0, 6).map(toDisplayProduct);
 
-  accent: 'bg-sage'
-}];
-
-
-// Extended list for carousel / best-sellers reuse
-export const SHOWCASE: Product[] = [
-PRODUCTS[0],
-PRODUCTS[1],
-PRODUCTS[2],
-{
-  ...PRODUCTS[0],
-  id: 's4',
-  name: 'Aube Dorée',
-  tagline: 'Vitamin C Concentré',
-  price: 118
-},
-{
-  ...PRODUCTS[1],
-  id: 's5',
-  name: 'Rosée Calme',
-  tagline: 'Sensitive Barrier Balm',
-  price: 88
-},
-{
-  ...PRODUCTS[2],
-  id: 's6',
-  name: 'Pureté Claire',
-  tagline: 'Acne Clarity Essence',
-  price: 74
-}];
-
+export { formatPrice };
 
 export const INGREDIENT_IMG = "/28832f8f-d510-4bff-87b1-4a61a2976a99.jpg";
 
-
 export const SKIN_IMG = "/eeef8845-ed8a-4bc7-9c3f-e284c8f93847.jpg";
 
-
 export const COLLECTIONS = [
-'Morning Routine',
-'Night Routine',
-'Acne Care',
-'Sensitive Skin',
-'Anti Aging',
-'Hydration',
-'Vitamin C',
+'Foundations & Primers',
+'Serums & Treatments',
+'Moisturizers & Creams',
+'Cleansers',
+'Sunscreen',
+'Mascara & Makeup',
+'K-Beauty',
 'Bundles'];
-
 
 export const INGREDIENTS = [
 {
-  name: 'Squalane Céleste',
-  desc: "Weightless plant lipid that mirrors the skin's own moisture for a satin, cushioned glow.",
+  name: 'Hyaluronic Acid',
+  desc: 'Draws moisture into the skin for plump, dewy hydration that lasts all day.',
   x: '18%',
   y: '28%'
 },
 {
-  name: 'Bakuchiol',
-  desc: 'A gentle botanical retinol alternative that smooths and firms without irritation.',
+  name: 'Niacinamide',
+  desc: 'Balances oil, refines pores, and visibly evens skin tone over time.',
   x: '68%',
   y: '20%'
 },
 {
-  name: 'Rosehip Nectar',
-  desc: 'Cold-pressed and rich in vitamin A to visibly renew tone and texture overnight.',
+  name: 'Ceramides',
+  desc: 'Rebuild the skin barrier to lock in moisture and protect against irritation.',
   x: '44%',
   y: '62%'
 },
 {
   name: 'Centella Asiatica',
-  desc: "The soothing 'tiger herb' that calms redness and reinforces the skin barrier.",
+  desc: "Nature's calming herb that soothes redness and strengthens sensitive skin.",
   x: '80%',
   y: '58%'
 }];
 
-
 export const REVIEWS = [
 {
   name: 'Isabelle R.',
-  location: 'Paris',
-  text: 'I have never felt more confident bare-faced. The Résurrection Sérum transformed my skin in three weeks.'
+  location: 'Karachi',
+  text: 'Genuine products at prices I could not find anywhere else. The Ordinary serum arrived sealed and fresh.'
 },
 {
   name: 'Naomi K.',
-  location: 'New York',
-  text: 'It feels less like skincare and more like a nightly ritual I genuinely look forward to. Pure luxury.'
+  location: 'Lahore',
+  text: 'Finally a store with real MAC and CeraVe at fair prices. Fast delivery and beautifully packaged.'
 },
 {
   name: 'Amara D.',
-  location: 'London',
-  text: "The glow is unreal. Strangers ask what I'm using. Worth every single penny."
+  location: 'Islamabad',
+  text: 'The COSRX snail cream changed my skin. Hautoria made premium skincare actually affordable.'
 },
 {
   name: 'Sofia M.',
-  location: 'Milan',
-  text: 'Sensitive skin, finally soothed. The Rosée Calme balm is the only thing that never stings.'
+  location: 'Rawalpindi',
+  text: 'Sensitive skin, finally soothed. Every product I ordered was authentic.'
 },
 {
   name: 'Yuki T.',
-  location: 'Tokyo',
-  text: 'Elegant, effective, and effortless. Hautoria understands what quiet luxury really means.'
+  location: 'Faisalabad',
+  text: 'Competitive prices on luxury brands without compromising on quality. Highly recommend.'
 }];
-
 
 export const QUIZ = [
 {
@@ -170,21 +130,20 @@ export const QUIZ = [
 
 }];
 
-
 export const FAQS = [
 {
-  q: 'Are Hautoria formulas suitable for sensitive skin?',
-  a: 'Every formula is dermatologically tested, fragrance-conscious, and built around barrier-first botanicals. Our Rosée Calme line is designed specifically for reactive skin.'
+  q: 'Are all products 100% authentic?',
+  a: 'Yes. Every product in our catalog is sourced from verified suppliers. We guarantee authenticity on all brands including The Ordinary, CeraVe, MAC, and La Roche-Posay.'
 },
 {
-  q: 'Are your products cruelty-free and clean?',
-  a: 'Always. Hautoria is 100% cruelty-free, vegan, and formulated without parabens, sulfates, or synthetic dyes — crafted in small batches for freshness.'
+  q: 'Why are your prices lower than other stores?',
+  a: 'We work directly with suppliers and pass savings to you while maintaining healthy quality standards. Our prices are always below the average market rate.'
 },
 {
-  q: 'How long until I see results?',
-  a: 'Most members notice a visible glow within 7 days and meaningful improvements in tone and firmness within 4 to 6 weeks of consistent use.'
+  q: 'How long does delivery take?',
+  a: 'Orders within major cities are delivered in 2–4 business days. Nationwide delivery typically takes 4–7 business days.'
 },
 {
-  q: 'Do you offer international shipping?',
-  a: 'Yes. We ship worldwide with carbon-neutral delivery and complimentary express shipping for VIP Club members.'
+  q: 'Do you offer returns?',
+  a: 'Unopened products can be returned within 7 days of delivery. Contact our support team to initiate a return.'
 }];

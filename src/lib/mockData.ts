@@ -8,152 +8,42 @@ import type {
   Review,
   User } from
 '../types/domain';
+import catalogData from './catalog.json';
 
-const serum = "/cb059319-2785-445b-869c-2f62ff3008f8.jpg";
+type CatalogEntry = (typeof catalogData)[number];
 
-const cream = "/48fc0826-b7fe-432d-9bd9-d33a0a941841.jpg";
-
-const oil = "/6543add9-3e90-4701-9487-939f86d9cccd.jpg";
-
-const botanicals = "/28832f8f-d510-4bff-87b1-4a61a2976a99.jpg";
-
-
-const makeProduct = (
-input: Omit<Product, 'gallery' | 'variants'>)
-: Product => ({
-  ...input,
-  gallery: [input.image, serum, cream, oil],
+const makeProduct = (input: CatalogEntry): Product => ({
+  id: input.id,
+  slug: input.slug,
+  name: input.name,
+  tagline: input.tagline,
+  description: input.description,
+  category: input.category,
+  concerns: input.concerns,
+  price: input.price,
+  compareAtPrice: input.compareAtPrice ?? undefined,
+  rating: input.rating,
+  reviewCount: input.reviewCount,
+  stock: input.stock,
+  image: input.image,
+  gallery: [input.image],
+  accent: input.accent,
+  badges: input.badges,
+  ingredients: input.ingredients,
+  featured: input.featured,
   variants: [
-  {
-    id: `${input.id}-30`,
-    name: '30 ml',
-    sku: `HT-${input.id.toUpperCase()}-30`,
-    price: input.price,
-    stock: input.stock
-  },
-  {
-    id: `${input.id}-50`,
-    name: '50 ml',
-    sku: `HT-${input.id.toUpperCase()}-50`,
-    price: Math.round(input.price * 1.45),
-    stock: Math.max(4, input.stock - 5)
-  }]
-
+    {
+      id: `${input.id}-default`,
+      name: 'Standard',
+      sku: `HT-${input.id.toUpperCase().slice(0, 12)}`,
+      price: input.price,
+      compareAtPrice: input.compareAtPrice ?? undefined,
+      stock: input.stock
+    }
+  ]
 });
 
-export const catalogProducts: Product[] = [
-makeProduct({
-  id: 'resurrection-serum',
-  slug: 'lumiere-celeste',
-  name: 'Lumière Céleste',
-  tagline: 'Résurrection Sérum',
-  description:
-  'A weightless renewal serum that floods the complexion with luminous, barrier-first hydration.',
-  category: 'serum',
-  concerns: ['hydration', 'radiance', 'aging'],
-  price: 148,
-  compareAtPrice: 168,
-  rating: 4.9,
-  reviewCount: 486,
-  stock: 18,
-  image: serum,
-  accent: 'bg-blush',
-  badges: ['Bestseller', 'Clinically tested'],
-  ingredients: ['Squalane Céleste', 'Bakuchiol', 'Rosehip Nectar'],
-  featured: true
-}),
-makeProduct({
-  id: 'velours-nuit',
-  slug: 'velours-nuit',
-  name: 'Velours Nuit',
-  tagline: 'Renewal Night Crème',
-  description:
-  'A cocooning overnight crème that smooths visible texture and leaves skin rested by morning.',
-  category: 'moisturizer',
-  concerns: ['aging', 'sensitivity', 'hydration'],
-  price: 132,
-  rating: 4.8,
-  reviewCount: 327,
-  stock: 7,
-  image: cream,
-  accent: 'bg-beige',
-  badges: ['Night ritual'],
-  ingredients: ['Bakuchiol', 'Ceramides', 'Centella Asiatica'],
-  featured: true
-}),
-makeProduct({
-  id: 'elixir-botanique',
-  slug: 'elixir-botanique',
-  name: 'Élixir Botanique',
-  tagline: 'Radiance Facial Oil',
-  description:
-  'A silky, fast-absorbing botanical oil to seal in luminosity without a trace of weight.',
-  category: 'oil',
-  concerns: ['radiance', 'hydration'],
-  price: 96,
-  rating: 4.9,
-  reviewCount: 271,
-  stock: 24,
-  image: oil,
-  accent: 'bg-sage',
-  badges: ['Cold pressed'],
-  ingredients: ['Rosehip Nectar', 'Squalane Céleste', 'Vitamin E'],
-  featured: true
-}),
-makeProduct({
-  id: 'aube-doree',
-  slug: 'aube-doree',
-  name: 'Aube Dorée',
-  tagline: 'Vitamin C Concentré',
-  description:
-  'A brightening morning concentrate with stabilized vitamin C and calming antioxidants.',
-  category: 'treatment',
-  concerns: ['radiance', 'clarity', 'aging'],
-  price: 118,
-  rating: 4.7,
-  reviewCount: 188,
-  stock: 12,
-  image: serum,
-  accent: 'bg-blush',
-  badges: ['Morning essential'],
-  ingredients: ['Vitamin C', 'Ferulic Acid', 'Niacinamide']
-}),
-makeProduct({
-  id: 'rosee-calme',
-  slug: 'rosee-calme',
-  name: 'Rosée Calme',
-  tagline: 'Sensitive Barrier Balm',
-  description:
-  'A gentle, restorative balm for moments when your skin asks for less and needs more.',
-  category: 'moisturizer',
-  concerns: ['sensitivity', 'hydration'],
-  price: 88,
-  rating: 4.9,
-  reviewCount: 205,
-  stock: 4,
-  image: cream,
-  accent: 'bg-beige',
-  badges: ['Sensitive skin'],
-  ingredients: ['Centella Asiatica', 'Ceramides', 'Oat Lipids']
-}),
-makeProduct({
-  id: 'purete-claire',
-  slug: 'purete-claire',
-  name: 'Pureté Claire',
-  tagline: 'Clarity Essence',
-  description:
-  'A balancing daily essence that refines the look of pores and softens congestion.',
-  category: 'treatment',
-  concerns: ['clarity', 'sensitivity'],
-  price: 74,
-  rating: 4.6,
-  reviewCount: 156,
-  stock: 31,
-  image: botanicals,
-  accent: 'bg-sage',
-  badges: ['Clarifying'],
-  ingredients: ['PHA', 'Zinc PCA', 'Green Tea']
-})];
+export const catalogProducts: Product[] = catalogData.map(makeProduct);
 
 
 export const demoAddress: Address = {
@@ -186,9 +76,9 @@ export const demoOrders: Order[] = [
   number: 'HT-10482',
   status: 'shipped',
   createdAt: '2026-07-11',
-  total: 244.24,
-  subtotal: 228,
-  tax: 16.24,
+  total: 5597,
+  subtotal: 5498,
+  tax: 99,
   shipping: 0,
   discount: 0,
   paymentProvider: 'stripe',
@@ -196,20 +86,20 @@ export const demoOrders: Order[] = [
   shippingAddress: demoAddress,
   items: [
   {
-    productId: 'resurrection-serum',
-    productName: 'Lumière Céleste',
-    image: serum,
-    variantName: '30 ml',
+    productId: catalogProducts[0]?.id ?? 'fit-me-matte-tube-foundation-18ml',
+    productName: catalogProducts[0]?.name ?? 'Fit Me Matte Tube Foundation 18ml',
+    image: catalogProducts[0]?.image ?? '/catalog/fit-me-matte-tube-foundation-18ml.png',
+    variantName: 'Standard',
     quantity: 1,
-    unitPrice: 148
+    unitPrice: catalogProducts[0]?.price ?? 1599
   },
   {
-    productId: 'rosee-calme',
-    productName: 'Rosée Calme',
-    image: cream,
-    variantName: '30 ml',
+    productId: catalogProducts[1]?.id ?? 'the-ordinary-hyaluronic-acid-2-b5-30ml',
+    productName: catalogProducts[1]?.name ?? 'The Ordinary Hyaluronic Acid 2% + B5 30ml',
+    image: catalogProducts[1]?.image ?? '/catalog/the-ordinary-hyaluronic-acid-2-b5-30ml.png',
+    variantName: 'Standard',
     quantity: 1,
-    unitPrice: 80
+    unitPrice: catalogProducts[1]?.price ?? 3899
   }],
 
   events: [
@@ -248,7 +138,7 @@ export const demoOrders: Order[] = [
 export const demoReviews: Review[] = [
 {
   id: 'rev_1',
-  productId: 'resurrection-serum',
+  productId: catalogProducts[1]?.id ?? 'the-ordinary-hyaluronic-acid-2-b5-30ml',
   author: 'Isabelle R.',
   rating: 5,
   text: 'My complexion feels cushioned, bright, and truly comfortable. It is my non-negotiable.',
@@ -257,7 +147,7 @@ export const demoReviews: Review[] = [
 },
 {
   id: 'rev_2',
-  productId: 'resurrection-serum',
+  productId: catalogProducts[1]?.id ?? 'the-ordinary-hyaluronic-acid-2-b5-30ml',
   author: 'Naomi K.',
   rating: 5,
   text: 'Quietly transformative. The glow is there without any irritation.',

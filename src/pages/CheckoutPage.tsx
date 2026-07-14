@@ -2,7 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CheckIcon, ChevronRightIcon, LockKeyholeIcon } from 'lucide-react';
 import { useAppState } from '../hooks/useAppState';
-import { catalogProducts, demoAddress } from '../lib/mockData';
+import { useCatalog } from '../context/CatalogContext';
+import { demoAddress } from '../lib/mockData';
+import { formatPrice } from '../lib/formatPrice';
 import { commerceService } from '../services/commerceService';
 import type {
   Address,
@@ -58,6 +60,7 @@ const payments: Array<{
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, user, addOrder, notify } = useAppState();
+  const { products } = useCatalog();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<CheckoutDraft>({
     email: user?.email ?? '',
@@ -68,7 +71,7 @@ export function CheckoutPage() {
   });
   const [processing, setProcessing] = useState(false);
   const lines = cart.flatMap((line) => {
-    const product = catalogProducts.find((item) => item.id === line.productId);
+    const product = products.find((item) => item.id === line.productId);
     const variant = product?.variants.find((item) => item.id === line.variantId);
     return product && variant ?
     [
@@ -85,8 +88,8 @@ export function CheckoutPage() {
     0
   );
   const shipping =
-  draft.shippingMethod === 'express' ? 24 : subtotal >= 150 ? 0 : 14;
-  const pointsDiscount = draft.usePoints ? 12 : 0;
+  draft.shippingMethod === 'express' ? 499 : subtotal >= 5000 ? 0 : 299;
+  const pointsDiscount = draft.usePoints ? 500 : 0;
   const total = Math.max(0, subtotal + shipping - pointsDiscount);
   const updateAddress = (field: keyof Address, value: string) =>
   setDraft((current) => ({
@@ -154,10 +157,23 @@ export function CheckoutPage() {
       }]
 
     };
-    await commerceService.createOrder(draft, order);
-    addOrder(order);
-    setProcessing(false);
-    navigate(`/checkout/success/${order.id}`);
+    try {
+      const created = await commerceService.createOrder(
+        draft,
+        lines.map((line) => ({
+          productId: line.product.id,
+          variantId: line.variant.id,
+          quantity: line.quantity,
+        })),
+        order
+      );
+      addOrder(created);
+      navigate(`/checkout/success/${created.id}`);
+    } catch (err) {
+      notify(err instanceof Error ? err.message : 'Checkout failed', 'error');
+    } finally {
+      setProcessing(false);
+    }
   };
   if (!lines.length)
   return (
@@ -265,7 +281,7 @@ export function CheckoutPage() {
               <div className="mt-6 space-y-3">
                 {[
               ['standard', 'Standard · 3–5 days', shipping],
-              ['express', 'Express · 1–2 days', 24]].
+              ['express', 'Express · 1–2 days', 499]].
               map(([id, label, cost]) =>
               <label
                 key={String(id)}
@@ -285,7 +301,7 @@ export function CheckoutPage() {
                   
                       {label}
                     </span>
-                    <span>${Number(cost).toFixed(2)}</span>
+                    <span>{formatPrice(Number(cost))}</span>
                   </label>
               )}
               </div>
@@ -395,7 +411,7 @@ export function CheckoutPage() {
               
                 {processing ?
               'Preparing order…' :
-              `Place demo order · $${total.toFixed(2)}`}
+              `Place demo order · ${formatPrice(total)}`}
               </button>
             }
           </div>
@@ -418,7 +434,7 @@ export function CheckoutPage() {
                   {line.product.name} × {line.quantity}
                 </p>
                 <span className="text-sm">
-                  ${(line.variant.price * line.quantity).toFixed(2)}
+                  {formatPrice(line.variant.price * line.quantity)}
                 </span>
               </div>
             )}
@@ -426,21 +442,21 @@ export function CheckoutPage() {
           <div className="mt-6 space-y-2 border-t border-charcoal/10 pt-5 text-sm dark:border-white/10">
             <p className="flex justify-between">
               <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>{formatPrice(subtotal)}</span>
             </p>
             <p className="flex justify-between">
               <span>Delivery</span>
-              <span>${shipping.toFixed(2)}</span>
+              <span>{formatPrice(shipping)}</span>
             </p>
             {pointsDiscount > 0 &&
             <p className="flex justify-between text-gold">
                 <span>Points</span>
-                <span>−${pointsDiscount.toFixed(2)}</span>
+                <span>−{formatPrice(pointsDiscount)}</span>
               </p>
             }
             <p className="flex justify-between pt-3 font-serif text-xl">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>{formatPrice(total)}</span>
             </p>
           </div>
         </aside>

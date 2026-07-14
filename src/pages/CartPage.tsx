@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRightIcon, GiftIcon, TagIcon } from 'lucide-react';
 import { useAppState } from '../hooks/useAppState';
-import { catalogProducts } from '../lib/mockData';
+import { useCatalog } from '../context/CatalogContext';
 import { EmptyState } from '../components/ui/EmptyState';
 import { QuantitySelector } from '../components/ui/QuantitySelector';
 import { Price } from '../components/ui/Price';
+import { formatPrice } from '../lib/formatPrice';
 import { commerceService } from '../services/commerceService';
 export function CartPage() {
   const { cart, updateQuantity, removeFromCart, notify } = useAppState();
+  const { products } = useCatalog();
   const [coupon, setCoupon] = useState('');
-  const [discount, setDiscount] = useState(0);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountLabel, setDiscountLabel] = useState('');
   const lines = cart.flatMap((line) => {
-    const product = catalogProducts.find((item) => item.id === line.productId);
+    const product = products.find((item) => item.id === line.productId);
     const variant = product?.variants.find((item) => item.id === line.variantId);
     return product && variant ?
     [
@@ -28,8 +31,8 @@ export function CartPage() {
     (sum, line) => sum + line.variant.price * line.quantity,
     0
   );
-  const shipping = subtotal >= 150 ? 0 : 14;
-  const total = subtotal * (1 - discount / 100) + shipping;
+  const shipping = subtotal >= 5000 ? 0 : 299;
+  const total = Math.max(0, subtotal + shipping - discountAmount);
   return (
     <main className="mx-auto min-h-screen max-w-6xl px-6 py-14">
       <p className="text-[.64rem] uppercase tracking-luxe text-gold">
@@ -101,35 +104,40 @@ export function CartPage() {
             <div className="mt-6 space-y-3 text-sm">
               <p className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{formatPrice(subtotal)}</span>
               </p>
               <p className="flex justify-between">
                 <span>Estimated delivery</span>
                 <span>
-                  {shipping ? `$${shipping.toFixed(2)}` : 'Complimentary'}
+                  {shipping ? formatPrice(shipping) : 'Complimentary'}
                 </span>
               </p>
-              {discount > 0 &&
-            <p className="flex justify-between text-gold">
-                  <span>Welcome ritual</span>
-                  <span>−{discount}%</span>
+              {discountAmount > 0 && (
+                <p className="flex justify-between text-gold">
+                  <span>{discountLabel || 'Discount'}</span>
+                  <span>−{formatPrice(discountAmount)}</span>
                 </p>
-            }
+              )}
               <div className="border-t border-charcoal/10 pt-4 dark:border-white/10">
                 <p className="flex justify-between font-serif text-xl">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{formatPrice(total)}</span>
                 </p>
               </div>
             </div>
             <form
             onSubmit={async (event) => {
               event.preventDefault();
-              const result = await commerceService.validateCoupon(coupon);
+              const result = await commerceService.validateCoupon(coupon, subtotal);
               if (result.valid) {
-                setDiscount(result.discount);
+                setDiscountAmount(result.discount);
+                setDiscountLabel(result.label);
                 notify(result.label);
-              } else notify(result.label, 'error');
+              } else {
+                setDiscountAmount(0);
+                setDiscountLabel('');
+                notify(result.label, 'error');
+              }
             }}
             className="mt-6 flex rounded-xl border border-charcoal/15 dark:border-white/15">
             
@@ -158,14 +166,14 @@ export function CartPage() {
               <div
               className="h-full bg-gold"
               style={{
-                width: `${Math.min(100, subtotal / 150 * 100)}%`
+                width: `${Math.min(100, subtotal / 5000 * 100)}%`
               }} />
             
             </div>
             <p className="mt-2 text-xs text-charcoal/55 dark:text-ivory/55">
-              {subtotal >= 150 ?
+              {subtotal >= 5000 ?
             'You unlocked complimentary shipping.' :
-            `$${(150 - subtotal).toFixed(2)} away from complimentary shipping.`}
+            `${formatPrice(5000 - subtotal)} away from complimentary shipping.`}
             </p>
             <Link
             to="/checkout"

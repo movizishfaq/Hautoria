@@ -8,7 +8,7 @@ import {
 'framer-motion';
 import { PlusIcon } from 'lucide-react';
 import { Reveal, RevealWords } from '../components/Reveal';
-import { PRODUCTS, type Product } from '../lib/data';
+import { PRODUCTS, formatPrice, type Product } from '../lib/data';
 import { catalogProducts } from '../lib/mockData';
 import { useAppState } from '../hooks/useAppState';
 const LUXE = [0.22, 1, 0.36, 1] as const;
@@ -177,7 +177,7 @@ function FloatingCard({ product, index }: {product: Product;index: number;}) {
             }}
             className="font-serif text-lg text-gold">
             
-            ${product.price}
+            {formatPrice(product.price)}
           </motion.p>
         </div>
       </div>

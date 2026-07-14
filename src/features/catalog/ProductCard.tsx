@@ -1,101 +1,66 @@
 import React from 'react';
-import { HeartIcon, ScaleIcon, ShoppingBagIcon } from 'lucide-react';
+import { ShoppingBagIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Product } from '../../types/domain';
 import { Price } from '../../components/ui/Price';
-import { RatingStars } from '../../components/ui/RatingStars';
+import { discountPercent } from '../../lib/formatPrice';
 import { useAppState } from '../../hooks/useAppState';
-export function ProductCard({ product }: {product: Product;}) {
-  const {
-    addToCart,
-    wishlist,
-    toggleWishlist,
-    compare,
-    toggleCompare,
-    notify
-  } = useAppState();
-  const wished = wishlist.some((item) => item.productId === product.id);
-  const comparing = compare.includes(product.id);
+
+export function ProductCard({ product }: { product: Product }) {
+  const { addToCart, notify } = useAppState();
+  const discount = discountPercent(product.price, product.compareAtPrice);
+
   return (
-    <article className="group relative">
+    <article className="group relative flex flex-col">
       <div
         className={`relative aspect-[4/5] overflow-hidden rounded-[1.75rem] ${product.accent} p-5`}>
-        
         <Link
           to={`/products/${product.slug}`}
           aria-label={`View ${product.name}`}
-          className="absolute inset-0 z-10" />
-        
-        <div className="absolute left-4 top-4 z-20 flex gap-2">
-          {product.badges.slice(0, 1).map((badge) =>
-          <span
-            key={badge}
-            className="rounded-full bg-ivory/80 px-3 py-1 text-[0.58rem] uppercase tracking-luxe text-charcoal backdrop-blur">
-            
-              {badge}
+          className="absolute inset-0 z-10"
+        />
+        {discount && (
+          <div className="absolute left-4 top-4 z-20">
+            <span className="rounded-full bg-gold px-3 py-1 text-[0.58rem] font-medium uppercase tracking-luxe text-charcoal">
+              {discount}% Off
             </span>
-          )}
-        </div>
-        <div className="absolute right-4 top-4 z-20 flex flex-col gap-2">
-          <button
-            aria-label="Toggle wishlist"
-            onClick={() => {
-              toggleWishlist(product.id);
-              notify(wished ? 'Removed from wishlist' : 'Saved to wishlist');
-            }}
-            className="rounded-full bg-white/75 p-2.5 text-charcoal backdrop-blur">
-            
-            <HeartIcon
-              className={`h-4 w-4 ${wished ? 'fill-gold text-gold' : ''}`} />
-            
-          </button>
-          <button
-            aria-label="Toggle comparison"
-            onClick={() => {
-              if (!comparing && compare.length >= 3)
-              notify('Compare up to three products', 'info');else
-              toggleCompare(product.id);
-            }}
-            className="rounded-full bg-white/75 p-2.5 text-charcoal backdrop-blur">
-            
-            <ScaleIcon className={`h-4 w-4 ${comparing ? 'text-gold' : ''}`} />
-          </button>
-        </div>
+          </div>
+        )}
         <img
           src={product.image}
-          alt=""
-          className="pointer-events-none relative z-0 h-full w-full object-contain transition-transform duration-700 ease-luxe group-hover:scale-105 group-hover:-rotate-2" />
-        
+          alt={product.name}
+          className="pointer-events-none relative z-0 h-full w-full object-contain transition-transform duration-700 ease-luxe group-hover:scale-105 group-hover:-rotate-2"
+        />
       </div>
-      <div className="px-1 pt-4">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <Link
-              to={`/products/${product.slug}`}
-              className="font-serif text-xl text-charcoal dark:text-ivory">
-              
-              {product.name}
-            </Link>
-            <p className="mt-1 text-[0.62rem] uppercase tracking-luxe text-charcoal/45 dark:text-ivory/45">
-              {product.tagline}
-            </p>
-          </div>
-          <button
-            onClick={() => addToCart(product)}
-            aria-label={`Add ${product.name} to cart`}
-            className="rounded-full border border-charcoal/15 p-3 transition-colors hover:border-gold hover:text-gold dark:border-white/20">
-            
-            <ShoppingBagIcon className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <Price
-            value={product.price}
-            compareAtPrice={product.compareAtPrice} />
-          
-          <RatingStars rating={product.rating} />
-        </div>
-      </div>
-    </article>);
 
+      <div className="flex flex-1 flex-col px-1 pt-4">
+        <Link
+          to={`/products/${product.slug}`}
+          className="font-serif text-xl leading-snug text-charcoal dark:text-ivory">
+          {product.name}
+        </Link>
+
+        <div className="mt-3">
+          <Price value={product.price} compareAtPrice={product.compareAtPrice} />
+        </div>
+
+        <div className="mt-4 flex gap-2">
+          <button
+            onClick={() => {
+              addToCart(product);
+              notify('Added to cart');
+            }}
+            className="flex flex-1 items-center justify-center gap-2 rounded-full border border-charcoal/15 px-4 py-3 text-[0.62rem] uppercase tracking-luxe transition-colors hover:border-gold hover:text-gold dark:border-white/20">
+            <ShoppingBagIcon className="h-4 w-4" />
+            Add to Cart
+          </button>
+          <Link
+            to={`/products/${product.slug}`}
+            className="flex flex-1 items-center justify-center rounded-full bg-charcoal px-4 py-3 text-center text-[0.62rem] uppercase tracking-luxe text-ivory transition-colors hover:bg-gold hover:text-charcoal dark:bg-ivory dark:text-charcoal">
+            Buy Now
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
 }

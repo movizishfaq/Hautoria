@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Reveal } from '../components/Reveal';
-import { SHOWCASE } from '../lib/data';
+import { SHOWCASE, formatPrice } from '../lib/data';
 /**
  * Infinite horizontal marquee of best-sellers. Pauses on hover.
  */
@@ -56,7 +56,7 @@ export function BestSellers() {
               <p className="mt-1 text-[0.62rem] uppercase tracking-luxe text-charcoal/45">
                 {p.tagline}
               </p>
-              <p className="mt-3 font-serif text-gold">${p.price}</p>
+              <p className="mt-3 font-serif text-gold">{formatPrice(p.price)}</p>
             </div>
           )}
         </motion.div>

@@ -11,14 +11,25 @@ export type SkinConcern =
 'clarity' |
 'radiance';
 export type OrderStatus =
-'processing' |
-'confirmed' |
-'packed' |
-'shipped' |
-'out_for_delivery' |
-'delivered' |
-'cancelled' |
-'refunded';
+| 'pending'
+| 'confirmed'
+| 'payment_verified'
+| 'processing'
+| 'packed'
+| 'quality_checked'
+| 'ready_to_ship'
+| 'shipped'
+| 'out_for_delivery'
+| 'delivered'
+| 'completed'
+| 'cancelled'
+| 'refund_requested'
+| 'refund_approved'
+| 'refund_completed'
+| 'returned'
+| 'rejected'
+| 'refunded';
+export type UserRole = 'customer' | 'admin' | 'manager' | 'sales' | 'support';
 export type PaymentProvider =
 'stripe' |
 'paypal' |
@@ -98,6 +109,9 @@ export interface User {
   email: string;
   phone?: string;
   birthday?: string;
+  role?: UserRole;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
   loyaltyPoints: number;
   tier: 'Rose' | 'Gold' | 'Celeste';
   addresses: Address[];

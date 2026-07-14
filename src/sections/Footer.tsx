@@ -10,6 +10,7 @@ import {
 import { Reveal, RevealWords } from '../components/Reveal';
 import { Magnetic } from '../components/Magnetic';
 import { COLLECTIONS } from '../lib/data';
+import { appConfig } from '../lib/config';
 const LUXE = [0.22, 1, 0.36, 1] as const;
 const COLS = [
 {
@@ -141,10 +142,13 @@ export function Footer() {
         {/* Link columns */}
         <div className="grid grid-cols-2 gap-10 py-16 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
-            <span className="font-serif text-3xl">Hautoria</span>
+            <span className="font-serif text-3xl">{appConfig.brandName}</span>
+            <p className="mt-2 text-[0.62rem] uppercase tracking-luxe text-gold">
+              {appConfig.brandTagline}
+            </p>
             <p className="mt-4 max-w-xs text-sm font-light leading-relaxed text-ivory/50">
-              Rare botanicals. Quiet science. The ritual of becoming your most
-              luminous self.
+              Premium authentic skincare and cosmetics — curated for results that
+              endure.
             </p>
             <div className="mt-6 flex gap-3">
               {[InstagramIcon, TwitterIcon, FacebookIcon].map((Icon, i) =>
@@ -209,7 +213,7 @@ export function Footer() {
       </motion.div>
 
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-ivory/10 px-6 py-8 text-[0.62rem] uppercase tracking-luxe text-ivory/40 sm:flex-row lg:px-10">
-        <p>© {new Date().getFullYear()} Hautoria · Ultra·Luxe Botanique</p>
+        <p>© {new Date().getFullYear()} {appConfig.brandName} · {appConfig.brandTagline}</p>
         <div className="flex gap-6">
           <a href="#" className="transition-colors hover:text-ivory">
             Privacy
