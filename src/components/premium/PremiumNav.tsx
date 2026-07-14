@@ -33,6 +33,7 @@ const megaMenu = [
       { label: 'CeraVe', to: '/shop?q=cerave' },
       { label: 'COSRX', to: '/shop?q=cosrx' },
       { label: 'La Roche-Posay', to: '/shop?q=roche' },
+      { label: 'MAC', to: '/shop?q=mac' },
     ],
   },
   {
