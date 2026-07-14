@@ -31,7 +31,7 @@ export function CartPage() {
     (sum, line) => sum + line.variant.price * line.quantity,
     0
   );
-  const shipping = subtotal >= 5000 ? 0 : 299;
+  const shipping = 250;
   const total = Math.max(0, subtotal + shipping - discountAmount);
   return (
     <main className="mx-auto min-h-screen max-w-6xl px-6 py-14">
@@ -162,18 +162,8 @@ export function CartPage() {
             
               <GiftIcon className="h-4 w-4" /> Apply gift card
             </button>
-            <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/70">
-              <div
-              className="h-full bg-gold"
-              style={{
-                width: `${Math.min(100, subtotal / 5000 * 100)}%`
-              }} />
-            
-            </div>
-            <p className="mt-2 text-xs text-charcoal/55 dark:text-ivory/55">
-              {subtotal >= 5000 ?
-            'You unlocked complimentary shipping.' :
-            `${formatPrice(5000 - subtotal)} away from complimentary shipping.`}
+            <p className="mt-5 text-xs text-charcoal/55 dark:text-ivory/55">
+              Flat delivery fee {formatPrice(250)} · shipped in 24 hours
             </p>
             <Link
             to="/checkout"

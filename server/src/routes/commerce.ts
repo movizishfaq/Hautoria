@@ -131,17 +131,14 @@ router.post(
       }
     }
 
-    const shipping =
-      freeShipping || subtotal >= 5000
-        ? 0
-        : body.shippingMethod === 'express'
-          ? 499
-          : 299;
+    const shipping = freeShipping ? 0 : 250;
     const tax = Math.round(subtotal * 0.05);
     const total = Math.max(0, subtotal + shipping + tax - discount);
 
     const paymentVerified =
-      body.paymentProvider === 'cod' || body.paymentProvider === 'bank_transfer';
+      body.paymentProvider === 'cod' ||
+      body.paymentProvider === 'bank_transfer' ||
+      body.paymentProvider === 'jazzcash';
 
     const order = await Order.create({
       number: generateOrderNumber(),
