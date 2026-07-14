@@ -104,7 +104,7 @@ export function CinematicHero() {
               <TruckIcon className="h-4 w-4 text-gold" />
             </span>
             <p className="text-left text-[0.65rem] uppercase leading-snug tracking-wide text-charcoal/80 sm:text-[0.62rem] sm:tracking-luxe dark:text-ivory/80">
-              Free shipping over {formatPrice(5000)}
+              Shipped in only 24 hours
             </p>
           </div>
         </motion.div>
