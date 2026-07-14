@@ -16,12 +16,14 @@ function mapUser(u: AuthResponse['user']): User {
 export const authService = {
   signIn: async (email: string, password: string): Promise<User> => {
     if (!isApiEnabled()) {
+      const isAdmin = email.toLowerCase() === 'admin@hautoria.com';
       return mockRequest({
-        id: 'usr_demo',
-        name: email.split('@')[0],
+        id: isAdmin ? 'usr_admin' : 'usr_demo',
+        name: isAdmin ? 'Hautoria Admin' : email.split('@')[0],
         email,
-        loyaltyPoints: 1240,
-        tier: 'Gold',
+        role: isAdmin ? 'admin' : 'customer',
+        loyaltyPoints: isAdmin ? 0 : 1240,
+        tier: isAdmin ? 'Celeste' : 'Gold',
         addresses: [],
       });
     }

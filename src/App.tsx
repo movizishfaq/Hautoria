@@ -32,7 +32,7 @@ const AuthPage = lazy(() => import('./pages/AuthPage').then((m) => ({ default: m
 const AccountLayout = lazy(() => import('./pages/AccountPage').then((m) => ({ default: m.AccountLayout })));
 const AccountOverview = lazy(() => import('./pages/AccountPage').then((m) => ({ default: m.AccountOverview })));
 const AccountSection = lazy(() => import('./pages/AccountPage').then((m) => ({ default: m.AccountSection })));
-const AdminPage = lazy(() => import('./pages/AdminPage').then((m) => ({ default: m.AdminPage })));
+const AdminApp = lazy(() => import('./admin/AdminApp').then((m) => ({ default: m.AdminApp })));
 const SupportPage = lazy(() => import('./pages/SupportPage').then((m) => ({ default: m.SupportPage })));
 
 function PageFallback() {
@@ -115,14 +115,7 @@ function Shell() {
               <Route path="/legal/privacy" element={<SupportPage />} />
               <Route path="/legal/terms" element={<SupportPage />} />
               <Route path="/legal/shipping" element={<SupportPage />} />
-              <Route
-                path="/admin/*"
-                element={
-                  <ProtectedRoute roles={['admin', 'manager', 'sales', 'support']}>
-                    <AdminPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/admin/*" element={<AdminApp />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
