@@ -1,14 +1,29 @@
 import type { AdminAnalytics, Order } from '../types/domain';
 import { apiRequest, isApiEnabled, mockRequest } from './api';
-import { adminAnalytics, demoOrders } from '../lib/mockData';
+
+const EMPTY_ANALYTICS: AdminAnalytics = {
+  revenue: 0,
+  orders: 0,
+  customers: 0,
+  conversion: 0,
+  series: [
+    { label: 'Mon', value: 0 },
+    { label: 'Tue', value: 0 },
+    { label: 'Wed', value: 0 },
+    { label: 'Thu', value: 0 },
+    { label: 'Fri', value: 0 },
+    { label: 'Sat', value: 0 },
+    { label: 'Sun', value: 0 },
+  ],
+};
 
 export const adminService = {
   getDashboard: async () => {
     if (!isApiEnabled()) {
       return mockRequest({
-        analytics: adminAnalytics,
-        recentOrders: demoOrders,
-        lowStock: [],
+        analytics: EMPTY_ANALYTICS,
+        recentOrders: [] as Order[],
+        lowStock: [] as Array<{ name: string; stock: number; slug: string }>,
       });
     }
     return apiRequest<{
@@ -19,7 +34,7 @@ export const adminService = {
   },
 
   getOrders: async (status?: string) => {
-    if (!isApiEnabled()) return mockRequest({ orders: demoOrders });
+    if (!isApiEnabled()) return mockRequest({ orders: [] as Order[] });
     const qs = status ? `?status=${encodeURIComponent(status)}` : '';
     return apiRequest<{ orders: Order[] }>(`/admin/orders${qs}`);
   },
@@ -37,17 +52,29 @@ export const adminService = {
     return apiRequest('/admin/customers');
   },
 
+  getCoupons: async () => {
+    if (!isApiEnabled()) return mockRequest({ coupons: [] });
+    return apiRequest<{ coupons: Array<{
+      code: string;
+      description?: string;
+      amount: number;
+      type: 'percent' | 'fixed';
+      active: boolean;
+    }> }>('/admin/coupons');
+  },
+
   getLogs: async () => {
     if (!isApiEnabled()) return mockRequest({ logs: [] });
     return apiRequest('/admin/logs');
   },
+
   exportCsv: async (section: string) => {
     if (!isApiEnabled()) {
-      return mockRequest(`section,exported\n${section},true`);
+      return mockRequest(`section,exported\n${section},false`);
     }
     const data = await apiRequest<Record<string, unknown>>(`/admin/export/${encodeURIComponent(section)}`).catch(
-      () => ({ csv: `section,exported\n${section},true` })
+      () => ({ csv: `section,exported\n${section},false` })
     );
-    return String((data as { csv?: string }).csv ?? `section,exported\n${section},true`);
+    return String((data as { csv?: string }).csv ?? `section,exported\n${section},false`);
   },
 };

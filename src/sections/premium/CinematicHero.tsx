@@ -300,7 +300,7 @@ export function CinematicHero() {
                   <div>
                     <div className="flex items-baseline gap-2">
                       <span className="font-serif text-3xl text-gold">{formatPrice(heroProduct.price)}</span>
-                      {heroProduct.compareAtPrice && (
+                      {heroProduct.compareAtPrice && heroProduct.compareAtPrice > heroProduct.price && (
                         <span className="text-sm text-charcoal/40 line-through dark:text-ivory/40">
                           {formatPrice(heroProduct.compareAtPrice)}
                         </span>

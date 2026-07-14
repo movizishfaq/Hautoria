@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, ShoppingBag, Users, Wallet } from 'lucide-react';
+import { useCatalog } from '../../context/CatalogContext';
 import { adminService } from '../../services/adminService';
-import { adminAnalytics, catalogProducts, demoOrders, inventory } from '../../lib/mockData';
 import { formatPKR, cn } from '../utils';
-import { PageHeader, Panel, Badge, AdminButton, Skeleton } from '../components/ui';
-import type { Order } from '../../types/domain';
+import { PageHeader, Panel, Badge, AdminButton, Skeleton, EmptyState } from '../components/ui';
+import type { AdminAnalytics, Order } from '../../types/domain';
 
 const PIPELINE = [
   { key: 'pending', label: 'Pending', tone: 'warning' as const },
@@ -15,17 +15,36 @@ const PIPELINE = [
   { key: 'cancelled', label: 'Cancelled', tone: 'danger' as const },
 ];
 
+const EMPTY_STATS: AdminAnalytics = {
+  revenue: 0,
+  orders: 0,
+  customers: 0,
+  conversion: 0,
+  series: [
+    { label: 'Mon', value: 0 },
+    { label: 'Tue', value: 0 },
+    { label: 'Wed', value: 0 },
+    { label: 'Thu', value: 0 },
+    { label: 'Fri', value: 0 },
+    { label: 'Sat', value: 0 },
+    { label: 'Sun', value: 0 },
+  ],
+};
+
 export function AdminDashboardPage() {
+  const { products } = useCatalog();
   const [loading, setLoading] = useState(true);
-  const [orders, setOrders] = useState<Order[]>(demoOrders);
-  const [stats, setStats] = useState(adminAnalytics);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [stats, setStats] = useState<AdminAnalytics>(EMPTY_STATS);
+  const [lowStockCount, setLowStockCount] = useState(0);
 
   useEffect(() => {
     void (async () => {
       try {
         const dash = await adminService.getDashboard();
-        setStats(dash.analytics);
-        if (dash.recentOrders?.length) setOrders(dash.recentOrders as Order[]);
+        setStats(dash.analytics ?? EMPTY_STATS);
+        setOrders(dash.recentOrders ?? []);
+        setLowStockCount(dash.lowStock?.length ?? 0);
       } finally {
         setLoading(false);
       }
@@ -45,7 +64,8 @@ export function AdminDashboardPage() {
     );
   }
 
-  const lowStock = inventory.filter((i) => i.stock <= i.threshold).length;
+  const catalogLowStock = products.filter((p) => p.stock <= 8).length;
+  const lowStock = lowStockCount || catalogLowStock;
   const pipelineCounts = PIPELINE.map((p) => ({
     ...p,
     count: orders.filter((o) => o.status === p.key).length,
@@ -75,7 +95,7 @@ export function AdminDashboardPage() {
     },
     {
       label: 'Catalog',
-      value: catalogProducts.length,
+      value: products.length,
       meta: lowStock ? `${lowStock} low stock` : 'Stock healthy',
       icon: Package,
       to: '/admin/inventory',
@@ -83,6 +103,8 @@ export function AdminDashboardPage() {
   ];
 
   const maxSeries = Math.max(...stats.series.map((s) => s.value), 1);
+  const hasOrders = orders.length > 0;
+  const hasRevenue = stats.series.some((s) => s.value > 0);
 
   return (
     <div className="max-w-[1400px] space-y-8">
@@ -170,19 +192,26 @@ export function AdminDashboardPage() {
 
       <section className="grid gap-4 xl:grid-cols-5">
         <Panel title="Revenue · last 7 days" className="xl:col-span-3">
-          <div className="flex h-64 items-end gap-3">
-            {stats.series.map((entry) => (
-              <div key={entry.label} className="flex flex-1 flex-col items-center gap-2">
-                <div
-                  className="w-full rounded-t-xl bg-amber-600/75"
-                  style={{ height: `${(entry.value / maxSeries) * 200}px` }}
-                />
-                <span className="text-[10px] uppercase tracking-wider text-[var(--admin-muted)]">
-                  {entry.label}
-                </span>
-              </div>
-            ))}
-          </div>
+          {hasRevenue ? (
+            <div className="flex h-64 items-end gap-3">
+              {stats.series.map((entry) => (
+                <div key={entry.label} className="flex flex-1 flex-col items-center gap-2">
+                  <div
+                    className="w-full rounded-t-xl bg-amber-600/75"
+                    style={{ height: `${(entry.value / maxSeries) * 200}px` }}
+                  />
+                  <span className="text-[10px] uppercase tracking-wider text-[var(--admin-muted)]">
+                    {entry.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              title="No revenue yet"
+              description="Orders will populate this chart once customers start checking out."
+            />
+          )}
         </Panel>
 
         <Panel
@@ -194,25 +223,32 @@ export function AdminDashboardPage() {
             </Link>
           }
         >
-          <ul className="space-y-1">
-            {orders.slice(0, 6).map((o) => (
-              <li key={o.id}>
-                <Link
-                  to="/admin/orders"
-                  className="flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-[var(--admin-hover)]"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm text-[var(--admin-fg)]">{o.number}</p>
-                    <p className="text-xs text-[var(--admin-muted)]">{o.createdAt}</p>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className="text-sm font-medium tabular-nums">{formatPKR(o.total)}</p>
-                    <Badge tone={o.status === 'delivered' ? 'success' : 'info'}>{o.status}</Badge>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {hasOrders ? (
+            <ul className="space-y-1">
+              {orders.slice(0, 6).map((o) => (
+                <li key={o.id}>
+                  <Link
+                    to="/admin/orders"
+                    className="flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-[var(--admin-hover)]"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm text-[var(--admin-fg)]">{o.number}</p>
+                      <p className="text-xs text-[var(--admin-muted)]">{o.createdAt}</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-sm font-medium tabular-nums">{formatPKR(o.total)}</p>
+                      <Badge tone={o.status === 'delivered' ? 'success' : 'info'}>{o.status}</Badge>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyState
+              title="No orders yet"
+              description="New storefront orders will appear here in real time."
+            />
+          )}
         </Panel>
       </section>
     </div>

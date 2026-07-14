@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { adminService } from '../../services/adminService';
-import { demoOrders } from '../../lib/mockData';
 import { formatPKR } from '../utils';
 import { PageHeader, Panel, AdminButton, AdminInput, AdminSelect, Badge, EmptyState } from '../components/ui';
 import { useAppState } from '../../hooks/useAppState';
@@ -20,7 +19,7 @@ const STATUSES: OrderStatus[] = [
 
 export function AdminOrdersPage() {
   const { notify } = useAppState();
-  const [orders, setOrders] = useState<Order[]>(demoOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [status, setStatus] = useState('all');
   const [q, setQ] = useState('');
   const [selected, setSelected] = useState<Order | null>(null);
@@ -29,7 +28,7 @@ export function AdminOrdersPage() {
   useEffect(() => {
     void (async () => {
       const res = await adminService.getOrders(status === 'all' ? undefined : status);
-      setOrders(res.orders ?? demoOrders);
+      setOrders(res.orders ?? []);
     })();
   }, [status]);
 
