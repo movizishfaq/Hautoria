@@ -143,7 +143,7 @@ export function Footer() {
         {/* Link columns */}
         <div className="grid grid-cols-2 gap-10 py-16 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
-            <BrandLogo to="/" size="lg" onDark />
+            <BrandLogo to="/" size="lg" className="brightness-0 invert" />
             <p className="mt-4 max-w-xs text-sm font-light leading-relaxed text-ivory/50">
               Premium authentic skincare and cosmetics — curated for results that
               endure.

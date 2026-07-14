@@ -5,7 +5,6 @@ import { appConfig } from '../lib/config';
 type BrandLogoProps = {
   to?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  onDark?: boolean;
   className?: string;
 };
 
@@ -19,7 +18,6 @@ const heights: Record<NonNullable<BrandLogoProps['size']>, string> = {
 export function BrandLogo({
   to = '/',
   size = 'md',
-  onDark = false,
   className = '',
 }: BrandLogoProps) {
   const image = (
@@ -28,7 +26,7 @@ export function BrandLogo({
       alt={`${appConfig.brandName} — ${appConfig.brandTagline}`}
       width={320}
       height={120}
-      className={`${heights[size]} w-auto object-contain ${onDark ? 'rounded-lg bg-ivory/95 px-2 py-1' : ''} ${className}`.trim()}
+      className={`${heights[size]} w-auto object-contain dark:brightness-0 dark:invert ${className}`.trim()}
     />
   );
 

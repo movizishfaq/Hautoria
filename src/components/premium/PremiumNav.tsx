@@ -81,7 +81,7 @@ export function PremiumNav() {
             : 'bg-transparent'
         }`}>
         <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-4 px-5 lg:px-10">
-          <BrandLogo to="/" size="md" className="dark:rounded-lg dark:bg-ivory/90 dark:px-2 dark:py-0.5" />
+          <BrandLogo to="/" size="md" />
 
           <nav className="hidden items-center gap-8 lg:flex">
             <div
@@ -213,7 +213,7 @@ export function PremiumNav() {
             className="fixed inset-0 z-[80] glass-dark lg:hidden">
             <div className="flex h-full flex-col p-6 text-ivory">
               <div className="flex justify-between">
-                <BrandLogo to="/" size="md" onDark />
+                <BrandLogo to="/" size="md" className="brightness-0 invert" />
                 <button onClick={() => setMenuOpen(false)} aria-label="Close">
                   <XIcon />
                 </button>

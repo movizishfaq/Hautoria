@@ -66,7 +66,7 @@ export function AuthPage() {
   return (
     <main className="grid min-h-screen grid-cols-1 bg-ivory lg:grid-cols-2 dark:bg-[#181818]">
       <section className="hidden bg-charcoal p-14 text-ivory lg:flex lg:flex-col lg:justify-between">
-        <BrandLogo to="/" size="lg" onDark />
+        <BrandLogo to="/" size="lg" className="brightness-0 invert" />
         <div>
           <SparklesIcon className="h-8 w-8 text-gold" />
           <h1 className="mt-6 max-w-md font-serif text-6xl font-light leading-tight">
