@@ -125,8 +125,8 @@ export function CinematicHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="font-serif text-4xl font-light leading-[1.05] text-charcoal sm:text-5xl lg:text-[3.4rem] dark:text-ivory">
-              Pakistan&apos;s premium
-              <span className="block italic text-gradient-gold">beauty store.</span>
+              Your destination for
+              <span className="block italic text-gradient-gold">timeless beauty.</span>
             </motion.h1>
 
             <motion.p
