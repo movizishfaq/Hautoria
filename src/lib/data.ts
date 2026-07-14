@@ -78,27 +78,44 @@ export const REVIEWS = [
 {
   name: 'Isabelle R.',
   location: 'Karachi',
+  rating: 5,
   text: 'Genuine products at prices I could not find anywhere else. The Ordinary serum arrived sealed and fresh.'
 },
 {
   name: 'Naomi K.',
   location: 'Lahore',
+  rating: 4,
   text: 'Finally a store with real MAC and CeraVe at fair prices. Fast delivery and beautifully packaged.'
 },
 {
   name: 'Amara D.',
   location: 'Islamabad',
+  rating: 5,
   text: 'The COSRX snail cream changed my skin. Hautoria made premium skincare actually affordable.'
 },
 {
   name: 'Sofia M.',
   location: 'Rawalpindi',
+  rating: 4,
   text: 'Sensitive skin, finally soothed. Every product I ordered was authentic.'
 },
 {
   name: 'Yuki T.',
   location: 'Faisalabad',
+  rating: 5,
   text: 'Competitive prices on luxury brands without compromising on quality. Highly recommend.'
+},
+{
+  name: 'Hina S.',
+  location: 'Multan',
+  rating: 4,
+  text: 'COD was easy and the box arrived intact. One item took an extra day but support kept me updated.'
+},
+{
+  name: 'Rabia Q.',
+  location: 'Peshawar',
+  rating: 3,
+  text: 'Good products overall. Gave three stars because my first order had a small delay during sale week.'
 }];
 
 export const QUIZ = [

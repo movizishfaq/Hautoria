@@ -7,7 +7,7 @@ const stats = [
   { value: 47, suffix: '+', label: 'Premium products' },
   { value: 12000, suffix: '+', label: 'Happy customers' },
   { value: 100, suffix: '%', label: 'Authentic guarantee' },
-  { value: 5, suffix: '★', label: 'Average rating' },
+  { value: 4.6, suffix: '★', label: 'Average rating' },
 ];
 
 export function LuxuryStats() {

@@ -24,6 +24,7 @@ import { LuxuryProductCard } from '../features/catalog/LuxuryProductCard';
 import { BlurReveal } from '../components/premium/BlurReveal';
 import { discountPercent, formatPrice } from '../lib/formatPrice';
 import { FAQS } from '../lib/data';
+import { getProductReviews } from '../lib/productReviews';
 
 export function StickyAddToCart({
   product,
@@ -263,14 +264,16 @@ export function ProductPage() {
           <BlurReveal>
             <h2 className="font-serif text-3xl">Customer reviews</h2>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {[
-                { author: 'Ayesha K.', text: 'Genuine product, fast delivery. Price was better than every other store I checked.', rating: 5 },
-                { author: 'Sara M.', text: 'Exactly as described. Packaging was premium and the product is 100% authentic.', rating: 5 },
-                { author: 'Fatima R.', text: 'Been ordering from Hautoria for months. Consistent quality every time.', rating: 4 },
-              ].map((review) => (
-                <div key={review.author} className="rounded-2xl bg-beige/50 p-6 dark:bg-white/5">
-                  <div className="flex justify-between">
-                    <p className="font-medium">{review.author}</p>
+              {getProductReviews(product.id).map((review) => (
+                <div key={`${product.id}-${review.author}`} className="rounded-2xl bg-beige/50 p-6 dark:bg-white/5">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium">{review.author}</p>
+                      <p className="mt-1 text-[0.62rem] uppercase tracking-luxe text-charcoal/45 dark:text-ivory/45">
+                        {review.date}
+                        {review.verified ? ' · Verified purchase' : ''}
+                      </p>
+                    </div>
                     <RatingStars rating={review.rating} />
                   </div>
                   <p className="mt-3 text-sm leading-relaxed text-charcoal/65 dark:text-ivory/65">

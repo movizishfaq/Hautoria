@@ -21,6 +21,7 @@ export function AnimatedCounter({
   useEffect(() => {
     if (!inView) return;
     let start = 0;
+    const isDecimal = !Number.isInteger(value);
     const step = value / (duration / 16);
     const timer = window.setInterval(() => {
       start += step;
@@ -28,16 +29,18 @@ export function AnimatedCounter({
         setCount(value);
         window.clearInterval(timer);
       } else {
-        setCount(Math.floor(start));
+        setCount(isDecimal ? Math.round(start * 10) / 10 : Math.floor(start));
       }
     }, 16);
     return () => window.clearInterval(timer);
   }, [inView, value, duration]);
 
+  const display = Number.isInteger(value) ? count.toLocaleString() : count.toFixed(1);
+
   return (
     <span ref={ref} className={className}>
       {prefix}
-      {count.toLocaleString()}
+      {display}
       {suffix}
     </span>
   );

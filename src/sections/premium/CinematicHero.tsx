@@ -188,7 +188,7 @@ export function CinematicHero() {
                 { icon: ShieldCheckIcon, label: '100% Authentic' },
                 { icon: TruckIcon, label: 'Nationwide delivery' },
                 { icon: CreditCardIcon, label: 'COD available' },
-                { icon: StarIcon, label: '4.7★ rated' },
+                { icon: StarIcon, label: '4.6★ rated' },
               ].map(({ icon: Icon, label }) => (
                 <div
                   key={label}

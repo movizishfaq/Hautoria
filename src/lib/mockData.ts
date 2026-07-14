@@ -149,9 +149,27 @@ export const demoReviews: Review[] = [
   id: 'rev_2',
   productId: catalogProducts[1]?.id ?? 'the-ordinary-hyaluronic-acid-2-b5-30ml',
   author: 'Naomi K.',
-  rating: 5,
+  rating: 4,
   text: 'Quietly transformative. The glow is there without any irritation.',
   date: 'May 2026',
+  verified: true
+},
+{
+  id: 'rev_3',
+  productId: catalogProducts[4]?.id ?? 'mac-prep-prime-tube-primer-45ml',
+  author: 'Hina S.',
+  rating: 4,
+  text: 'Blends smoothly under foundation. Took one extra day to arrive during a busy week.',
+  date: 'April 2026',
+  verified: false
+},
+{
+  id: 'rev_4',
+  productId: catalogProducts[12]?.id ?? 'cosrx-aloe-soothing-sun-cream-spf-50',
+  author: 'Mariam T.',
+  rating: 3,
+  text: 'No white cast on my skin tone, which I love. Pump was stiff at first but loosened up.',
+  date: 'March 2026',
   verified: true
 }];
 

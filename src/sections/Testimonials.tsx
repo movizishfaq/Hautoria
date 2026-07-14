@@ -63,7 +63,7 @@ export function Testimonials() {
                 }).map((_, s) =>
                 <StarIcon
                   key={s}
-                  className="h-3.5 w-3.5 fill-current"
+                  className={`h-3.5 w-3.5 ${s < Math.round(r.rating) ? 'fill-current' : 'opacity-20'}`}
                   strokeWidth={0} />
 
                 )}
