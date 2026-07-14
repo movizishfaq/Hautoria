@@ -6,6 +6,7 @@ import {
   Routes,
   useLocation } from
 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { SmoothScroll } from './components/SmoothScroll';
 import { Cursor } from './components/Cursor';
 import { ScrollProgress } from './components/ScrollProgress';
@@ -141,6 +142,7 @@ export function App() {
       <AppStateProvider>
         <CatalogProvider>
           <Shell />
+          <Analytics />
         </CatalogProvider>
       </AppStateProvider>
     </BrowserRouter>
