@@ -85,8 +85,12 @@ export function PremiumNav() {
             ? 'glass shadow-glass dark:glass-dark'
             : 'bg-transparent'
         }`}>
-        <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-4 px-5 lg:px-10">
-          <BrandLogo to="/" size="md" />
+        <div className="relative mx-auto flex h-[4.75rem] max-w-7xl items-center justify-between gap-4 px-5 lg:h-[4.25rem] lg:px-10">
+          <BrandLogo
+            to="/"
+            size="md"
+            className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 !h-14 sm:!h-16 lg:static lg:translate-x-0 lg:translate-y-0 lg:!h-11"
+          />
 
           <nav className="hidden items-center gap-8 lg:flex">
             <div
@@ -147,7 +151,7 @@ export function PremiumNav() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-1">
+          <div className="relative z-20 ml-auto flex items-center gap-1">
             <Magnetic strength={0.25}>
               <button
                 onClick={() => setSearchOpen(true)}
