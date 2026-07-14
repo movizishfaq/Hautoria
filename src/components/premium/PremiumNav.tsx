@@ -34,6 +34,12 @@ const megaMenu = [
       { label: 'COSRX', to: '/shop?q=cosrx' },
       { label: 'La Roche-Posay', to: '/shop?q=roche' },
       { label: 'MAC', to: '/shop?q=mac' },
+      { label: 'Maybelline', to: '/shop?q=maybelline' },
+      { label: 'Giorgio Armani', to: '/shop?q=giorgio' },
+      { label: 'Dior', to: '/shop?q=dior' },
+      { label: 'Chanel', to: '/shop?q=chanel' },
+      { label: 'Axis-Y', to: '/shop?q=axis' },
+      { label: 'Anua', to: '/shop?q=anua' },
     ],
   },
   {
