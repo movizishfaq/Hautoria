@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { User, UserRole } from '../types/domain';
 
+import { isApiEnabled } from '../services/api';
+
 const ADMIN_ROLES: UserRole[] = ['admin', 'manager', 'sales', 'support'];
 
 type AdminAuthState = {
@@ -18,16 +20,32 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const raw = localStorage.getItem('hautoria_user');
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw) as User;
-        if (parsed.role && ADMIN_ROLES.includes(parsed.role)) setUser(parsed);
-      } catch {
-        /* ignore */
+    void (async () => {
+      const raw = localStorage.getItem('hautoria_user');
+      if (isApiEnabled()) {
+        try {
+          const { authService } = await import('../services/authService');
+          const me = await authService.getMe();
+          if (me?.role && ADMIN_ROLES.includes(me.role)) {
+            setUser(me);
+            localStorage.setItem('hautoria_user', JSON.stringify(me));
+            setLoading(false);
+            return;
+          }
+        } catch {
+          /* fall through */
+        }
       }
-    }
-    setLoading(false);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw) as User;
+          if (parsed.role && ADMIN_ROLES.includes(parsed.role)) setUser(parsed);
+        } catch {
+          /* ignore */
+        }
+      }
+      setLoading(false);
+    })();
   }, []);
 
   const login = async (email: string, password: string) => {

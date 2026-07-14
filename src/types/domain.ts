@@ -198,6 +198,7 @@ export interface AdminAnalytics {
   customers: number;
   conversion: number;
   series: Array<{label: string;value: number;}>;
+  pipeline?: Record<string, number>;
 }
 export interface InventoryRecord {
   productId: string;

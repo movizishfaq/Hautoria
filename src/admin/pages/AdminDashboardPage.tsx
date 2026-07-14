@@ -68,7 +68,7 @@ export function AdminDashboardPage() {
   const lowStock = lowStockCount || catalogLowStock;
   const pipelineCounts = PIPELINE.map((p) => ({
     ...p,
-    count: orders.filter((o) => o.status === p.key).length,
+    count: stats.pipeline?.[p.key] ?? orders.filter((o) => o.status === p.key).length,
   }));
 
   const heroes = [

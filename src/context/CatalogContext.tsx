@@ -7,9 +7,9 @@ import React, {
   useState,
 } from 'react';
 import type { Product } from '../types/domain';
-import { catalogProducts } from '../lib/mockData';
 import { catalogService } from '../services/catalogService';
 import { isApiEnabled } from '../services/api';
+import { loadAdminCatalog } from '../lib/adminCatalogStore';
 
 type CatalogState = {
   products: Product[];
@@ -24,23 +24,23 @@ const Context = createContext<CatalogState | undefined>(undefined);
 
 export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>(
-    isApiEnabled() ? [] : catalogProducts
+    isApiEnabled() ? [] : loadAdminCatalog()
   );
   const [loading, setLoading] = useState(isApiEnabled());
   const [ready, setReady] = useState(!isApiEnabled());
 
   const refresh = useCallback(async () => {
     if (!isApiEnabled()) {
-      setProducts(catalogProducts);
+      setProducts(loadAdminCatalog());
       setReady(true);
       return;
     }
     setLoading(true);
     try {
       const list = await catalogService.list({ limit: '48' });
-      setProducts(list.length ? list : catalogProducts);
+      setProducts(list.length ? list : loadAdminCatalog());
     } catch {
-      setProducts(catalogProducts);
+      setProducts(loadAdminCatalog());
     } finally {
       setLoading(false);
       setReady(true);
