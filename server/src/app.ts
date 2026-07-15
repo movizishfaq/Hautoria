@@ -63,20 +63,25 @@ function corsOrigin(
 }
 
 function mountApi(router: express.Router) {
-  router.get('/health', (_req, res) => {
-    const uriDebug = mongoUriDebug(process.env.MONGODB_URI);
-    res.json({
-      status: 'ok',
-      store: env.storeName,
-      tagline: env.storeTagline,
-      runtime: isServerless ? 'vercel-serverless' : 'node',
-      mongo: isDbReady() ? 'connected' : 'disconnected',
-      mongoState: mongoose.connection.readyState,
-      hasMongoUri: Boolean(process.env.MONGODB_URI),
-      mongoError: getLastMongoError() || null,
-      mongoUriDebug: uriDebug,
-    });
-  });
+  router.get(
+    '/health',
+    asyncHandler(async (_req, res) => {
+      // Probe reconnect so health reflects real Atlas state (not a stale disconnect).
+      const ok = isDbReady() || (await connectDb());
+      const uriDebug = mongoUriDebug(process.env.MONGODB_URI);
+      res.json({
+        status: ok ? 'ok' : 'degraded',
+        store: env.storeName,
+        tagline: env.storeTagline,
+        runtime: isServerless ? 'vercel-serverless' : 'node',
+        mongo: ok ? 'connected' : 'disconnected',
+        mongoState: mongoose.connection.readyState,
+        hasMongoUri: Boolean(process.env.MONGODB_URI),
+        mongoError: getLastMongoError() || null,
+        mongoUriDebug: uriDebug,
+      });
+    })
+  );
 
   // DB required for everything except health
   router.use(

@@ -10,6 +10,10 @@ import { ensureCatalogSeeded } from '../server/src/services/ensureCatalog.js';
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    // Cold/warm isolates can keep a dead mongoose handle — always ensure live connection.
+    if (mongoose.connection.readyState !== 1) {
+      await mongoose.disconnect().catch(() => undefined);
+    }
     const connected = await connectDb();
     if (connected) {
       await ensureCatalogSeeded().catch((err) => {
@@ -17,7 +21,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     } else {
       console.error(
-        'MongoDB unavailable. Set MONGODB_URI in Vercel → Settings → Environment Variables, and allow 0.0.0.0/0 in Atlas Network Access.'
+        'MongoDB unavailable.',
+        global.__hautoriaMongoLastError ?? 'unknown',
+        'Set MONGODB_URI in Vercel and allow 0.0.0.0/0 in Atlas Network Access.'
       );
     }
 

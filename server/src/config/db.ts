@@ -9,9 +9,14 @@ declare global {
   var __hautoriaMongoLastError: string | undefined;
 }
 
+function clearCachedPromise() {
+  global.__hautoriaMongoPromise = undefined;
+}
+
 /**
  * Serverless-safe Mongo connection.
- * Reuses the cached promise across warm Vercel invocations.
+ * Reuses the cached promise across warm Vercel invocations,
+ * but reconnects when Atlas drops the idle connection (readyState 0/3).
  */
 export async function connectDb(): Promise<boolean> {
   mongoose.set('strictQuery', true);
@@ -22,15 +27,28 @@ export async function connectDb(): Promise<boolean> {
     return false;
   }
 
-  const readyState = mongoose.connection.readyState;
-  // 1 = connected, 2 = connecting
-  if (readyState === 1) return true;
-  if (readyState === 2 && global.__hautoriaMongoPromise) {
+  // Already connected
+  if (mongoose.connection.readyState === 1) {
+    global.__hautoriaMongoLastError = undefined;
+    return true;
+  }
+
+  // Stale cache after idle disconnect — must open a new connection
+  if (mongoose.connection.readyState === 0 || mongoose.connection.readyState === 3) {
+    clearCachedPromise();
+  }
+
+  // Wait for an in-flight connect
+  if (mongoose.connection.readyState === 2 && global.__hautoriaMongoPromise) {
     try {
       await global.__hautoriaMongoPromise;
-      return mongoose.connection.readyState === 1;
+      if (mongoose.connection.readyState === 1) {
+        global.__hautoriaMongoLastError = undefined;
+        return true;
+      }
+      clearCachedPromise();
     } catch {
-      global.__hautoriaMongoPromise = undefined;
+      clearCachedPromise();
     }
   }
 
@@ -39,19 +57,31 @@ export async function connectDb(): Promise<boolean> {
       global.__hautoriaMongoPromise = mongoose.connect(env.mongoUri, {
         // Local Windows TLS quirks only — production Atlas must use valid certs
         tlsAllowInvalidCertificates: env.nodeEnv !== 'production' && !process.env.VERCEL,
-        serverSelectionTimeoutMS: 15000,
-        maxPoolSize: process.env.VERCEL ? 5 : 10,
+        serverSelectionTimeoutMS: 20000,
+        connectTimeoutMS: 20000,
+        maxPoolSize: process.env.VERCEL ? 1 : 10,
+        minPoolSize: 0,
+        maxIdleTimeMS: process.env.VERCEL ? 10000 : 0,
         bufferCommands: true,
         // Vercel → Atlas often breaks on IPv6 DNS; force IPv4
         family: 4,
       });
     }
+
     await global.__hautoriaMongoPromise;
+
+    if (mongoose.connection.readyState !== 1) {
+      clearCachedPromise();
+      global.__hautoriaMongoLastError = `Mongo connected promise resolved but readyState=${mongoose.connection.readyState}`;
+      logger.error(global.__hautoriaMongoLastError);
+      return false;
+    }
+
     global.__hautoriaMongoLastError = undefined;
     logger.info('MongoDB connected');
-    return mongoose.connection.readyState === 1;
+    return true;
   } catch (error) {
-    global.__hautoriaMongoPromise = undefined;
+    clearCachedPromise();
     const message = error instanceof Error ? error.message : String(error);
     global.__hautoriaMongoLastError = message;
     if (message.includes('whitelist') || message.includes('IP')) {
