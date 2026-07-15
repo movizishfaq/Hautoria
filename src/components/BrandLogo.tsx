@@ -46,7 +46,7 @@ export function BrandLogo({
       alt={showName ? '' : `${appConfig.brandName} — ${appConfig.brandTagline}`}
       width={480}
       height={480}
-      className={`${imgHeight[size]} w-auto max-w-none object-contain object-center invert dark:invert-0 ${className}`.trim()}
+      className={`${imgHeight[size]} w-auto max-w-none object-contain object-center dark:brightness-0 dark:invert ${className}`.trim()}
     />
   );
 
