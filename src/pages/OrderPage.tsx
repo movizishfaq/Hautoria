@@ -18,30 +18,38 @@ import { formatPrice } from '../lib/formatPrice';
 
 export function OrderPage({ success = false }: { success?: boolean }) {
   const { orderId } = useParams();
-  const { orders, notify, addOrder } = useAppState();
+  const { notify, addOrder } = useAppState();
   const [requested, setRequested] = useState(false);
-  const [order, setOrder] = useState<Order | undefined>(
-    orders.find((item) => item.id === orderId)
-  );
-  const [loading, setLoading] = useState(isApiEnabled() && !order);
+  const [order, setOrder] = useState<Order | undefined>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!orderId || order) return;
-    if (!isApiEnabled()) return;
+    if (!orderId) {
+      setLoading(false);
+      return;
+    }
     let active = true;
     (async () => {
-      const remote = await userService.getOrder(orderId);
-      if (!active) return;
-      if (remote) {
-        setOrder(remote);
-        addOrder(remote);
+      setLoading(true);
+      try {
+        if (isApiEnabled()) {
+          const remote = await userService.getOrder(orderId);
+          if (!active) return;
+          if (remote) {
+            setOrder(remote);
+            addOrder(remote);
+          } else {
+            setOrder(undefined);
+          }
+        }
+      } finally {
+        if (active) setLoading(false);
       }
-      setLoading(false);
     })();
     return () => {
       active = false;
     };
-  }, [orderId, order, addOrder]);
+  }, [orderId, addOrder]);
 
   if (loading) {
     return (

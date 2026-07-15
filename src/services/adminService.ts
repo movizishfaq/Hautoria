@@ -1,4 +1,4 @@
-import type { AdminAnalytics, Order, OrderStatus, Product } from '../types/domain';
+import type { AdminAnalytics, Order, Product } from '../types/domain';
 import { apiRequest, ApiError, isApiEnabled, mockRequest } from './api';
 import {
   loadAdminCatalog,
@@ -6,11 +6,6 @@ import {
   updateAdminStock,
   upsertAdminProduct,
 } from '../lib/adminCatalogStore';
-import {
-  buildLocalAnalytics,
-  loadLocalOrders,
-  updateLocalOrderStatus,
-} from '../lib/adminOrdersStore';
 import { adminDataCache } from '../lib/adminDataCache';
 
 export type AdminProduct = Product & {
@@ -68,26 +63,6 @@ function slugify(value: string) {
     .replace(/^-|-$/g, '');
 }
 
-function filterOrders(orders: Order[], status?: string) {
-  if (!status || status === 'all') return orders;
-  return orders.filter((o) => o.status === status);
-}
-
-function localDashboard(): DashboardPayload {
-  const products = loadAdminCatalog();
-  const orders = loadLocalOrders();
-  const analytics = buildLocalAnalytics(orders);
-  return {
-    analytics: {
-      ...EMPTY_ANALYTICS,
-      ...analytics,
-      products: products.length,
-    },
-    recentOrders: orders.slice(0, 10),
-    lowStock: products.filter((p) => p.stock <= 8),
-  };
-}
-
 export const adminService = {
   getDashboard: async (opts?: { force?: boolean }) => {
     if (!opts?.force) {
@@ -95,65 +70,70 @@ export const adminService = {
       if (cached) return cached;
     }
     if (!isApiEnabled()) {
-      const local = localDashboard();
-      adminDataCache.setDashboard(local);
-      return local;
+      throw new ApiError(503, 'Admin API is unavailable');
     }
     const dash = await apiRequest<DashboardPayload>('/admin/dashboard');
     adminDataCache.setDashboard(dash);
     return dash;
   },
 
-  getOrders: async (status?: string, opts?: { force?: boolean }) => {
-    const key = status ?? 'all';
-    if (!opts?.force) {
-      const cached = adminDataCache.getOrders<{ orders: Order[] }>(key);
-      if (cached) return cached;
-    }
-    if (!isApiEnabled()) {
-      return { orders: filterOrders(loadLocalOrders(), status) };
-    }
-    const qs = status ? `?status=${encodeURIComponent(status)}` : '';
-    const res = await apiRequest<{ orders: Order[] }>(`/admin/orders${qs}`);
-    adminDataCache.setOrders(key, res);
-    return res;
-  },
-
   getOrder: async (id: string) => {
     if (!isApiEnabled()) {
-      const order = loadLocalOrders().find((o) => o.id === id || o.number === id);
-      if (!order) throw new ApiError(404, 'Order not found');
-      return mockRequest({ order });
+      throw new ApiError(503, 'Admin API is unavailable');
     }
-    try {
-      return await apiRequest<{ order: Order }>(`/admin/orders/${id}`);
-    } catch {
-      const order = loadLocalOrders().find((o) => o.id === id || o.number === id);
-      if (!order) throw new ApiError(404, 'Order not found');
-      return { order };
-    }
+    return apiRequest<{ order: Order }>(`/admin/orders/${id}`);
   },
 
   updateOrderStatus: async (orderId: string, status: string, note?: string) => {
     if (!isApiEnabled()) {
-      const updated = updateLocalOrderStatus(orderId, status as OrderStatus);
-      if (!updated) throw new ApiError(404, 'Order not found');
-      adminDataCache.invalidate('orders');
-      return mockRequest({ order: updated });
+      throw new ApiError(503, 'Admin API is unavailable');
     }
-    try {
-      const res = await apiRequest(`/admin/orders/${orderId}/status`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status, note }),
-      });
-      adminDataCache.invalidate('orders');
-      return res;
-    } catch {
-      const updated = updateLocalOrderStatus(orderId, status as OrderStatus);
-      if (!updated) throw new ApiError(404, 'Order not found');
-      adminDataCache.invalidate('orders');
-      return { order: updated };
+    const res = await apiRequest<{ order: Order }>(`/admin/orders/${orderId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, note }),
+    });
+    adminDataCache.invalidate('orders');
+    return res;
+  },
+
+  deleteOrder: async (orderId: string) => {
+    if (!isApiEnabled()) {
+      throw new ApiError(503, 'Admin API is unavailable');
     }
+    const res = await apiRequest<{ ok: boolean }>(`/admin/orders/${orderId}`, {
+      method: 'DELETE',
+    });
+    adminDataCache.invalidate('orders');
+    return res;
+  },
+
+  getOrders: async (
+    status?: string,
+    opts?: { force?: boolean; q?: string; page?: number; limit?: number }
+  ) => {
+    const key = `${status ?? 'all'}:${opts?.q ?? ''}:${opts?.page ?? 1}`;
+    if (!opts?.force) {
+      const cached = adminDataCache.getOrders<{
+        orders: Order[];
+        pagination?: { page: number; limit: number; total: number; pages: number };
+      }>(key);
+      if (cached) return cached;
+    }
+    if (!isApiEnabled()) {
+      throw new ApiError(503, 'Admin API is unavailable');
+    }
+    const params = new URLSearchParams();
+    if (status && status !== 'all') params.set('status', status);
+    if (opts?.q) params.set('q', opts.q);
+    if (opts?.page) params.set('page', String(opts.page));
+    if (opts?.limit) params.set('limit', String(opts.limit));
+    const qs = params.toString() ? `?${params}` : '';
+    const res = await apiRequest<{
+      orders: Order[];
+      pagination?: { page: number; limit: number; total: number; pages: number };
+    }>(`/admin/orders${qs}`);
+    adminDataCache.setOrders(key, res);
+    return res;
   },
 
   getProducts: async (opts?: { force?: boolean }) => {
@@ -290,40 +270,24 @@ export const adminService = {
 
   getCustomers: async () => {
     if (!isApiEnabled()) {
-      const customers = loadLocalOrders().map((o, i) => ({
-        id: `local_${i}`,
-        name:
-          `${o.shippingAddress?.firstName ?? ''} ${o.shippingAddress?.lastName ?? ''}`.trim() ||
-          'Guest',
-        email: 'guest@order.local',
-        phone: o.shippingAddress?.phone,
-        tier: 'Rose',
-        loyaltyPoints: 0,
-      }));
-      return mockRequest({ customers });
+      throw new ApiError(503, 'Admin API is unavailable');
     }
-    try {
-      return await apiRequest('/admin/customers');
-    } catch {
-      return { customers: [] };
-    }
+    return apiRequest('/admin/customers');
   },
 
   getCoupons: async () => {
-    if (!isApiEnabled()) return mockRequest({ coupons: [] });
-    try {
-      return await apiRequest<{
-        coupons: Array<{
-          code: string;
-          description?: string;
-          amount: number;
-          type: 'percent' | 'fixed' | 'free_shipping';
-          active: boolean;
-        }>;
-      }>('/admin/coupons');
-    } catch {
-      return { coupons: [] };
+    if (!isApiEnabled()) {
+      throw new ApiError(503, 'Admin API is unavailable');
     }
+    return apiRequest<{
+      coupons: Array<{
+        code: string;
+        description?: string;
+        amount: number;
+        type: 'percent' | 'fixed' | 'free_shipping';
+        active: boolean;
+      }>;
+    }>('/admin/coupons');
   },
 
   createCoupon: async (input: {
@@ -335,9 +299,7 @@ export const adminService = {
     active?: boolean;
   }) => {
     if (!isApiEnabled()) {
-      return mockRequest({
-        coupon: { ...input, code: input.code.toUpperCase(), active: input.active ?? true },
-      });
+      throw new ApiError(503, 'Admin API is unavailable');
     }
     return apiRequest('/admin/coupons', {
       method: 'POST',
@@ -346,51 +308,20 @@ export const adminService = {
   },
 
   getLogs: async () => {
-    if (!isApiEnabled()) return mockRequest({ logs: [] });
-    try {
-      return await apiRequest('/admin/logs');
-    } catch {
-      return { logs: [] };
+    if (!isApiEnabled()) {
+      throw new ApiError(503, 'Admin API is unavailable');
     }
+    return apiRequest('/admin/logs');
   },
 
   exportCsv: async (section: string) => {
-    const localOrdersCsv = () => {
-      const rows = loadLocalOrders().map((o) =>
-        [
-          o.number,
-          o.status,
-          o.total,
-          o.createdAt,
-          o.shippingAddress?.firstName ?? 'Guest',
-        ].join(',')
-      );
-      return `number,status,total,createdAt,customer\n${rows.join('\n')}`;
-    };
-
     if (!isApiEnabled()) {
-      if (section === 'orders') return mockRequest(localOrdersCsv());
-      if (section === 'products') {
-        const rows = loadAdminCatalog().map((p) =>
-          [p.slug, `"${p.name}"`, p.price, p.stock].join(',')
-        );
-        return mockRequest(`slug,name,price,stock\n${rows.join('\n')}`);
-      }
-      return mockRequest(`section,exported\n${section},false`);
+      throw new ApiError(503, 'Admin API is unavailable');
     }
-
-    try {
-      const data = await apiRequest<{ csv: string }>(
-        `/admin/export/${encodeURIComponent(section)}`
-      );
-      if (section === 'orders' && data.csv.split('\n').length <= 1 && loadLocalOrders().length) {
-        return localOrdersCsv();
-      }
-      return data.csv;
-    } catch {
-      if (section === 'orders') return localOrdersCsv();
-      return `section,exported\n${section},false`;
-    }
+    const data = await apiRequest<{ csv: string }>(
+      `/admin/export/${encodeURIComponent(section)}`
+    );
+    return data.csv;
   },
 
   makeSlug: slugify,

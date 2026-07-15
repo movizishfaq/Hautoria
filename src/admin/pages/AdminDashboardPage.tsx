@@ -40,11 +40,14 @@ export function AdminDashboardPage() {
   useEffect(() => {
     void (async () => {
       try {
-        const dash = await adminService.getDashboard();
+        const dash = await adminService.getDashboard({ force: true });
         setStats(dash.analytics ?? EMPTY_STATS);
         setOrders(dash.recentOrders ?? []);
         setLowStockCount(dash.lowStock?.length ?? 0);
-        setCatalogCount(dash.analytics?.products ?? dash.lowStock?.length ?? 0);
+        setCatalogCount(dash.analytics?.products ?? 0);
+      } catch {
+        setStats(EMPTY_STATS);
+        setOrders([]);
       } finally {
         setLoading(false);
       }
@@ -74,14 +77,14 @@ export function AdminDashboardPage() {
     {
       label: 'Revenue',
       value: formatPKR(stats.revenue),
-      meta: `${stats.orders} orders`,
+      meta: `${formatPKR(stats.todayRevenue ?? 0)} today`,
       icon: Wallet,
       accent: true,
     },
     {
       label: 'Pending orders',
-      value: pipelineCounts.find((p) => p.key === 'pending')?.count ?? 0,
-      meta: 'Needs action',
+      value: stats.pendingOrders ?? pipelineCounts.find((p) => p.key === 'pending')?.count ?? 0,
+      meta: `${stats.todayOrders ?? 0} placed today`,
       icon: ShoppingBag,
       to: '/admin/orders',
     },

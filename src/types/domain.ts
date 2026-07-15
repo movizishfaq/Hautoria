@@ -152,7 +152,10 @@ export interface Order {
   items: OrderLine[];
   shippingAddress: Address;
   paymentProvider: PaymentProvider;
+  paymentStatus?: 'pending' | 'verified' | 'failed' | 'refunded';
+  guestEmail?: string;
   trackingNumber?: string;
+  notes?: string;
   events: OrderEvent[];
 }
 export interface Review {
@@ -198,6 +201,10 @@ export interface AdminAnalytics {
   customers: number;
   conversion: number;
   products?: number;
+  todayOrders?: number;
+  todayRevenue?: number;
+  pendingOrders?: number;
+  completedOrders?: number;
   series: Array<{label: string;value: number;}>;
   pipeline?: Record<string, number>;
 }

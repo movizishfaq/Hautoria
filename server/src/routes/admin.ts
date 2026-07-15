@@ -64,49 +64,74 @@ function emptyRevenueSeries() {
 }
 
 const ORDER_LIST_SELECT =
-  'number status createdAt total subtotal tax shipping discount paymentProvider paymentStatus trackingNumber courier guestEmail items shippingAddress notes';
+  'number status createdAt total subtotal tax shipping discount paymentProvider paymentStatus trackingNumber courier guestEmail items shippingAddress notes events';
 
 router.get(
   '/dashboard',
   asyncHandler(async (_req, res) => {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
     const weekStart = new Date();
     weekStart.setHours(0, 0, 0, 0);
     weekStart.setDate(weekStart.getDate() - 6);
 
-    const [orderCount, revenueAgg, customers, products, recentOrders, lowStock, statusAgg, weekRevenue] =
-      await Promise.all([
-        Order.countDocuments(),
-        Order.aggregate([{ $group: { _id: null, total: { $sum: '$total' } } }]),
-        User.countDocuments({ role: 'customer' }),
-        Product.countDocuments({ isActive: true }),
-        Order.find()
-          .select(ORDER_LIST_SELECT)
-          .sort({ createdAt: -1 })
-          .limit(10)
-          .lean(),
-        Product.find({ stock: { $lte: 8 }, isActive: true })
-          .select(
-            'slug name tagline description category brand concerns price compareAtPrice rating reviewCount stock image gallery accent badges ingredients featured isActive sku variants lowStockThreshold createdAt updatedAt'
-          )
-          .limit(10)
-          .lean(),
-        Order.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
-        Order.aggregate([
-          { $match: { createdAt: { $gte: weekStart } } },
-          {
-            $group: {
-              _id: {
-                $dateToString: {
-                  format: '%Y-%m-%d',
-                  date: '$createdAt',
-                  timezone: 'Asia/Karachi',
-                },
+    const [
+      orderCount,
+      revenueAgg,
+      customers,
+      products,
+      recentOrders,
+      lowStock,
+      statusAgg,
+      weekRevenue,
+      todayOrders,
+      todayRevenueAgg,
+      pendingCount,
+      completedCount,
+    ] = await Promise.all([
+      Order.countDocuments(),
+      Order.aggregate([{ $group: { _id: null, total: { $sum: '$total' } } }]),
+      User.countDocuments({ role: 'customer' }),
+      Product.countDocuments({ isActive: true }),
+      Order.find()
+        .select(ORDER_LIST_SELECT)
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .lean(),
+      Product.find({ stock: { $lte: 8 }, isActive: true })
+        .select(
+          'slug name tagline description category brand concerns price compareAtPrice rating reviewCount stock image gallery accent badges ingredients featured isActive sku variants lowStockThreshold createdAt updatedAt'
+        )
+        .limit(10)
+        .lean(),
+      Order.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
+      Order.aggregate([
+        { $match: { createdAt: { $gte: weekStart } } },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: '%Y-%m-%d',
+                date: '$createdAt',
+                timezone: 'Asia/Karachi',
               },
-              total: { $sum: '$total' },
             },
+            total: { $sum: '$total' },
           },
-        ]),
-      ]);
+        },
+      ]),
+      Order.countDocuments({ createdAt: { $gte: todayStart } }),
+      Order.aggregate([
+        { $match: { createdAt: { $gte: todayStart } } },
+        { $group: { _id: null, total: { $sum: '$total' } } },
+      ]),
+      Order.countDocuments({
+        status: { $in: ['pending', 'confirmed', 'payment_verified', 'processing'] },
+      }),
+      Order.countDocuments({
+        status: { $in: ['delivered', 'completed'] },
+      }),
+    ]);
 
     const byDay = new Map(
       weekRevenue.map((row: { _id: string; total: number }) => [row._id, row.total])
@@ -127,13 +152,22 @@ router.get(
       statusAgg.map((row: { _id: string; count: number }) => [row._id, row.count])
     );
 
+    const revenue = revenueAgg[0]?.total ?? 0;
+    // Real conversion proxy: completed / total orders (not a fake constant).
+    const conversion =
+      orderCount > 0 ? Math.round((completedCount / orderCount) * 1000) / 10 : 0;
+
     res.json({
       analytics: {
-        revenue: revenueAgg[0]?.total ?? 0,
+        revenue,
         orders: orderCount,
         customers,
         products,
-        conversion: orderCount > 0 ? 4.2 : 0,
+        conversion,
+        todayOrders,
+        todayRevenue: todayRevenueAgg[0]?.total ?? 0,
+        pendingOrders: pendingCount,
+        completedOrders: completedCount,
         series,
         pipeline,
       },
@@ -147,13 +181,33 @@ router.get(
   '/orders',
   asyncHandler(async (req, res) => {
     const status = req.query.status as string | undefined;
-    const filter = status ? { status } : {};
-    const orders = await Order.find(filter)
-      .select(ORDER_LIST_SELECT)
-      .sort({ createdAt: -1 })
-      .limit(100)
-      .lean();
-    res.json({ orders: orders.map((o) => toClientOrder(o as never)) });
+    const q = String(req.query.q ?? '').trim();
+    const page = Math.max(1, Number(req.query.page ?? 1));
+    const limit = Math.min(100, Math.max(1, Number(req.query.limit ?? 50)));
+    const filter: Record<string, unknown> = {};
+    if (status && status !== 'all') filter.status = status;
+    if (q) {
+      filter.$or = [
+        { number: { $regex: q, $options: 'i' } },
+        { guestEmail: { $regex: q, $options: 'i' } },
+        { 'shippingAddress.firstName': { $regex: q, $options: 'i' } },
+        { 'shippingAddress.lastName': { $regex: q, $options: 'i' } },
+        { 'shippingAddress.phone': { $regex: q, $options: 'i' } },
+      ];
+    }
+    const [orders, total] = await Promise.all([
+      Order.find(filter)
+        .select(ORDER_LIST_SELECT)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+      Order.countDocuments(filter),
+    ]);
+    res.json({
+      orders: orders.map((o) => toClientOrder(o as never)),
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 },
+    });
   })
 );
 
@@ -176,6 +230,22 @@ router.patch(
     if (!order) throw new AppError(404, 'Order not found');
     const updated = await updateOrderStatus(order, status as OrderStatus, note);
     res.json({ order: toClientOrder(updated) });
+  })
+);
+
+router.delete(
+  '/orders/:id',
+  asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) throw new AppError(404, 'Order not found');
+    if (!['cancelled', 'rejected', 'pending'].includes(order.status)) {
+      throw new AppError(
+        400,
+        'Only pending, cancelled, or rejected orders can be deleted. Cancel the order first.'
+      );
+    }
+    await order.deleteOne();
+    res.json({ ok: true, id: req.params.id });
   })
 );
 

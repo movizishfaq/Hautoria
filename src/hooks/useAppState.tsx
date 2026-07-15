@@ -16,7 +16,6 @@ import type {
 import { isApiEnabled } from '../services/api';
 import { authService } from '../services/authService';
 import { userService } from '../services/userService';
-import { upsertLocalOrder } from '../lib/adminOrdersStore';
 import { usePersistedState } from './usePersistedState';
 type Toast = {
   id: string;
@@ -115,9 +114,9 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
         if (me) setUser(me);
         else setUser(null);
         const remoteOrders = await userService.getOrders().catch(() => []);
-        if (active && remoteOrders.length) setOrders(remoteOrders);
+        if (active) setOrders(remoteOrders);
         const remoteNotes = await userService.getNotifications().catch(() => []);
-        if (active && remoteNotes.length) setNotifications(remoteNotes);
+        if (active) setNotifications(remoteNotes);
       } finally {
         if (active) setAuthReady(true);
       }
@@ -243,11 +242,8 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
       ),
       setUser,
       addOrder: (order) => {
-        upsertLocalOrder(order);
-        setOrders((items) => {
-          const next = [order, ...items.filter((o) => o.id !== order.id)];
-          return next;
-        });
+        // Memory only — Mongo is the source of truth for fulfillment status.
+        setOrders((items) => [order, ...items.filter((o) => o.id !== order.id)]);
       },
       setCartOpen,
       setWishlistOpen,

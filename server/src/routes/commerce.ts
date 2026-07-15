@@ -16,6 +16,7 @@ import { generateInvoicePdf } from '../services/invoice.js';
 import { sendEmail, emailTemplates } from '../services/email.js';
 import { sendWhatsApp, orderWhatsAppMessage, notifyStoreNewOrder } from '../services/whatsapp.js';
 import { createNotification } from '../services/notifications.js';
+import { toClientOrder } from '../utils/serializers.js';
 
 const router = Router();
 
@@ -93,6 +94,7 @@ const checkoutSchema = z.object({
   shippingMethod: z.enum(['standard', 'express']).default('standard'),
   paymentProvider: z.string(),
   couponCode: z.string().optional(),
+  giftNote: z.string().optional(),
   guestCheckout: z.boolean().optional(),
 });
 
@@ -155,16 +157,15 @@ router.post(
     const tax = Math.round(subtotal * 0.05);
     const total = Math.max(0, subtotal + shipping + tax - discount);
 
-    const paymentVerified =
-      body.paymentProvider === 'cod' ||
-      body.paymentProvider === 'bank_transfer' ||
-      body.paymentProvider === 'jazzcash';
+    // Only COD is auto-confirmed. Bank/JazzCash wait for admin payment verification.
+    const isCod = body.paymentProvider === 'cod';
 
     const order = await Order.create({
       number: generateOrderNumber(),
       userId: req.userId,
-      guestEmail: req.userId ? undefined : body.email,
-      status: paymentVerified ? 'payment_verified' : 'pending',
+      // Always keep contact email so status emails work for guests and logged-in users.
+      guestEmail: body.email.toLowerCase(),
+      status: isCod ? 'confirmed' : 'pending',
       trackingNumber: generateTrackingNumber(),
       items: lines,
       shippingAddress: body.shippingAddress,
@@ -176,7 +177,8 @@ router.post(
       total,
       couponCode: body.couponCode,
       paymentProvider: body.paymentProvider,
-      paymentStatus: paymentVerified ? 'verified' : 'pending',
+      paymentStatus: isCod ? 'verified' : 'pending',
+      notes: body.giftNote,
       events: [
         {
           status: 'pending',
@@ -188,8 +190,8 @@ router.post(
       ],
     });
 
-    if (paymentVerified) {
-      await updateOrderStatus(order, 'confirmed', 'Order confirmed — payment on delivery');
+    if (isCod) {
+      await updateOrderStatus(order, 'confirmed', 'Order confirmed — cash on delivery');
     }
 
     await deductStock(lines);
@@ -225,30 +227,13 @@ router.post(
       await createNotification({
         userId: req.userId,
         title: 'Order placed',
-        body: `Order ${order.number} confirmed. Total Rs. ${total.toLocaleString()}`,
+        body: `Order ${order.number} placed. Total Rs. ${total.toLocaleString()}`,
         kind: 'order',
       });
     }
 
     const out = fresh ?? order;
-    res.status(201).json({
-      order: {
-        id: out._id.toString(),
-        number: out.number,
-        status: out.status,
-        trackingNumber: out.trackingNumber,
-        total: out.total,
-        subtotal: out.subtotal,
-        tax: out.tax,
-        shipping: out.shipping,
-        discount: out.discount,
-        items: out.items,
-        shippingAddress: out.shippingAddress,
-        paymentProvider: out.paymentProvider,
-        events: out.events,
-        createdAt: out.createdAt,
-      },
-    });
+    res.status(201).json({ order: toClientOrder(out) });
   })
 );
 
@@ -256,8 +241,12 @@ router.get(
   '/orders',
   authenticate,
   asyncHandler(async (req: AuthRequest, res) => {
-    const orders = await Order.find({ userId: req.userId }).sort({ createdAt: -1 });
-    res.json({ orders });
+    const orders = await Order.find({
+      $or: [{ userId: req.userId }, { guestEmail: req.user?.email }],
+    })
+      .sort({ createdAt: -1 })
+      .limit(100);
+    res.json({ orders: orders.map((o) => toClientOrder(o)) });
   })
 );
 
@@ -270,7 +259,7 @@ router.get(
     if (order.userId && order.userId !== req.userId && req.user?.role !== 'admin') {
       throw new AppError(403, 'Access denied');
     }
-    res.json({ order });
+    res.json({ order: toClientOrder(order) });
   })
 );
 

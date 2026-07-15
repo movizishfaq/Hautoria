@@ -29,7 +29,10 @@ function mapApiOrder(raw: Record<string, unknown>): Order {
     items: (raw.items as Order['items']) ?? [],
     shippingAddress: raw.shippingAddress as Order['shippingAddress'],
     paymentProvider: (raw.paymentProvider as Order['paymentProvider']) ?? 'cod',
+    paymentStatus: raw.paymentStatus as Order['paymentStatus'],
+    guestEmail: raw.guestEmail ? String(raw.guestEmail) : undefined,
     trackingNumber: raw.trackingNumber as string | undefined,
+    notes: raw.notes ? String(raw.notes) : undefined,
     events,
   };
 }
@@ -101,6 +104,7 @@ export const commerceService = {
           shippingMethod: draft.shippingMethod,
           paymentProvider: draft.paymentProvider,
           couponCode: draft.couponCode,
+          giftNote: draft.giftNote,
           guestCheckout: true,
         }),
       }

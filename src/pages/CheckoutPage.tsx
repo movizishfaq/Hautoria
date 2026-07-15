@@ -73,8 +73,8 @@ export function CheckoutPage() {
     0
   );
   const shipping = DELIVERY_FEE;
-  const pointsDiscount = draft.usePoints ? 500 : 0;
-  const total = Math.max(0, subtotal + shipping - pointsDiscount);
+  const tax = Math.round(subtotal * 0.05);
+  const total = Math.max(0, subtotal + shipping + tax);
 
   const updateAddress = (field: keyof Address, value: string) =>
     setDraft((current) => ({
@@ -385,12 +385,10 @@ export function CheckoutPage() {
               <span>Delivery</span>
               <span>{formatPrice(shipping)}</span>
             </p>
-            {pointsDiscount > 0 && (
-              <p className="flex justify-between text-gold">
-                <span>Points</span>
-                <span>−{formatPrice(pointsDiscount)}</span>
-              </p>
-            )}
+            <p className="flex justify-between">
+              <span>Tax (5%)</span>
+              <span>{formatPrice(tax)}</span>
+            </p>
             <p className="flex justify-between pt-3 font-serif text-xl">
               <span>Total</span>
               <span>{formatPrice(total)}</span>

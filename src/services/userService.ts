@@ -32,6 +32,8 @@ function mapOrder(raw: Record<string, unknown>): Order {
     items: (raw.items as Order['items']) ?? [],
     shippingAddress: raw.shippingAddress as Order['shippingAddress'],
     paymentProvider: (raw.paymentProvider as Order['paymentProvider']) ?? 'cod',
+    paymentStatus: raw.paymentStatus as Order['paymentStatus'],
+    guestEmail: raw.guestEmail ? String(raw.guestEmail) : undefined,
     trackingNumber: raw.trackingNumber as string | undefined,
     events,
   };
