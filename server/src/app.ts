@@ -6,7 +6,7 @@ import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import { env } from './config/env.js';
 import { errorHandler, AppError, asyncHandler } from './middleware/errorHandler.js';
-import { connectDb, isDbReady } from './config/db.js';
+import { connectDb, isDbReady, getLastMongoError } from './config/db.js';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
 import commerceRoutes from './routes/commerce.js';
@@ -66,6 +66,7 @@ function mountApi(router: express.Router) {
       mongo: isDbReady() ? 'connected' : 'disconnected',
       mongoState: mongoose.connection.readyState,
       hasMongoUri: Boolean(process.env.MONGODB_URI),
+      mongoError: getLastMongoError() || null,
     });
   });
 

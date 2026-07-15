@@ -5,6 +5,8 @@ import { logger } from '../utils/logger.js';
 declare global {
   // eslint-disable-next-line no-var
   var __hautoriaMongoPromise: Promise<typeof mongoose> | undefined;
+  // eslint-disable-next-line no-var
+  var __hautoriaMongoLastError: string | undefined;
 }
 
 /**
@@ -15,7 +17,8 @@ export async function connectDb(): Promise<boolean> {
   mongoose.set('strictQuery', true);
 
   if (process.env.VERCEL && !process.env.MONGODB_URI) {
-    logger.error('MONGODB_URI is missing in Vercel environment variables');
+    global.__hautoriaMongoLastError = 'MONGODB_URI is missing in Vercel environment variables';
+    logger.error(global.__hautoriaMongoLastError);
     return false;
   }
 
@@ -38,16 +41,19 @@ export async function connectDb(): Promise<boolean> {
         tlsAllowInvalidCertificates: env.nodeEnv !== 'production' && !process.env.VERCEL,
         serverSelectionTimeoutMS: 15000,
         maxPoolSize: process.env.VERCEL ? 5 : 10,
-        // Allow brief buffering while the serverless isolate warms the socket
         bufferCommands: true,
+        // Vercel → Atlas often breaks on IPv6 DNS; force IPv4
+        family: 4,
       });
     }
     await global.__hautoriaMongoPromise;
+    global.__hautoriaMongoLastError = undefined;
     logger.info('MongoDB connected');
     return mongoose.connection.readyState === 1;
   } catch (error) {
     global.__hautoriaMongoPromise = undefined;
     const message = error instanceof Error ? error.message : String(error);
+    global.__hautoriaMongoLastError = message;
     if (message.includes('whitelist') || message.includes('IP')) {
       logger.error(
         'MongoDB Atlas blocked this IP. In Atlas → Network Access → Allow Access from Anywhere (0.0.0.0/0) for Vercel.'
@@ -62,4 +68,8 @@ export async function connectDb(): Promise<boolean> {
 
 export function isDbReady() {
   return mongoose.connection.readyState === 1;
+}
+
+export function getLastMongoError() {
+  return global.__hautoriaMongoLastError;
 }
