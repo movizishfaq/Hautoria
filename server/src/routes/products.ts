@@ -5,28 +5,30 @@ import { asyncHandler } from '../middleware/errorHandler.js';
 
 const router = Router();
 
-function toClientProduct(p: InstanceType<typeof Product>) {
+function toClientProduct(p: InstanceType<typeof Product> | Record<string, unknown>) {
+  const doc = p as InstanceType<typeof Product>;
+  const variants = Array.isArray(doc.variants) ? doc.variants : [];
   return {
-    id: p.slug,
-    slug: p.slug,
-    name: p.name,
-    tagline: p.tagline,
-    description: p.description,
-    category: p.category,
-    concerns: p.concerns,
-    price: p.price,
-    compareAtPrice: p.compareAtPrice,
-    rating: p.rating,
-    reviewCount: p.reviewCount,
-    stock: p.stock,
-    image: p.image,
-    gallery: p.gallery?.length ? p.gallery : [p.image],
-    accent: p.accent,
-    badges: p.badges,
-    ingredients: p.ingredients,
-    featured: p.featured,
-    brand: p.brand,
-    variants: p.variants.map((v) => ({
+    id: doc.slug,
+    slug: doc.slug,
+    name: doc.name,
+    tagline: doc.tagline,
+    description: doc.description,
+    category: doc.category,
+    concerns: doc.concerns ?? [],
+    price: doc.price,
+    compareAtPrice: doc.compareAtPrice,
+    rating: doc.rating,
+    reviewCount: doc.reviewCount,
+    stock: doc.stock,
+    image: doc.image,
+    gallery: doc.gallery?.length ? doc.gallery : [doc.image],
+    accent: doc.accent,
+    badges: doc.badges ?? [],
+    ingredients: doc.ingredients ?? [],
+    featured: doc.featured,
+    brand: doc.brand,
+    variants: variants.map((v) => ({
       id: v.id,
       name: v.name,
       sku: v.sku,

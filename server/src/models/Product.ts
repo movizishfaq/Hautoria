@@ -72,7 +72,7 @@ const variantSchema = new Schema<IProductVariant>(
 const productSchema = new Schema<IProduct>(
   {
     slug: { type: String, required: true, unique: true, index: true },
-    name: { type: String, required: true, index: 'text' },
+    name: { type: String, required: true },
     tagline: String,
     description: String,
     category: { type: String, index: true },

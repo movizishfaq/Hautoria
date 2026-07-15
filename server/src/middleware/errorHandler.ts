@@ -31,7 +31,12 @@ export function errorHandler(
     });
   }
   console.error(err);
-  return res.status(500).json({ error: 'Internal server error' });
+  const message = err instanceof Error ? err.message : 'Internal server error';
+  // Surface the real cause on Vercel so deploy issues are diagnosable
+  return res.status(500).json({
+    error: message,
+    code: 'INTERNAL_ERROR',
+  });
 }
 
 export function asyncHandler(

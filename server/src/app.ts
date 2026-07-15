@@ -3,8 +3,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
+import mongoose from 'mongoose';
 import { env } from './config/env.js';
-import { errorHandler } from './middleware/errorHandler.js';
+import { errorHandler, AppError, asyncHandler } from './middleware/errorHandler.js';
+import { connectDb, isDbReady } from './config/db.js';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
 import commerceRoutes from './routes/commerce.js';
@@ -61,8 +63,27 @@ function mountApi(router: express.Router) {
       store: env.storeName,
       tagline: env.storeTagline,
       runtime: isServerless ? 'vercel-serverless' : 'node',
+      mongo: isDbReady() ? 'connected' : 'disconnected',
+      mongoState: mongoose.connection.readyState,
+      hasMongoUri: Boolean(process.env.MONGODB_URI),
     });
   });
+
+  // DB required for everything except health
+  router.use(
+    asyncHandler(async (req, _res, next) => {
+      if (req.path === '/health') return next();
+      const ok = isDbReady() || (await connectDb());
+      if (!ok) {
+        throw new AppError(
+          503,
+          'Database unavailable. Set MONGODB_URI in Vercel env vars and allow 0.0.0.0/0 in Atlas Network Access.',
+          'DB_UNAVAILABLE'
+        );
+      }
+      next();
+    })
+  );
 
   router.use('/auth', authRoutes);
   router.use('/products', productRoutes);

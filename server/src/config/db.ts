@@ -14,13 +14,18 @@ declare global {
 export async function connectDb(): Promise<boolean> {
   mongoose.set('strictQuery', true);
 
+  if (process.env.VERCEL && !process.env.MONGODB_URI) {
+    logger.error('MONGODB_URI is missing in Vercel environment variables');
+    return false;
+  }
+
   const readyState = mongoose.connection.readyState;
   // 1 = connected, 2 = connecting
   if (readyState === 1) return true;
   if (readyState === 2 && global.__hautoriaMongoPromise) {
     try {
       await global.__hautoriaMongoPromise;
-      return true;
+      return mongoose.connection.readyState === 1;
     } catch {
       global.__hautoriaMongoPromise = undefined;
     }
@@ -31,14 +36,15 @@ export async function connectDb(): Promise<boolean> {
       global.__hautoriaMongoPromise = mongoose.connect(env.mongoUri, {
         // Local Windows TLS quirks only — production Atlas must use valid certs
         tlsAllowInvalidCertificates: env.nodeEnv !== 'production' && !process.env.VERCEL,
-        serverSelectionTimeoutMS: 12000,
+        serverSelectionTimeoutMS: 15000,
         maxPoolSize: process.env.VERCEL ? 5 : 10,
-        bufferCommands: false,
+        // Allow brief buffering while the serverless isolate warms the socket
+        bufferCommands: true,
       });
     }
     await global.__hautoriaMongoPromise;
     logger.info('MongoDB connected');
-    return true;
+    return mongoose.connection.readyState === 1;
   } catch (error) {
     global.__hautoriaMongoPromise = undefined;
     const message = error instanceof Error ? error.message : String(error);
@@ -52,4 +58,8 @@ export async function connectDb(): Promise<boolean> {
     logger.error(`MongoDB connection failed: ${message}`);
     return false;
   }
+}
+
+export function isDbReady() {
+  return mongoose.connection.readyState === 1;
 }
