@@ -16,6 +16,7 @@ import type {
 import { isApiEnabled } from '../services/api';
 import { authService } from '../services/authService';
 import { userService } from '../services/userService';
+import { upsertLocalOrder } from '../lib/adminOrdersStore';
 import { usePersistedState } from './usePersistedState';
 type Toast = {
   id: string;
@@ -249,7 +250,13 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
       [productId, ...items.filter((id) => id !== productId)].slice(0, 6)
       ),
       setUser,
-      addOrder: (order) => setOrders((items) => [order, ...items]),
+      addOrder: (order) => {
+        upsertLocalOrder(order);
+        setOrders((items) => {
+          const next = [order, ...items.filter((o) => o.id !== order.id)];
+          return next;
+        });
+      },
       setCartOpen,
       setWishlistOpen,
       setSearchOpen,

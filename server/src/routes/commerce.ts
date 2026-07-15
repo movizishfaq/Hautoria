@@ -88,9 +88,12 @@ router.post(
     let subtotal = 0;
 
     for (const item of body.items) {
+      const isObjectId = /^[a-f\d]{24}$/i.test(item.productId);
       const product = await Product.findOne({
-        $or: [{ slug: item.productId }, { _id: item.productId }],
         isActive: true,
+        ...(isObjectId
+          ? { $or: [{ slug: item.productId }, { _id: item.productId }] }
+          : { slug: item.productId }),
       });
       if (!product) throw new AppError(400, `Product not found: ${item.productId}`);
 
@@ -173,6 +176,8 @@ router.post(
     }
 
     await deductStock(lines);
+    await order.save();
+    const fresh = await Order.findById(order._id);
 
     const customerName = (body.shippingAddress.firstName as string) ?? 'Customer';
     const phone = body.shippingAddress.phone as string | undefined;
@@ -193,7 +198,7 @@ router.post(
       ).catch(() => {});
     }
 
-    await notifyStoreNewOrder(order, {
+    await notifyStoreNewOrder(fresh ?? order, {
       customerName,
       email: body.email,
       phone,
@@ -208,22 +213,23 @@ router.post(
       });
     }
 
+    const out = fresh ?? order;
     res.status(201).json({
       order: {
-        id: order._id.toString(),
-        number: order.number,
-        status: order.status,
-        trackingNumber: order.trackingNumber,
-        total: order.total,
-        subtotal: order.subtotal,
-        tax: order.tax,
-        shipping: order.shipping,
-        discount: order.discount,
-        items: order.items,
-        shippingAddress: order.shippingAddress,
-        paymentProvider: order.paymentProvider,
-        events: order.events,
-        createdAt: order.createdAt,
+        id: out._id.toString(),
+        number: out.number,
+        status: out.status,
+        trackingNumber: out.trackingNumber,
+        total: out.total,
+        subtotal: out.subtotal,
+        tax: out.tax,
+        shipping: out.shipping,
+        discount: out.discount,
+        items: out.items,
+        shippingAddress: out.shippingAddress,
+        paymentProvider: out.paymentProvider,
+        events: out.events,
+        createdAt: out.createdAt,
       },
     });
   })

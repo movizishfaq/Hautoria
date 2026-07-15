@@ -37,7 +37,7 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
     }
     setLoading(true);
     try {
-      const list = await catalogService.list({ limit: '48' });
+      const list = await catalogService.list({ limit: '100' });
       setProducts(list.length ? list : loadAdminCatalog());
     } catch {
       setProducts(loadAdminCatalog());

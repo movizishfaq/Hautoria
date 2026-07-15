@@ -61,7 +61,12 @@ app.use('/api/referral', referralRoutes);
 
 app.use(errorHandler);
 
-await connectDb();
+const connected = await connectDb();
+if (!connected) {
+  console.warn(
+    'Warning: MongoDB is offline. API is up for health checks; order/product writes need Atlas or use the storefront local fallback.'
+  );
+}
 
 app.listen(env.port, () => {
   console.log(`Hautoria API running on http://localhost:${env.port}`);

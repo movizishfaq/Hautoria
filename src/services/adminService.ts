@@ -1,4 +1,4 @@
-import type { AdminAnalytics, Order, Product } from '../types/domain';
+import type { AdminAnalytics, Order, OrderStatus, Product } from '../types/domain';
 import { apiRequest, ApiError, isApiEnabled, mockRequest } from './api';
 import {
   loadAdminCatalog,
@@ -6,6 +6,11 @@ import {
   updateAdminStock,
   upsertAdminProduct,
 } from '../lib/adminCatalogStore';
+import {
+  buildLocalAnalytics,
+  loadLocalOrders,
+  updateLocalOrderStatus,
+} from '../lib/adminOrdersStore';
 
 export type AdminProduct = Product & {
   isActive?: boolean;
@@ -56,43 +61,106 @@ function slugify(value: string) {
     .replace(/^-|-$/g, '');
 }
 
+function filterOrders(orders: Order[], status?: string) {
+  if (!status || status === 'all') return orders;
+  return orders.filter((o) => o.status === status);
+}
+
+function localDashboard() {
+  const products = loadAdminCatalog();
+  const orders = loadLocalOrders();
+  const analytics = buildLocalAnalytics(orders);
+  return {
+    analytics: {
+      ...EMPTY_ANALYTICS,
+      ...analytics,
+      products: products.length,
+    },
+    recentOrders: orders.slice(0, 10),
+    lowStock: products.filter((p) => p.stock <= 8),
+  };
+}
+
 export const adminService = {
   getDashboard: async () => {
     if (!isApiEnabled()) {
-      const products = loadAdminCatalog();
-      return mockRequest({
-        analytics: {
-          ...EMPTY_ANALYTICS,
-          products: products.length,
-        },
-        recentOrders: [] as Order[],
-        lowStock: products.filter((p) => p.stock <= 8),
-      });
+      return mockRequest(localDashboard());
     }
-    return apiRequest<{
-      analytics: AdminAnalytics;
-      recentOrders: Order[];
-      lowStock: AdminProduct[];
-    }>('/admin/dashboard');
+    try {
+      const dash = await apiRequest<{
+        analytics: AdminAnalytics;
+        recentOrders: Order[];
+        lowStock: AdminProduct[];
+      }>('/admin/dashboard');
+      if ((dash.recentOrders?.length ?? 0) === 0 && loadLocalOrders().length) {
+        const local = localDashboard();
+        return {
+          ...dash,
+          analytics: {
+            ...dash.analytics,
+            revenue: dash.analytics.revenue || local.analytics.revenue,
+            orders: dash.analytics.orders || local.analytics.orders,
+            pipeline: Object.keys(dash.analytics.pipeline ?? {}).length
+              ? dash.analytics.pipeline
+              : local.analytics.pipeline,
+            series: dash.analytics.series.some((s) => s.value > 0)
+              ? dash.analytics.series
+              : local.analytics.series,
+          },
+          recentOrders: local.recentOrders,
+        };
+      }
+      return dash;
+    } catch {
+      return localDashboard();
+    }
   },
 
   getOrders: async (status?: string) => {
-    if (!isApiEnabled()) return mockRequest({ orders: [] as Order[] });
-    const qs = status ? `?status=${encodeURIComponent(status)}` : '';
-    return apiRequest<{ orders: Order[] }>(`/admin/orders${qs}`);
+    if (!isApiEnabled()) {
+      return mockRequest({ orders: filterOrders(loadLocalOrders(), status) });
+    }
+    try {
+      const qs = status ? `?status=${encodeURIComponent(status)}` : '';
+      const res = await apiRequest<{ orders: Order[] }>(`/admin/orders${qs}`);
+      if ((res.orders?.length ?? 0) > 0) return res;
+      return { orders: filterOrders(loadLocalOrders(), status) };
+    } catch {
+      return { orders: filterOrders(loadLocalOrders(), status) };
+    }
   },
 
   getOrder: async (id: string) => {
-    if (!isApiEnabled()) throw new ApiError(404, 'Order not found');
-    return apiRequest<{ order: Order }>(`/admin/orders/${id}`);
+    if (!isApiEnabled()) {
+      const order = loadLocalOrders().find((o) => o.id === id || o.number === id);
+      if (!order) throw new ApiError(404, 'Order not found');
+      return mockRequest({ order });
+    }
+    try {
+      return await apiRequest<{ order: Order }>(`/admin/orders/${id}`);
+    } catch {
+      const order = loadLocalOrders().find((o) => o.id === id || o.number === id);
+      if (!order) throw new ApiError(404, 'Order not found');
+      return { order };
+    }
   },
 
   updateOrderStatus: async (orderId: string, status: string, note?: string) => {
-    if (!isApiEnabled()) return mockRequest({ order: { id: orderId, status } });
-    return apiRequest(`/admin/orders/${orderId}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status, note }),
-    });
+    if (!isApiEnabled()) {
+      const updated = updateLocalOrderStatus(orderId, status as OrderStatus);
+      if (!updated) throw new ApiError(404, 'Order not found');
+      return mockRequest({ order: updated });
+    }
+    try {
+      return await apiRequest(`/admin/orders/${orderId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status, note }),
+      });
+    } catch {
+      const updated = updateLocalOrderStatus(orderId, status as OrderStatus);
+      if (!updated) throw new ApiError(404, 'Order not found');
+      return { order: updated };
+    }
   },
 
   getProducts: async () => {
@@ -101,7 +169,13 @@ export const adminService = {
         products: loadAdminCatalog().map((p) => ({ ...p, isActive: true })),
       });
     }
-    return apiRequest<{ products: AdminProduct[] }>('/admin/products');
+    try {
+      return await apiRequest<{ products: AdminProduct[] }>('/admin/products');
+    } catch {
+      return {
+        products: loadAdminCatalog().map((p) => ({ ...p, isActive: true })),
+      };
+    }
   },
 
   createProduct: async (input: ProductInput & { slug: string }) => {
@@ -198,21 +272,41 @@ export const adminService = {
   },
 
   getCustomers: async () => {
-    if (!isApiEnabled()) return mockRequest({ customers: [] });
-    return apiRequest('/admin/customers');
+    if (!isApiEnabled()) {
+      const customers = loadLocalOrders().map((o, i) => ({
+        id: `local_${i}`,
+        name:
+          `${o.shippingAddress?.firstName ?? ''} ${o.shippingAddress?.lastName ?? ''}`.trim() ||
+          'Guest',
+        email: 'guest@order.local',
+        phone: o.shippingAddress?.phone,
+        tier: 'Rose',
+        loyaltyPoints: 0,
+      }));
+      return mockRequest({ customers });
+    }
+    try {
+      return await apiRequest('/admin/customers');
+    } catch {
+      return { customers: [] };
+    }
   },
 
   getCoupons: async () => {
     if (!isApiEnabled()) return mockRequest({ coupons: [] });
-    return apiRequest<{
-      coupons: Array<{
-        code: string;
-        description?: string;
-        amount: number;
-        type: 'percent' | 'fixed' | 'free_shipping';
-        active: boolean;
-      }>;
-    }>('/admin/coupons');
+    try {
+      return await apiRequest<{
+        coupons: Array<{
+          code: string;
+          description?: string;
+          amount: number;
+          type: 'percent' | 'fixed' | 'free_shipping';
+          active: boolean;
+        }>;
+      }>('/admin/coupons');
+    } catch {
+      return { coupons: [] };
+    }
   },
 
   createCoupon: async (input: {
@@ -236,11 +330,29 @@ export const adminService = {
 
   getLogs: async () => {
     if (!isApiEnabled()) return mockRequest({ logs: [] });
-    return apiRequest('/admin/logs');
+    try {
+      return await apiRequest('/admin/logs');
+    } catch {
+      return { logs: [] };
+    }
   },
 
   exportCsv: async (section: string) => {
+    const localOrdersCsv = () => {
+      const rows = loadLocalOrders().map((o) =>
+        [
+          o.number,
+          o.status,
+          o.total,
+          o.createdAt,
+          o.shippingAddress?.firstName ?? 'Guest',
+        ].join(',')
+      );
+      return `number,status,total,createdAt,customer\n${rows.join('\n')}`;
+    };
+
     if (!isApiEnabled()) {
+      if (section === 'orders') return mockRequest(localOrdersCsv());
       if (section === 'products') {
         const rows = loadAdminCatalog().map((p) =>
           [p.slug, `"${p.name}"`, p.price, p.stock].join(',')
@@ -249,8 +361,19 @@ export const adminService = {
       }
       return mockRequest(`section,exported\n${section},false`);
     }
-    const data = await apiRequest<{ csv: string }>(`/admin/export/${encodeURIComponent(section)}`);
-    return data.csv;
+
+    try {
+      const data = await apiRequest<{ csv: string }>(
+        `/admin/export/${encodeURIComponent(section)}`
+      );
+      if (section === 'orders' && data.csv.split('\n').length <= 1 && loadLocalOrders().length) {
+        return localOrdersCsv();
+      }
+      return data.csv;
+    } catch {
+      if (section === 'orders') return localOrdersCsv();
+      return `section,exported\n${section},false`;
+    }
   },
 
   makeSlug: slugify,

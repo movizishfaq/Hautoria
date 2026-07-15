@@ -55,13 +55,14 @@ async function seed() {
       badges: item.badges,
       ingredients: item.ingredients,
       featured: item.featured ?? false,
-      sku: `HT-${item.slug.slice(0, 12).toUpperCase()}`,
+      sku: `HT-${item.id}`.toUpperCase().slice(0, 48),
       tags: item.concerns,
+      brand: item.tagline,
       variants: [
         {
           id: `${item.id}-default`,
           name: 'Standard',
-          sku: `HT-${item.id.toUpperCase().slice(0, 12)}`,
+          sku: `HT-V-${item.id}`.toUpperCase().slice(0, 48),
           price: item.price,
           compareAtPrice: item.compareAtPrice,
           stock: item.stock,

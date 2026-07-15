@@ -77,7 +77,7 @@ router.get(
     };
 
     const pageNum = Math.max(1, Number(page));
-    const limitNum = Math.min(48, Math.max(1, Number(limit)));
+    const limitNum = Math.min(100, Math.max(1, Number(limit)));
     const skip = (pageNum - 1) * limitNum;
 
     const [items, total] = await Promise.all([

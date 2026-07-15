@@ -21,7 +21,7 @@ const STATUSES: OrderStatus[] = [
 ];
 
 export function AdminOrdersPage() {
-  const { notify } = useAppState();
+  const { notify, orders: localOrders } = useAppState();
   const [orders, setOrders] = useState<Order[]>([]);
   const [status, setStatus] = useState('all');
   const [q, setQ] = useState('');
@@ -33,11 +33,21 @@ export function AdminOrdersPage() {
     setLoading(true);
     try {
       const res = await adminService.getOrders(status === 'all' ? undefined : status);
-      setOrders(res.orders ?? []);
+      const fromApi = res.orders ?? [];
+      // Prefer API, but always merge any local checkout orders so none are lost
+      const byId = new Map<string, Order>();
+      for (const o of [...fromApi, ...localOrders]) {
+        if (!o?.id && !o?.number) continue;
+        byId.set(o.id || o.number, o);
+      }
+      let merged = Array.from(byId.values());
+      if (status !== 'all') merged = merged.filter((o) => o.status === status);
+      merged.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+      setOrders(merged);
     } finally {
       setLoading(false);
     }
-  }, [status]);
+  }, [status, localOrders]);
 
   useEffect(() => {
     void load();
