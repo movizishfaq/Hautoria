@@ -40,23 +40,44 @@ export async function apiRequest<T>(
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${base}${path}`, {
-    ...options,
-    headers,
-    credentials: 'include',
-  });
-
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const details = (data as { details?: unknown }).details;
-    let message = (data as { error?: string }).error ?? 'Request failed';
-    if (details && typeof details === 'object') {
-      const first = Object.values(details as Record<string, unknown>).flat()[0];
-      if (typeof first === 'string') message = first;
-    }
-    throw new ApiError(res.status, message, details);
+  const controller = new AbortController();
+  const timeoutMs = 8000;
+  const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+  // Allow callers to abort too
+  const external = options.signal;
+  if (external) {
+    if (external.aborted) controller.abort();
+    else external.addEventListener('abort', () => controller.abort(), { once: true });
   }
-  return data as T;
+
+  try {
+    const res = await fetch(`${base}${path}`, {
+      ...options,
+      headers,
+      credentials: 'include',
+      signal: controller.signal,
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const details = (data as { details?: unknown }).details;
+      let message = (data as { error?: string }).error ?? 'Request failed';
+      if (details && typeof details === 'object') {
+        const first = Object.values(details as Record<string, unknown>).flat()[0];
+        if (typeof first === 'string') message = first;
+      }
+      throw new ApiError(res.status, message, details);
+    }
+    return data as T;
+  } catch (err) {
+    if (err instanceof ApiError) throw err;
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new ApiError(408, 'Request timed out. Showing local catalog.');
+    }
+    throw new ApiError(503, 'Store API is unavailable');
+  } finally {
+    window.clearTimeout(timer);
+  }
 }
 
 export async function mockRequest<T>(payload: T, delay = 380): Promise<T> {

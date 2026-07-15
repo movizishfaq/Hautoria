@@ -108,6 +108,9 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
       return;
     }
     let active = true;
+    const safety = window.setTimeout(() => {
+      if (active) setAuthReady(true);
+    }, 6000);
     (async () => {
       try {
         const me = await authService.getMe();
@@ -118,12 +121,16 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
         if (active) setOrders(remoteOrders);
         const remoteNotes = await userService.getNotifications().catch(() => []);
         if (active) setNotifications(remoteNotes);
+      } catch {
+        if (active) setUser(null);
       } finally {
         if (active) setAuthReady(true);
+        window.clearTimeout(safety);
       }
     })();
     return () => {
       active = false;
+      window.clearTimeout(safety);
     };
   }, [setUser, setOrders, setNotifications]);
   const notify = (message: string, tone: Toast['tone'] = 'success') => {

@@ -30,13 +30,15 @@ function fallbackCatalog(): Product[] {
 
 export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>(() => fallbackCatalog());
-  const [loading, setLoading] = useState(isApiEnabled());
-  const [ready, setReady] = useState(!isApiEnabled());
+  // Never block the storefront on API — start ready with local/fallback catalog.
+  const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(true);
 
   const refresh = useCallback(async () => {
     if (!isApiEnabled()) {
       setProducts(fallbackCatalog());
       setReady(true);
+      setLoading(false);
       return;
     }
     setLoading(true);
@@ -45,7 +47,6 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
       if (list.length > 0) {
         setProducts(list);
       } else {
-        // API up but DB empty — show built-in catalog so the shop is never blank.
         setProducts(fallbackCatalog());
       }
     } catch {
