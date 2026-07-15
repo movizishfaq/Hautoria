@@ -10,10 +10,6 @@ import { ensureCatalogSeeded } from '../server/src/services/ensureCatalog.js';
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    // Cold/warm isolates can keep a dead mongoose handle — always ensure live connection.
-    if (mongoose.connection.readyState !== 1) {
-      await mongoose.disconnect().catch(() => undefined);
-    }
     const connected = await connectDb();
     if (connected) {
       await ensureCatalogSeeded().catch((err) => {
