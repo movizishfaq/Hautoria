@@ -3,21 +3,36 @@ import { catalogProducts } from './mockData';
 
 const STORAGE_KEY = 'hautoria_admin_catalog';
 
+function baseCatalog(): Product[] {
+  return catalogProducts.map((p) => ({ ...p }));
+}
+
 function readStore(): Product[] | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as Product[];
+    const parsed = JSON.parse(raw) as Product[];
+    // Empty / corrupt admin overrides must never wipe the storefront catalog.
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    return parsed;
   } catch {
+    localStorage.removeItem(STORAGE_KEY);
     return null;
   }
 }
 
 export function loadAdminCatalog(): Product[] {
-  return readStore() ?? catalogProducts.map((p) => ({ ...p }));
+  return readStore() ?? baseCatalog();
 }
 
 export function saveAdminCatalog(products: Product[]) {
+  if (!products.length) {
+    localStorage.removeItem(STORAGE_KEY);
+    return;
+  }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
 }
 
@@ -31,22 +46,23 @@ export function upsertAdminProduct(product: Product) {
 }
 
 export function removeAdminProduct(slug: string) {
-  const list = loadAdminCatalog().map((p) =>
-    p.slug === slug ? { ...p, stock: 0 } : p
-  );
-  saveAdminCatalog(list.filter((p) => p.slug !== slug));
+  const list = loadAdminCatalog().filter((p) => p.slug !== slug && p.id !== slug);
+  saveAdminCatalog(list);
   return list;
 }
 
 export function updateAdminStock(slug: string, stock: number) {
-  const list = loadAdminCatalog().map((p) => {
-    if (p.slug !== slug) return p;
-    return {
-      ...p,
-      stock,
-      variants: p.variants.map((v, i) => (i === 0 ? { ...v, stock } : v)),
-    };
-  });
+  const list = loadAdminCatalog();
+  const product = list.find((p) => p.slug === slug || p.id === slug);
+  if (!product) return null;
+  product.stock = stock;
+  if (product.variants[0]) product.variants[0].stock = stock;
   saveAdminCatalog(list);
-  return list.find((p) => p.slug === slug) ?? null;
+  return product;
+}
+
+/** Reset any bad local overrides back to the built-in catalog. */
+export function resetAdminCatalog() {
+  localStorage.removeItem(STORAGE_KEY);
+  return baseCatalog();
 }

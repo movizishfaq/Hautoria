@@ -55,6 +55,7 @@ async function seed() {
       badges: item.badges,
       ingredients: item.ingredients,
       featured: item.featured ?? false,
+      isActive: true,
       sku: `HT-${item.id}`.toUpperCase().slice(0, 48),
       tags: item.concerns,
       brand: item.tagline,

@@ -9,7 +9,8 @@ import React, {
 import type { Product } from '../types/domain';
 import { catalogService } from '../services/catalogService';
 import { isApiEnabled } from '../services/api';
-import { loadAdminCatalog } from '../lib/adminCatalogStore';
+import { loadAdminCatalog, resetAdminCatalog } from '../lib/adminCatalogStore';
+import { catalogProducts } from '../lib/mockData';
 
 type CatalogState = {
   products: Product[];
@@ -22,25 +23,33 @@ type CatalogState = {
 
 const Context = createContext<CatalogState | undefined>(undefined);
 
+function fallbackCatalog(): Product[] {
+  const local = loadAdminCatalog();
+  return local.length ? local : catalogProducts.map((p) => ({ ...p }));
+}
+
 export function CatalogProvider({ children }: { children: React.ReactNode }) {
-  // Seed local catalog immediately so hero/shop never flash blank while API loads.
-  const [products, setProducts] = useState<Product[]>(() => loadAdminCatalog());
+  const [products, setProducts] = useState<Product[]>(() => fallbackCatalog());
   const [loading, setLoading] = useState(isApiEnabled());
   const [ready, setReady] = useState(!isApiEnabled());
 
   const refresh = useCallback(async () => {
     if (!isApiEnabled()) {
-      setProducts(loadAdminCatalog());
+      setProducts(fallbackCatalog());
       setReady(true);
       return;
     }
     setLoading(true);
     try {
       const list = await catalogService.list({ limit: '100' });
-      if (list.length) setProducts(list);
-      // Keep local catalog if API returns empty (unseeded) so the storefront stays usable.
+      if (list.length > 0) {
+        setProducts(list);
+      } else {
+        // API up but DB empty — show built-in catalog so the shop is never blank.
+        setProducts(fallbackCatalog());
+      }
     } catch {
-      // Keep existing products (local seed) when the API is unreachable.
+      setProducts(fallbackCatalog());
     } finally {
       setLoading(false);
       setReady(true);
@@ -48,6 +57,19 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // One-time repair: wipe empty/corrupt local catalog overrides.
+    try {
+      const raw = localStorage.getItem('hautoria_admin_catalog');
+      if (raw) {
+        const parsed = JSON.parse(raw) as unknown;
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          resetAdminCatalog();
+          setProducts(fallbackCatalog());
+        }
+      }
+    } catch {
+      resetAdminCatalog();
+    }
     void refresh();
   }, [refresh]);
 

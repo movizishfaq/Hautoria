@@ -1,12 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import app from '../server/src/app.js';
 import { connectDb } from '../server/src/config/db.js';
+import { ensureCatalogSeeded } from '../server/src/services/ensureCatalog.js';
 
-let dbReady: Promise<boolean> | null = null;
+let ready: Promise<void> | null = null;
 
-async function ensureDb() {
-  if (!dbReady) dbReady = connectDb();
-  return dbReady;
+async function bootstrap() {
+  const connected = await connectDb();
+  if (connected) await ensureCatalogSeeded();
 }
 
 /**
@@ -14,7 +15,7 @@ async function ensureDb() {
  * Rewrites send `/api/*` here while preserving routing via dual mounts in app.ts.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  await ensureDb();
-  // Express Request/Response are compatible with Vercel's Node request objects
+  if (!ready) ready = bootstrap();
+  await ready;
   return app(req as never, res as never);
 }

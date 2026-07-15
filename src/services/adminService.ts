@@ -166,9 +166,21 @@ export const adminService = {
         products: loadAdminCatalog().map((p) => ({ ...p, isActive: true })),
       };
     }
-    const res = await apiRequest<{ products: AdminProduct[] }>('/admin/products');
-    adminDataCache.setProducts(res);
-    return res;
+    try {
+      const res = await apiRequest<{ products: AdminProduct[] }>('/admin/products');
+      if ((res.products?.length ?? 0) > 0) {
+        adminDataCache.setProducts(res);
+        return res;
+      }
+      const fallback = {
+        products: loadAdminCatalog().map((p) => ({ ...p, isActive: true })),
+      };
+      return fallback;
+    } catch {
+      return {
+        products: loadAdminCatalog().map((p) => ({ ...p, isActive: true })),
+      };
+    }
   },
 
   createProduct: async (input: ProductInput & { slug: string }) => {
