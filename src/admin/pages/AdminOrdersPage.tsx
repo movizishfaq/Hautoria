@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { adminService } from '../../services/adminService';
 import { commerceService } from '../../services/commerceService';
 import { formatPKR } from '../utils';
 import { PageHeader, Panel, AdminButton, AdminInput, AdminSelect, Badge, EmptyState } from '../components/ui';
 import { useAppState } from '../../hooks/useAppState';
+import { useAdminAuth } from '../AdminAuthContext';
+import { ApiError } from '../../services/api';
 import type { Order, OrderStatus } from '../../types/domain';
 
 const STATUSES: OrderStatus[] = [
@@ -39,6 +42,8 @@ const FILTER_PRESETS = [
 
 export function AdminOrdersPage() {
   const { notify } = useAppState();
+  const { logout } = useAdminAuth();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [status, setStatus] = useState('all');
   const [q, setQ] = useState('');
@@ -66,11 +71,18 @@ export function AdminOrdersPage() {
       setTotal(res.pagination?.total ?? res.orders?.length ?? 0);
     } catch (err) {
       setOrders([]);
+      setTotal(0);
+      if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+        setError('Admin session expired. Please log in again.');
+        await logout();
+        navigate('/admin/login', { replace: true });
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Could not load orders');
     } finally {
       setLoading(false);
     }
-  }, [status, search, page]);
+  }, [status, search, page, logout, navigate]);
 
   useEffect(() => {
     void load();
@@ -156,7 +168,7 @@ export function AdminOrdersPage() {
     <div className="max-w-[1400px] space-y-6">
       <PageHeader
         title="Orders"
-        subtitle={`${total} orders from MongoDB · newest first`}
+        subtitle={`${total} order${total === 1 ? '' : 's'} in database · newest first`}
         actions={
           <div className="flex gap-2">
             <AdminButton variant="secondary" onClick={() => void load()}>
@@ -258,7 +270,10 @@ export function AdminOrdersPage() {
               </tbody>
             </table>
             {!orders.length && (
-              <EmptyState title="No orders yet" description="Orders from checkout will appear here." />
+              <EmptyState
+                title="No orders in MongoDB yet"
+                description="Only real checkouts that save to the database appear here. Place a new order on the live site, then click Refresh. Older failed/local checkouts will not show."
+              />
             )}
           </div>
         )}
