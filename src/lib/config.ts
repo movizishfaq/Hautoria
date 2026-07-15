@@ -13,7 +13,10 @@ export const appConfig = {
   brandTagline: 'Crafted for Timeless Skin.',
   logoUrl: '/hautoria-logo.png',
   heroImage: '/hero-fit-me-real-hd.png',
-  apiBaseUrl: runtimeEnvironment.VITE_API_BASE_URL ?? '',
+  // Same-origin /api on Vercel (and Vite proxy in local dev). Override with VITE_API_BASE_URL if needed.
+  apiBaseUrl:
+    runtimeEnvironment.VITE_API_BASE_URL ??
+    (runtimeEnvironment.PROD || runtimeEnvironment.MODE === 'production' ? '/api' : '/api'),
   stripePublishableKey: runtimeEnvironment.VITE_STRIPE_PUBLISHABLE_KEY ?? '',
   paypalClientId: runtimeEnvironment.VITE_PAYPAL_CLIENT_ID ?? '',
   gaId: runtimeEnvironment.VITE_GA_ID ?? '',
