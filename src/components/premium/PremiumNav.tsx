@@ -88,24 +88,18 @@ export function PremiumNav() {
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed inset-x-0 top-0 z-50 transition-[background,box-shadow,backdrop-filter] duration-500 ${
           scrolled
-            ? 'border-b border-charcoal/8 bg-ivory/90 shadow-[0_8px_40px_-24px_rgba(43,43,43,0.25)] backdrop-blur-xl dark:border-white/8 dark:bg-graphite/90'
-            : 'border-b border-transparent bg-gradient-to-b from-ivory/70 to-transparent dark:from-graphite/50'
+            ? 'border-b border-charcoal/8 bg-ivory/92 shadow-[0_8px_40px_-24px_rgba(43,43,43,0.25)] backdrop-blur-xl dark:border-white/8 dark:bg-graphite/92'
+            : 'border-b border-transparent bg-gradient-to-b from-ivory/75 to-transparent dark:from-graphite/55'
         }`}
       >
-        <div className="mx-auto grid h-[4.75rem] max-w-7xl grid-cols-[1fr_auto] items-center gap-3 px-4 sm:h-[5.25rem] sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:px-10">
-          {/* Brand — left */}
-          <div className="min-w-0 justify-self-start">
-            <BrandLogo
-              to="/"
-              size="md"
-              showName
-              showTagline
-              className="!h-10 sm:!h-11"
-            />
+        <div className="mx-auto flex h-[4.75rem] max-w-7xl items-center gap-4 px-4 sm:h-[5.5rem] sm:gap-6 sm:px-6 lg:px-10">
+          {/* Left — full logo (mark + Hautoria + tagline) */}
+          <div className="shrink-0">
+            <BrandLogo to="/" size="lg" fullLockup />
           </div>
 
-          {/* Links — center (desktop) */}
-          <nav className="hidden items-center gap-7 lg:flex">
+          {/* Desktop links — after logo */}
+          <nav className="ml-2 hidden min-w-0 flex-1 items-center gap-6 lg:flex xl:gap-8">
             <div
               className="relative"
               onMouseEnter={() => setMegaOpen(true)}
@@ -113,7 +107,7 @@ export function PremiumNav() {
             >
               <button
                 type="button"
-                className="flex items-center gap-1 text-[0.62rem] uppercase tracking-[0.22em] text-charcoal/65 transition-colors hover:text-charcoal dark:text-ivory/65 dark:hover:text-ivory"
+                className="flex items-center gap-1 text-[0.62rem] uppercase tracking-[0.22em] text-charcoal/70 transition-colors hover:text-charcoal dark:text-ivory/70 dark:hover:text-ivory"
               >
                 Shop <ChevronDownIcon className="h-3 w-3 opacity-70" />
               </button>
@@ -124,7 +118,7 @@ export function PremiumNav() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.22 }}
-                    className="absolute left-1/2 top-full z-50 mt-5 w-[34rem] -translate-x-1/2 rounded-2xl border border-charcoal/8 bg-ivory/95 p-8 shadow-luxe backdrop-blur-xl dark:border-white/10 dark:bg-graphite/95"
+                    className="absolute left-0 top-full z-50 mt-5 w-[34rem] rounded-2xl border border-charcoal/8 bg-ivory/95 p-8 shadow-luxe backdrop-blur-xl dark:border-white/10 dark:bg-graphite/95"
                   >
                     <div className="grid grid-cols-3 gap-8">
                       {megaMenu.map((col) => (
@@ -161,15 +155,14 @@ export function PremiumNav() {
               <NavLink
                 key={link.to}
                 to={link.to}
-                className="text-[0.62rem] uppercase tracking-[0.22em] text-charcoal/65 transition-colors hover:text-charcoal dark:text-ivory/65 dark:hover:text-ivory"
+                className="text-[0.62rem] uppercase tracking-[0.22em] text-charcoal/70 transition-colors hover:text-charcoal dark:text-ivory/70 dark:hover:text-ivory"
               >
                 {link.label}
               </NavLink>
             ))}
           </nav>
 
-          {/* Actions — right */}
-          <div className="flex items-center justify-end gap-0.5 justify-self-end sm:gap-1">
+          <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
             <Magnetic strength={0.22}>
               <button
                 type="button"
@@ -252,19 +245,13 @@ export function PremiumNav() {
             className="fixed inset-0 z-[80] bg-charcoal/95 backdrop-blur-xl lg:hidden"
           >
             <div className="flex h-full flex-col px-6 pb-10 pt-6 text-ivory">
-              <div className="flex items-center justify-between">
-                <BrandLogo
-                  to="/"
-                  size="md"
-                  showName
-                  showTagline
-                  className="brightness-0 invert"
-                />
+              <div className="flex items-center justify-between gap-4">
+                <BrandLogo to="/" size="md" fullLockup className="brightness-0 invert" />
                 <button
                   type="button"
                   onClick={() => setMenuOpen(false)}
                   aria-label="Close"
-                  className="flex h-11 w-11 items-center justify-center rounded-full"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
                 >
                   <XIcon strokeWidth={1.5} />
                 </button>
@@ -291,9 +278,6 @@ export function PremiumNav() {
                   </button>
                 ))}
               </nav>
-              <p className="text-[0.58rem] uppercase tracking-[0.28em] text-ivory/35">
-                Crafted for Timeless Skin.
-              </p>
             </div>
           </motion.div>
         )}

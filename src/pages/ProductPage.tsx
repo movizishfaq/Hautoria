@@ -125,7 +125,7 @@ export function ProductPage() {
 
   return (
     <>
-      <main className="mx-auto max-w-7xl px-4 pb-44 pt-24 sm:px-6 lg:pb-20 lg:pt-28">
+      <main className="mx-auto max-w-7xl px-4 pb-44 pt-28 sm:px-6 lg:pb-20 lg:pt-32">
         <p className="mb-8 text-[.58rem] uppercase tracking-luxe text-charcoal/40 dark:text-ivory/40">
           <Link to="/shop">Shop</Link> / <span className="capitalize">{product.category}</span>
         </p>

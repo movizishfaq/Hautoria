@@ -34,7 +34,7 @@ export function CartPage() {
   const shipping = 250;
   const total = Math.max(0, subtotal + shipping - discountAmount);
   return (
-    <main className="mx-auto min-h-screen max-w-6xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">
+    <main className="mx-auto min-h-screen max-w-6xl px-4 pb-10 pt-28 sm:px-6 sm:pt-32">
       <p className="text-[.64rem] uppercase tracking-luxe text-gold">
         Your ritual edit
       </p>

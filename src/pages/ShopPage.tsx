@@ -50,7 +50,7 @@ export function ShopPage() {
   ) :
   undefined;
   return (
-    <div className="min-h-screen bg-ivory pt-24 dark:bg-graphite">
+    <div className="min-h-screen bg-ivory pt-28 dark:bg-graphite">
       <section className="border-b border-charcoal/10 px-6 pb-12 pt-8 dark:border-white/10">
         <div className="mx-auto max-w-7xl">
           <p className="text-[.64rem] uppercase tracking-luxe text-gold">

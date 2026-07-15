@@ -57,7 +57,7 @@ export function SupportPage() {
       </main>);
 
   return (
-    <main className="mx-auto min-h-screen max-w-6xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">
+    <main className="mx-auto min-h-screen max-w-6xl px-4 pb-10 pt-28 sm:px-6 sm:pt-32">
       <p className="text-[.62rem] uppercase tracking-luxe text-gold">
         Concierge
       </p>
