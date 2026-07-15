@@ -18,7 +18,7 @@ const heights: Record<NonNullable<BrandLogoProps['size']>, string> = {
 };
 
 const nameSizes: Record<NonNullable<BrandLogoProps['size']>, string> = {
-  sm: 'text-lg',
+  sm: 'text-base',
   md: 'text-xl',
   lg: 'text-2xl',
   xl: 'text-3xl',
@@ -32,23 +32,23 @@ export function BrandLogo({
   showTagline = false,
 }: BrandLogoProps) {
   const content = (
-    <span className="inline-flex items-center gap-2.5">
+    <span className="inline-flex items-center gap-3.5 sm:gap-4 lg:gap-5">
       <img
         src={appConfig.logoUrl}
         alt=""
         width={320}
         height={120}
-        className={`${heights[size]} w-auto object-contain dark:brightness-0 dark:invert ${className}`.trim()}
+        className={`${heights[size]} w-auto shrink-0 object-contain dark:brightness-0 dark:invert ${className}`.trim()}
       />
       {showName && (
-        <span className="min-w-0 leading-tight">
+        <span className="flex min-w-0 flex-col justify-center leading-none">
           <span
-            className={`block font-serif tracking-tight text-charcoal dark:text-ivory ${nameSizes[size]}`}
+            className={`block font-serif font-medium tracking-tight text-charcoal dark:text-ivory ${nameSizes[size]}`}
           >
             {appConfig.brandName}
           </span>
           {showTagline && (
-            <span className="mt-0.5 hidden text-[0.52rem] uppercase tracking-luxe text-charcoal/45 dark:text-ivory/45 sm:block">
+            <span className="mt-1 hidden text-[0.52rem] uppercase tracking-luxe text-charcoal/45 dark:text-ivory/45 sm:block">
               {appConfig.brandTagline}
             </span>
           )}
@@ -62,7 +62,7 @@ export function BrandLogo({
       <span
         role="img"
         aria-label={`${appConfig.brandName} — ${appConfig.brandTagline}`}
-        className="inline-flex shrink-0"
+        className="inline-flex shrink-0 items-center"
       >
         {content}
       </span>
