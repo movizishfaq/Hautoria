@@ -71,7 +71,7 @@ export function OrderPage({ success = false }: { success?: boolean }) {
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-4 pb-10 pt-32 sm:px-6 sm:pt-36">
+    <main className="mx-auto max-w-5xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">
       {success && (
         <div className="mb-10 rounded-[2rem] bg-sage p-7">
           <CheckCircle2Icon className="h-8 w-8 text-gold" />
