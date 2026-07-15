@@ -11,17 +11,24 @@ type BrandLogoProps = {
 };
 
 const mark: Record<NonNullable<BrandLogoProps['size']>, string> = {
-  sm: 'h-8',
-  md: 'h-10',
-  lg: 'h-12',
+  sm: 'h-9',
+  md: 'h-11',
+  lg: 'h-[3.25rem]',
   xl: 'h-16',
 };
 
 const wordmark: Record<NonNullable<BrandLogoProps['size']>, string> = {
-  sm: 'text-lg',
-  md: 'text-[1.35rem]',
-  lg: 'text-2xl',
-  xl: 'text-3xl',
+  sm: 'text-xl',
+  md: 'text-[1.65rem] sm:text-[1.85rem]',
+  lg: 'text-3xl',
+  xl: 'text-4xl',
+};
+
+const taglineSize: Record<NonNullable<BrandLogoProps['size']>, string> = {
+  sm: 'text-[0.48rem]',
+  md: 'text-[0.52rem] sm:text-[0.55rem]',
+  lg: 'text-[0.58rem]',
+  xl: 'text-[0.62rem]',
 };
 
 export function BrandLogo({
@@ -41,15 +48,16 @@ export function BrandLogo({
         className={`${mark[size]} w-auto shrink-0 object-contain object-center dark:brightness-0 dark:invert ${className}`.trim()}
       />
       {showName && (
-        <span className="flex flex-col justify-center">
+        <span className="flex min-w-0 flex-col justify-center">
           <span
             className={`font-serif font-medium leading-none tracking-[-0.02em] text-charcoal dark:text-ivory ${wordmark[size]}`}
-            style={{ transform: 'translateY(0.5px)' }}
           >
             {appConfig.brandName}
           </span>
           {showTagline && (
-            <span className="mt-1 text-[0.5rem] uppercase tracking-[0.28em] text-charcoal/40 dark:text-ivory/40">
+            <span
+              className={`mt-1.5 uppercase tracking-[0.22em] text-charcoal/45 dark:text-ivory/45 ${taglineSize[size]}`}
+            >
               {appConfig.brandTagline}
             </span>
           )}

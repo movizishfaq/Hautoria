@@ -92,10 +92,16 @@ export function PremiumNav() {
             : 'border-b border-transparent bg-gradient-to-b from-ivory/70 to-transparent dark:from-graphite/50'
         }`}
       >
-        <div className="mx-auto grid h-[4.25rem] max-w-7xl grid-cols-[1fr_auto] items-center gap-3 px-4 sm:h-[4.75rem] sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:px-10">
+        <div className="mx-auto grid h-[4.75rem] max-w-7xl grid-cols-[1fr_auto] items-center gap-3 px-4 sm:h-[5.25rem] sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:px-10">
           {/* Brand — left */}
-          <div className="justify-self-start">
-            <BrandLogo to="/" size="md" showName className="!h-9 sm:!h-10" />
+          <div className="min-w-0 justify-self-start">
+            <BrandLogo
+              to="/"
+              size="md"
+              showName
+              showTagline
+              className="!h-10 sm:!h-11"
+            />
           </div>
 
           {/* Links — center (desktop) */}
@@ -251,6 +257,7 @@ export function PremiumNav() {
                   to="/"
                   size="md"
                   showName
+                  showTagline
                   className="brightness-0 invert"
                 />
                 <button
