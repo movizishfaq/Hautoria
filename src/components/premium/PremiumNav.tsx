@@ -86,7 +86,7 @@ export function PremiumNav() {
             : 'bg-transparent'
         }`}>
         <div className="mx-auto flex h-[5rem] max-w-7xl items-center justify-between gap-4 px-5 lg:h-[4.5rem] lg:px-10">
-          <BrandLogo to="/" className="!h-[4.25rem] sm:!h-[4.75rem] lg:!h-14" />
+          <BrandLogo to="/" showTagline className="!h-[4.25rem] sm:!h-[4.75rem] lg:!h-14" />
 
           <nav className="hidden items-center gap-8 lg:flex">
             <div

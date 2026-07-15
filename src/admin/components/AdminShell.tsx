@@ -50,7 +50,7 @@ export function AdminShell() {
       <div className="flex items-center justify-between gap-2 border-b border-[var(--admin-border)] p-4">
         {!collapsed && (
           <div className="min-w-0">
-            <BrandLogo to="/admin" size="sm" />
+            <BrandLogo to="/admin" size="sm" showTagline={false} />
             <p className="mt-1 text-xs text-[var(--admin-muted)]">Admin</p>
           </div>
         )}

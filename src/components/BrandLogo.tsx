@@ -6,6 +6,8 @@ type BrandLogoProps = {
   to?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
+  showName?: boolean;
+  showTagline?: boolean;
 };
 
 const heights: Record<NonNullable<BrandLogoProps['size']>, string> = {
@@ -15,26 +17,65 @@ const heights: Record<NonNullable<BrandLogoProps['size']>, string> = {
   xl: 'h-20',
 };
 
+const nameSizes: Record<NonNullable<BrandLogoProps['size']>, string> = {
+  sm: 'text-lg',
+  md: 'text-xl',
+  lg: 'text-2xl',
+  xl: 'text-3xl',
+};
+
 export function BrandLogo({
   to = '/',
   size = 'md',
   className = '',
+  showName = true,
+  showTagline = false,
 }: BrandLogoProps) {
-  const image = (
-    <img
-      src={appConfig.logoUrl}
-      alt={`${appConfig.brandName} — ${appConfig.brandTagline}`}
-      width={320}
-      height={120}
-      className={`${heights[size]} w-auto object-contain dark:brightness-0 dark:invert ${className}`.trim()}
-    />
+  const content = (
+    <span className="inline-flex items-center gap-2.5">
+      <img
+        src={appConfig.logoUrl}
+        alt=""
+        width={320}
+        height={120}
+        className={`${heights[size]} w-auto object-contain dark:brightness-0 dark:invert ${className}`.trim()}
+      />
+      {showName && (
+        <span className="min-w-0 leading-tight">
+          <span
+            className={`block font-serif tracking-tight text-charcoal dark:text-ivory ${nameSizes[size]}`}
+          >
+            {appConfig.brandName}
+          </span>
+          {showTagline && (
+            <span className="mt-0.5 hidden text-[0.52rem] uppercase tracking-luxe text-charcoal/45 dark:text-ivory/45 sm:block">
+              {appConfig.brandTagline}
+            </span>
+          )}
+        </span>
+      )}
+    </span>
   );
 
-  if (!to) return image;
+  if (!to) {
+    return (
+      <span
+        role="img"
+        aria-label={`${appConfig.brandName} — ${appConfig.brandTagline}`}
+        className="inline-flex shrink-0"
+      >
+        {content}
+      </span>
+    );
+  }
 
   return (
-    <Link to={to} className="inline-flex shrink-0 transition-opacity hover:opacity-90">
-      {image}
+    <Link
+      to={to}
+      aria-label={`${appConfig.brandName} — ${appConfig.brandTagline}`}
+      className="inline-flex shrink-0 items-center transition-opacity hover:opacity-90"
+    >
+      {content}
     </Link>
   );
 }
