@@ -46,6 +46,27 @@ const deliveryFields: Array<keyof Address> = [
   'phone',
 ];
 
+const fieldLabels: Record<string, string> = {
+  email: 'email',
+  firstName: 'first name',
+  lastName: 'last name',
+  line1: 'address',
+  city: 'city',
+  postalCode: 'postal code',
+  country: 'country',
+  phone: 'phone number',
+};
+
+function labelFor(field: keyof Address) {
+  return (
+    fieldLabels[field] ??
+    field
+      .replace('line1', 'Address')
+      .replace('postalCode', 'Postal code')
+      .replace(/([A-Z])/g, ' $1')
+  );
+}
+
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, user, addOrder, clearCart, notify } = useAppState();
@@ -59,6 +80,8 @@ export function CheckoutPage() {
     usePoints: false,
   });
   const [processing, setProcessing] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState(false);
 
   const lines = cart.flatMap((line) => {
     const product = products.find((item) => item.id === line.productId);
@@ -76,7 +99,7 @@ export function CheckoutPage() {
   const tax = Math.round(subtotal * 0.05);
   const total = Math.max(0, subtotal + shipping + tax);
 
-  const updateAddress = (field: keyof Address, value: string) =>
+  const updateAddress = (field: keyof Address, value: string) => {
     setDraft((current) => ({
       ...current,
       address: {
@@ -84,20 +107,83 @@ export function CheckoutPage() {
         [field]: value,
       },
     }));
+    if (errors[field]) {
+      setErrors((current) => {
+        const next = { ...current };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
+  const validateContact = () => {
+    const next: Record<string, string> = {};
+    if (!draft.email.trim()) {
+      next.email = 'Please fill email';
+    } else if (!draft.email.includes('@') || !draft.email.includes('.')) {
+      next.email = 'Please enter a valid email';
+    }
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
+  const validateDelivery = () => {
+    const addr = draft.address ?? emptyAddress;
+    const next: Record<string, string> = {};
+    for (const field of deliveryFields) {
+      const value = String(addr[field] ?? '').trim();
+      if (!value) {
+        next[field] = `Please fill ${labelFor(field)}`;
+      }
+    }
+    const phone = String(addr.phone ?? '').trim();
+    if (phone && phone.replace(/\D/g, '').length < 10) {
+      next.phone = 'Please enter a valid phone number';
+    }
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
+  const validatePayment = () => {
+    if (!draft.paymentProvider) {
+      notify('Please choose a payment method', 'error');
+      return false;
+    }
+    setErrors({});
+    return true;
+  };
+
+  const goNext = () => {
+    setTouched(true);
+    if (step === 0 && !validateContact()) {
+      notify('Please fill all required fields', 'error');
+      return;
+    }
+    if (step === 1 && !validateDelivery()) {
+      notify('Please fill all required fields', 'error');
+      return;
+    }
+    if (step === 2 && !validatePayment()) return;
+    setErrors({});
+    setStep((current) => current + 1);
+  };
 
   const place = async () => {
-    const addr = draft.address;
-    const missing =
-      !draft.email.includes('@') ||
-      !addr?.firstName?.trim() ||
-      !addr?.lastName?.trim() ||
-      !addr?.line1?.trim() ||
-      !addr?.city?.trim() ||
-      !addr?.postalCode?.trim() ||
-      !addr?.phone?.trim();
-    if (missing) {
-      notify('Complete contact and delivery details', 'error');
+    setTouched(true);
+    const contactOk = validateContact();
+    if (!contactOk) {
+      notify('Please fill all required fields', 'error');
       setStep(0);
+      return;
+    }
+    const deliveryOk = validateDelivery();
+    if (!deliveryOk) {
+      notify('Please fill all required fields', 'error');
+      setStep(1);
+      return;
+    }
+    if (!validatePayment()) {
+      setStep(2);
       return;
     }
     if (!lines.length) {
@@ -195,17 +281,33 @@ export function CheckoutPage() {
                   type="email"
                   required
                   value={draft.email}
-                  onChange={(event) =>
+                  onChange={(event) => {
                     setDraft({
                       ...draft,
                       email: event.target.value,
-                    })
-                  }
-                  className="mt-2 w-full rounded-xl border border-charcoal/15 bg-transparent p-3 text-base normal-case tracking-normal outline-none focus:border-gold dark:border-white/15"
+                    });
+                    if (errors.email) {
+                      setErrors((current) => {
+                        const next = { ...current };
+                        delete next.email;
+                        return next;
+                      });
+                    }
+                  }}
+                  className={`mt-2 w-full rounded-xl border bg-transparent p-3 text-base normal-case tracking-normal outline-none focus:border-gold dark:border-white/15 ${
+                    errors.email
+                      ? 'border-red-500'
+                      : 'border-charcoal/15'
+                  }`}
                   placeholder="you@example.com"
                   autoComplete="email"
                 />
               </label>
+              {errors.email && (
+                <p className="mt-2 text-xs normal-case tracking-normal text-red-500">
+                  {errors.email}
+                </p>
+              )}
               {user?.email &&
                 !user.email.includes('example.com') &&
                 !user.email.includes('hautoria.demo') &&
@@ -235,18 +337,25 @@ export function CheckoutPage() {
                       field === 'line1' ? 'sm:col-span-2' : ''
                     }`}
                   >
-                    {field
-                      .replace('line1', 'Address')
-                      .replace('postalCode', 'Postal code')
-                      .replace(/([A-Z])/g, ' $1')}
+                    {labelFor(field)}
                     <input
+                      required
                       value={String(draft.address?.[field] ?? '')}
                       onChange={(event) =>
                         updateAddress(field, event.target.value)
                       }
-                      className="mt-2 w-full rounded-xl border border-charcoal/15 bg-transparent p-3 text-sm normal-case tracking-normal outline-none focus:border-gold dark:border-white/15"
+                      className={`mt-2 w-full rounded-xl border bg-transparent p-3 text-sm normal-case tracking-normal outline-none focus:border-gold dark:border-white/15 ${
+                        errors[field]
+                          ? 'border-red-500'
+                          : 'border-charcoal/15'
+                      }`}
                       autoComplete="off"
                     />
+                    {errors[field] && (
+                      <span className="mt-1.5 block text-xs normal-case tracking-normal text-red-500">
+                        {errors[field]}
+                      </span>
+                    )}
                   </label>
                 ))}
               </div>
@@ -337,13 +446,15 @@ export function CheckoutPage() {
             </button>
             {step < 3 ? (
               <button
-                onClick={() => setStep(step + 1)}
+                type="button"
+                onClick={goNext}
                 className="flex items-center gap-2 rounded-full bg-charcoal px-6 py-3 text-xs uppercase tracking-luxe text-ivory dark:bg-ivory dark:text-charcoal"
               >
                 Continue <ChevronRightIcon className="h-4 w-4" />
               </button>
             ) : (
               <button
+                type="button"
                 disabled={processing}
                 onClick={place}
                 className="rounded-full bg-charcoal px-6 py-3 text-xs uppercase tracking-luxe text-ivory disabled:opacity-50 dark:bg-ivory dark:text-charcoal"
@@ -354,6 +465,11 @@ export function CheckoutPage() {
               </button>
             )}
           </div>
+          {touched && Object.keys(errors).length > 0 && (
+            <p className="mt-4 text-sm text-red-500">
+              Please fill the highlighted fields to continue.
+            </p>
+          )}
         </section>
 
         <aside className="h-fit rounded-[2rem] bg-beige p-6 dark:bg-white/5">
