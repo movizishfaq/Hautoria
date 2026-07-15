@@ -93,8 +93,8 @@ export function PremiumNav() {
             : 'border-b border-transparent bg-gradient-to-b from-ivory/75 to-transparent dark:from-graphite/55'
         }`}
       >
-        <div className="relative mx-auto flex h-[4.75rem] max-w-7xl items-center px-4 sm:h-[5.5rem] sm:px-6 lg:px-10">
-          {/* 1 — Logo */}
+        <div className="relative mx-auto flex h-[5.25rem] max-w-7xl items-center px-4 sm:h-[5.75rem] sm:px-6 lg:px-10">
+          {/* 1 — Logo image (full artwork, no crop) */}
           <div className="relative z-10 shrink-0">
             <BrandLogo to="/" size="lg" showName={false} />
           </div>
@@ -261,7 +261,7 @@ export function PremiumNav() {
           >
             <div className="flex h-full flex-col px-6 pb-10 pt-6 text-ivory">
               <div className="flex items-center justify-between gap-4">
-                <BrandLogo to="/" size="md" showName showTagline className="brightness-0 invert" />
+                <BrandLogo to="/" size="md" showName={false} className="!invert-0" />
                 <button
                   type="button"
                   onClick={() => setMenuOpen(false)}
