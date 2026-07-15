@@ -57,11 +57,11 @@ export function SupportPage() {
       </main>);
 
   return (
-    <main className="mx-auto min-h-screen max-w-6xl px-6 py-14">
+    <main className="mx-auto min-h-screen max-w-6xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">
       <p className="text-[.62rem] uppercase tracking-luxe text-gold">
         Concierge
       </p>
-      <h1 className="mt-3 font-serif text-5xl">{title}</h1>
+      <h1 className="mt-3 font-serif text-4xl sm:text-5xl">{title}</h1>
       <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-2">
         <section className="rounded-[2rem] bg-beige p-7 dark:bg-white/5">
           <h2 className="font-serif text-3xl">Send a note</h2>

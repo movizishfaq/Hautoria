@@ -144,25 +144,25 @@ export function CheckoutPage() {
     payments.find((entry) => entry.id === draft.paymentProvider)?.label ?? '';
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
-      <div className="mb-10 flex items-center justify-between">
-        <div>
+    <main className="mx-auto max-w-6xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">
+      <div className="mb-8 flex items-start justify-between gap-4 sm:mb-10">
+        <div className="min-w-0">
           <p className="text-[.62rem] uppercase tracking-luxe text-gold">
             Secure checkout
           </p>
-          <h1 className="mt-2 font-serif text-4xl">A ritual, almost yours.</h1>
+          <h1 className="mt-2 font-serif text-3xl sm:text-4xl">A ritual, almost yours.</h1>
         </div>
         <p className="hidden items-center gap-2 text-xs text-charcoal/55 sm:flex dark:text-ivory/55">
           <LockKeyholeIcon className="h-4 w-4 text-gold" /> Secure checkout
         </p>
       </div>
 
-      <div className="mb-10 flex overflow-x-auto border-b border-charcoal/10 dark:border-white/10">
+      <div className="-mx-4 mb-10 flex snap-x snap-mandatory overflow-x-auto border-b border-charcoal/10 px-4 dark:border-white/10 sm:mx-0 sm:px-0">
         {steps.map((label, index) => (
           <button
             key={label}
             onClick={() => index < step && setStep(index)}
-            className={`flex shrink-0 items-center gap-2 px-4 py-4 text-[.62rem] uppercase tracking-luxe ${
+            className={`flex shrink-0 snap-start items-center gap-2 px-3 py-4 text-[.62rem] uppercase tracking-luxe sm:px-4 ${
               index === step
                 ? 'border-b-2 border-gold text-charcoal dark:text-ivory'
                 : 'text-charcoal/40 dark:text-ivory/40'

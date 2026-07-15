@@ -44,8 +44,8 @@ export function StickyAddToCart({
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-charcoal/10 glass px-4 py-3 shadow-luxe-lg dark:glass-dark lg:bottom-6 lg:left-auto lg:right-6 lg:max-w-md lg:rounded-2xl lg:border">
-          <div className="mx-auto flex max-w-7xl items-center gap-4">
+          className="fixed inset-x-0 bottom-[calc(3.75rem+env(safe-area-inset-bottom))] z-[60] border-t border-charcoal/10 glass px-4 py-3 shadow-luxe-lg dark:glass-dark lg:bottom-6 lg:left-auto lg:right-6 lg:z-40 lg:max-w-md lg:rounded-2xl lg:border">
+          <div className="mx-auto flex max-w-7xl items-center gap-3 sm:gap-4">
             <div className={`hidden h-12 w-12 shrink-0 rounded-xl sm:block ${product.accent} p-1.5`}>
               <img src={product.image} alt="" className="h-full object-contain" />
             </div>
@@ -55,9 +55,10 @@ export function StickyAddToCart({
             </div>
             <button
               onClick={onAdd}
-              className="flex shrink-0 items-center gap-2 rounded-full bg-charcoal px-6 py-3 text-[0.58rem] uppercase tracking-luxe text-ivory dark:bg-ivory dark:text-charcoal">
+              className="flex min-h-[44px] shrink-0 items-center gap-2 rounded-full bg-charcoal px-5 py-3 text-[0.58rem] uppercase tracking-luxe text-ivory sm:px-6 dark:bg-ivory dark:text-charcoal">
               <ShoppingBagIcon className="h-4 w-4" />
-              Add to Cart
+              <span className="sm:hidden">Add</span>
+              <span className="hidden sm:inline">Add to Cart</span>
             </button>
           </div>
         </motion.div>
@@ -124,7 +125,7 @@ export function ProductPage() {
 
   return (
     <>
-      <main className="mx-auto max-w-7xl px-6 pb-32 pt-24 lg:pb-20 lg:pt-28">
+      <main className="mx-auto max-w-7xl px-4 pb-44 pt-24 sm:px-6 lg:pb-20 lg:pt-28">
         <p className="mb-8 text-[.58rem] uppercase tracking-luxe text-charcoal/40 dark:text-ivory/40">
           <Link to="/shop">Shop</Link> / <span className="capitalize">{product.category}</span>
         </p>

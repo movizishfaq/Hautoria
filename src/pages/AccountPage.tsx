@@ -27,15 +27,15 @@ const nav = [
 export function AccountLayout() {
   const { user } = useAppState();
   return (
-    <main className="mx-auto min-h-screen max-w-7xl px-6 py-10">
+    <main className="mx-auto min-h-screen max-w-7xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">
       <p className="text-[.62rem] uppercase tracking-luxe text-gold">
         My Hautoria
       </p>
-      <h1 className="mt-3 font-serif text-5xl">
+      <h1 className="mt-3 font-serif text-4xl sm:text-5xl">
         Hello, {user?.name.split(' ')[0] ?? 'there'}.
       </h1>
-      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[220px_1fr]">
-        <aside className="h-fit overflow-x-auto lg:overflow-visible">
+      <div className="mt-8 grid grid-cols-1 gap-8 sm:mt-10 lg:grid-cols-[220px_1fr]">
+        <aside className="h-fit -mx-4 overflow-x-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0">
           <nav className="flex gap-2 lg:flex-col">
             {nav.map(([to, label, Icon]) =>
             <NavLink
@@ -43,7 +43,7 @@ export function AccountLayout() {
               key={to}
               to={to}
               className={({ isActive }) =>
-              `flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-sm ${isActive ? 'bg-charcoal text-ivory dark:bg-ivory dark:text-charcoal' : 'hover:bg-beige dark:hover:bg-white/5'}`
+              `flex min-h-[44px] shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-sm ${isActive ? 'bg-charcoal text-ivory dark:bg-ivory dark:text-charcoal' : 'hover:bg-beige dark:hover:bg-white/5'}`
               }>
               
                 <Icon className="h-4 w-4" />

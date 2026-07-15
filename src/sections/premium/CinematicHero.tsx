@@ -99,8 +99,8 @@ export function CinematicHero() {
               <BadgePercentIcon className="h-4 w-4 text-gold" />
             </span>
             <p className="min-w-0 text-left text-[0.65rem] uppercase leading-snug tracking-wide text-charcoal sm:text-[0.62rem] sm:tracking-luxe dark:text-ivory">
-              <span className="whitespace-nowrap">Use code </span>
-              <strong className="whitespace-nowrap text-gold">GLOW10</strong>
+              <span>Use code </span>
+              <strong className="text-gold">GLOW10</strong>
               <span className="hidden sm:inline"> — </span>
               <span className="block sm:inline">10% off your first ritual</span>
             </p>
@@ -358,9 +358,9 @@ export function CinematicHero() {
               <motion.div
                 animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 4, repeat: Infinity }}
-                className="absolute -right-2 -top-2 z-30 rounded-2xl border border-gold/30 bg-charcoal px-4 py-3 text-ivory shadow-luxe dark:bg-ivory dark:text-charcoal">
+                className="absolute right-2 top-2 z-30 rounded-2xl border border-gold/30 bg-charcoal px-3 py-2.5 text-ivory shadow-luxe sm:-right-2 sm:-top-2 sm:px-4 sm:py-3 dark:bg-ivory dark:text-charcoal">
                 <p className="text-[0.55rem] uppercase tracking-luxe text-gold">Live store</p>
-                <p className="font-serif text-xl">{productCountLabel}</p>
+                <p className="font-serif text-lg sm:text-xl">{productCountLabel}</p>
                 <p className="text-[0.55rem] uppercase tracking-luxe opacity-70">Products</p>
               </motion.div>
             </motion.div>

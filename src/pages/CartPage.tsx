@@ -34,11 +34,11 @@ export function CartPage() {
   const shipping = 250;
   const total = Math.max(0, subtotal + shipping - discountAmount);
   return (
-    <main className="mx-auto min-h-screen max-w-6xl px-6 py-14">
+    <main className="mx-auto min-h-screen max-w-6xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">
       <p className="text-[.64rem] uppercase tracking-luxe text-gold">
         Your ritual edit
       </p>
-      <h1 className="mt-3 font-serif text-5xl">Shopping bag</h1>
+      <h1 className="mt-3 font-serif text-4xl sm:text-5xl">Shopping bag</h1>
       {!lines.length ?
       <div className="mt-10">
           <EmptyState
@@ -52,10 +52,10 @@ export function CartPage() {
             {lines.map((line) =>
           <article
             key={`${line.productId}-${line.variantId}`}
-            className="flex gap-5 border-b border-charcoal/10 pb-5 dark:border-white/10">
+            className="flex flex-col gap-4 border-b border-charcoal/10 pb-5 sm:flex-row sm:gap-5 dark:border-white/10">
             
                 <div
-              className={`h-32 w-28 shrink-0 rounded-2xl ${line.product.accent} p-3`}>
+              className={`mx-auto h-36 w-full max-w-[9rem] shrink-0 rounded-2xl sm:mx-0 sm:h-32 sm:w-28 ${line.product.accent} p-3`}>
               
                   <img
                 src={line.product.image}
@@ -63,12 +63,12 @@ export function CartPage() {
                 className="h-full w-full object-contain" />
               
                 </div>
-                <div className="flex-1">
-                  <div className="flex justify-between gap-3">
-                    <div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-col justify-between gap-2 sm:flex-row sm:gap-3">
+                    <div className="min-w-0">
                       <Link
                     to={`/products/${line.product.slug}`}
-                    className="font-serif text-2xl">
+                    className="font-serif text-xl sm:text-2xl">
                     
                         {line.product.name}
                       </Link>

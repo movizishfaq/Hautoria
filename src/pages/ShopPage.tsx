@@ -71,7 +71,7 @@ export function ShopPage() {
             </div>
             <button
               onClick={() => setFiltersOpen(!filtersOpen)}
-              className="flex items-center justify-center gap-2 rounded-2xl border border-charcoal/15 px-5 text-[.66rem] uppercase tracking-luxe dark:border-white/15">
+              className="flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-charcoal/15 px-5 py-3 text-[.66rem] uppercase tracking-luxe dark:border-white/15">
               
               <SlidersHorizontalIcon className="h-4 w-4" /> Filters
             </button>
@@ -89,7 +89,7 @@ export function ShopPage() {
       </section>
       <main className="mx-auto max-w-7xl px-6 py-10">
         <div
-          className={`${filtersOpen ? 'grid' : 'hidden'} mb-8 grid-cols-1 gap-4 rounded-2xl bg-beige p-5 sm:grid-cols-4 dark:bg-white/5`}>
+          className={`${filtersOpen ? 'grid' : 'hidden'} mb-8 grid-cols-1 gap-4 rounded-2xl bg-beige p-5 sm:grid-cols-2 lg:grid-cols-4 dark:bg-white/5`}>
           
           <label className="text-xs uppercase tracking-luxe">
             Category

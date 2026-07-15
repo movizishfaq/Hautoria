@@ -22,21 +22,21 @@ export function MobileBottomNav() {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-charcoal/10 glass pb-safe lg:hidden dark:glass-dark">
-      <div className="mx-auto flex max-w-lg items-center justify-around px-2 py-2">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-charcoal/10 glass pb-[env(safe-area-inset-bottom)] lg:hidden dark:glass-dark">
+      <div className="mx-auto flex max-w-lg items-center justify-around px-1 py-1.5">
         {items.map((item) => {
           const active = item.to === location.pathname;
           const Icon = item.icon;
           const inner = (
             <motion.button
               whileTap={{ scale: 0.92 }}
-              className={`relative flex flex-col items-center gap-1 px-4 py-2 ${
+              className={`relative flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-0.5 px-2 py-1.5 ${
                 active ? 'text-gold' : 'text-charcoal/55 dark:text-ivory/55'
               }`}>
               <Icon className="h-5 w-5" strokeWidth={1.5} />
-              <span className="text-[0.5rem] uppercase tracking-luxe">{item.label}</span>
+              <span className="text-[0.6rem] uppercase tracking-wide">{item.label}</span>
               {item.badge ? (
-                <span className="absolute right-2 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[8px] text-charcoal">
+                <span className="absolute right-1 top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-gold px-1 text-[8px] text-charcoal">
                   {item.badge}
                 </span>
               ) : null}

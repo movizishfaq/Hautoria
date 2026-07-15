@@ -46,12 +46,12 @@ export function SearchOverlay() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search products, brands..."
-                className="flex-1 bg-transparent text-2xl font-light text-ivory outline-none placeholder:text-ivory/30"
+                className="flex-1 bg-transparent text-xl font-light text-ivory outline-none placeholder:text-ivory/30 sm:text-2xl"
               />
               <button
                 onClick={() => setSearchOpen(false)}
                 aria-label="Close search"
-                className="rounded-full p-2 text-ivory/60 hover:text-ivory">
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2 text-ivory/60 hover:text-ivory">
                 <XIcon className="h-6 w-6" />
               </button>
             </div>

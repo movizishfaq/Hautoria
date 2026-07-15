@@ -28,6 +28,8 @@ body {
   font-family: 'Jost', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  /* iOS notch / home indicator */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
 }
 /* Custom cursor: hide default on desktop pointer devices */
 @media (hover: hover) and (pointer: fine) {

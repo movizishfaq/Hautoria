@@ -85,8 +85,13 @@ export function PremiumNav() {
             ? 'glass shadow-glass dark:glass-dark'
             : 'bg-transparent'
         }`}>
-        <div className="mx-auto flex h-[5rem] max-w-7xl items-center justify-between gap-4 px-5 lg:h-[4.5rem] lg:px-10">
-          <BrandLogo to="/" showTagline className="!h-[4.25rem] sm:!h-[4.75rem] lg:!h-14" />
+        <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-2 px-4 sm:h-[5rem] sm:gap-4 sm:px-5 lg:h-[4.5rem] lg:px-10">
+          <span className="lg:hidden">
+            <BrandLogo to="/" showTagline={false} showName={false} className="!h-10 sm:!h-12" />
+          </span>
+          <span className="hidden lg:inline-flex">
+            <BrandLogo to="/" showTagline={false} className="!h-14" />
+          </span>
 
           <nav className="hidden items-center gap-8 lg:flex">
             <div
@@ -147,12 +152,12 @@ export function PremiumNav() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1">
             <Magnetic strength={0.25}>
               <button
                 onClick={() => setSearchOpen(true)}
                 aria-label="Search"
-                className="rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10">
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10">
                 <SearchIcon className="h-4 w-4" />
               </button>
             </Magnetic>
@@ -202,7 +207,7 @@ export function PremiumNav() {
             <button
               onClick={() => setMenuOpen(true)}
               aria-label="Menu"
-              className="rounded-full p-2.5 lg:hidden">
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2.5 lg:hidden">
               <MenuIcon className="h-5 w-5" />
             </button>
           </div>
@@ -217,9 +222,13 @@ export function PremiumNav() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[80] glass-dark lg:hidden">
             <div className="flex h-full flex-col p-6 text-ivory">
-              <div className="flex justify-between">
+              <div className="flex items-center justify-between">
                 <BrandLogo to="/" size="md" className="brightness-0 invert" />
-                <button onClick={() => setMenuOpen(false)} aria-label="Close">
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  aria-label="Close"
+                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full"
+                >
                   <XIcon />
                 </button>
               </div>

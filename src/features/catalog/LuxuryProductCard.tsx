@@ -98,28 +98,28 @@ export function LuxuryProductCard({
         <motion.div
           initial={false}
           animate={{ opacity: hovered ? 1 : 0 }}
-          className="pointer-events-none absolute inset-0 z-[5] bg-gradient-to-t from-charcoal/20 via-transparent to-transparent"
+          className="pointer-events-none absolute inset-0 z-[5] hidden bg-gradient-to-t from-charcoal/20 via-transparent to-transparent lg:block"
         />
 
-        <motion.div
-          initial={false}
-          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 16 }}
-          className={`absolute z-20 flex gap-2 ${
+        <div
+          className={`absolute z-20 flex gap-2 transition-all duration-300 ${
             compact ? 'inset-x-2 bottom-2' : 'inset-x-4 bottom-4'
-          }`}>
+          } opacity-100 translate-y-0 lg:pointer-events-none lg:translate-y-4 lg:opacity-0 lg:group-hover:pointer-events-auto lg:group-hover:translate-y-0 lg:group-hover:opacity-100`}>
           <button
+            type="button"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               addToCart(product);
             }}
-            className={`pointer-events-auto flex flex-1 items-center justify-center gap-1.5 rounded-full glass uppercase tracking-luxe text-charcoal backdrop-blur-xl transition-colors hover:bg-charcoal hover:text-ivory ${
-              compact ? 'py-2 text-[0.48rem]' : 'py-3 text-[0.58rem]'
+            className={`pointer-events-auto flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full glass uppercase tracking-luxe text-charcoal backdrop-blur-xl transition-colors hover:bg-charcoal hover:text-ivory ${
+              compact ? 'py-2 text-[0.55rem]' : 'py-3 text-[0.58rem]'
             }`}>
             <PlusIcon className={compact ? 'h-3 w-3' : 'h-3.5 w-3.5'} />
             {compact ? 'Add' : 'Quick Add'}
           </button>
           <button
+            type="button"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -127,14 +127,14 @@ export function LuxuryProductCard({
               notify(wished ? 'Removed from wishlist' : 'Saved to wishlist');
             }}
             aria-label="Wishlist"
-            className={`pointer-events-auto rounded-full glass backdrop-blur-xl ${
+            className={`pointer-events-auto flex min-h-[40px] min-w-[40px] items-center justify-center rounded-full glass backdrop-blur-xl ${
               compact ? 'p-2' : 'p-3'
             }`}>
             <HeartIcon
               className={`${wished ? 'fill-gold text-gold' : ''} ${compact ? 'h-3.5 w-3.5' : 'h-4 w-4'}`}
             />
           </button>
-        </motion.div>
+        </div>
       </div>
 
       <div className={compact ? 'px-0.5 pt-3' : 'px-1 pt-5'}>

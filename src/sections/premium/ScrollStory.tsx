@@ -15,12 +15,12 @@ export function ScrollStory() {
   const spotlight = catalogProducts.find((p) => p.name.includes('CeraVe')) ?? catalogProducts[10];
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-ivory py-32 dark:bg-[#141414]">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-6 lg:grid-cols-2 lg:px-10">
+    <section ref={ref} className="relative overflow-hidden bg-ivory py-20 sm:py-28 lg:py-32 dark:bg-[#141414]">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 sm:gap-16 sm:px-6 lg:grid-cols-2 lg:px-10">
         <motion.div style={{ x: textX }}>
           <BlurReveal>
             <p className="text-[0.62rem] uppercase tracking-luxe text-gold">The Hautoria Standard</p>
-            <h2 className="mt-5 font-serif text-4xl font-light leading-tight sm:text-5xl lg:text-6xl">
+            <h2 className="mt-5 font-serif text-3xl font-light leading-tight sm:text-5xl lg:text-6xl">
               Authenticity is
               <br />
               <em className="text-gradient-gold">non-negotiable.</em>
@@ -39,7 +39,7 @@ export function ScrollStory() {
         </motion.div>
 
         <motion.div style={{ y: imageY }} className="relative">
-          <div className={`aspect-square overflow-hidden rounded-[2.5rem] ${spotlight.accent} p-12 shadow-luxe-lg`}>
+          <div className={`aspect-square overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] ${spotlight.accent} p-6 shadow-luxe-lg sm:p-12`}>
             <img
               src={spotlight.image}
               alt={spotlight.name}
@@ -47,8 +47,8 @@ export function ScrollStory() {
               loading="lazy"
             />
           </div>
-          <div className="absolute -bottom-6 -left-6 rounded-2xl glass px-6 py-4 shadow-luxe">
-            <p className="font-serif text-lg">{spotlight.name}</p>
+          <div className="absolute bottom-4 left-4 right-4 rounded-2xl glass px-4 py-3 shadow-luxe sm:-bottom-6 sm:-left-6 sm:right-auto sm:px-6 sm:py-4">
+            <p className="truncate font-serif text-base sm:text-lg">{spotlight.name}</p>
             <p className="text-gold">{formatPrice(spotlight.price)}</p>
           </div>
         </motion.div>
