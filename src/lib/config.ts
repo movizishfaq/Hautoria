@@ -17,6 +17,10 @@ export const appConfig = {
   apiBaseUrl:
     runtimeEnvironment.VITE_API_BASE_URL ??
     (runtimeEnvironment.PROD || runtimeEnvironment.MODE === 'production' ? '/api' : '/api'),
+  /** Customer storefront URL (used by standalone admin “Live site”). */
+  storeUrl: (runtimeEnvironment.VITE_STORE_URL ?? 'https://hautoria.vercel.app').replace(/\/$/, ''),
+  /** Standalone admin panel URL (storefront redirects /admin here). */
+  adminUrl: (runtimeEnvironment.VITE_ADMIN_URL ?? '').replace(/\/$/, ''),
   stripePublishableKey: runtimeEnvironment.VITE_STRIPE_PUBLISHABLE_KEY ?? '',
   paypalClientId: runtimeEnvironment.VITE_PAYPAL_CLIENT_ID ?? '',
   gaId: runtimeEnvironment.VITE_GA_ID ?? '',

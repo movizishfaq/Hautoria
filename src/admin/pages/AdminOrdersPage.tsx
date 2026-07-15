@@ -4,6 +4,7 @@ import { adminService } from '../../services/adminService';
 import { commerceService } from '../../services/commerceService';
 import { formatPKR } from '../utils';
 import { PageHeader, Panel, AdminButton, AdminInput, AdminSelect, Badge, EmptyState } from '../components/ui';
+import { adminPath } from '../paths';
 import { useAppState } from '../../hooks/useAppState';
 import { useAdminAuth } from '../AdminAuthContext';
 import { ApiError } from '../../services/api';
@@ -75,7 +76,7 @@ export function AdminOrdersPage() {
       if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
         setError('Admin session expired. Please log in again.');
         await logout();
-        navigate('/admin/login', { replace: true });
+        navigate(adminPath.login, { replace: true });
         return;
       }
       setError(err instanceof Error ? err.message : 'Could not load orders');

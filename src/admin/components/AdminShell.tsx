@@ -1,13 +1,15 @@
 import React, { useMemo, useState } from 'react';
-import { NavLink, Outlet, Navigate, Link } from 'react-router-dom';
+import { NavLink, Outlet, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { useAdminAuth } from '../AdminAuthContext';
 import { useAdminTheme } from '../AdminThemeProvider';
 import { ADMIN_NAV_GROUPS } from '../nav';
+import { adminPath } from '../paths';
 import { cn } from '../utils';
 import { AdminInput } from './ui';
 import { BrandLogo } from '../../components/BrandLogo';
+import { appConfig } from '../../lib/config';
 
 function Icon({ name, size = 16 }: { name: string; size?: number }) {
   const Cmp = (Icons as Record<string, React.ComponentType<{ size?: number; strokeWidth?: number }>>)[name] || Icons.Circle;
@@ -38,7 +40,7 @@ export function AdminShell() {
     );
   }
 
-  if (!isAuthenticated) return <Navigate to="/admin/login" replace />;
+  if (!isAuthenticated) return <Navigate to={adminPath.login} replace />;
 
   const sidebar = (
     <aside
@@ -50,12 +52,12 @@ export function AdminShell() {
       <div className="flex items-center justify-between gap-2 border-b border-[var(--admin-border)] p-4">
         {!collapsed && (
           <div className="min-w-0">
-            <BrandLogo to="/admin" size="sm" showTagline={false} />
+            <BrandLogo to={adminPath.home} size="sm" showTagline={false} />
             <p className="mt-1 text-xs text-[var(--admin-muted)]">Admin</p>
           </div>
         )}
         {collapsed && (
-          <BrandLogo to="/admin" size="sm" className="mx-auto" />
+          <BrandLogo to={adminPath.home} size="sm" className="mx-auto" />
         )}
         <button
           type="button"
@@ -168,12 +170,14 @@ export function AdminShell() {
             >
               {isDark ? <Icons.Sun size={16} /> : <Icons.Moon size={16} />}
             </button>
-            <Link
-              to="/"
+            <a
+              href={appConfig.storeUrl}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-card)] px-3.5 py-2 text-sm font-medium transition hover:border-amber-700/40 hover:text-amber-800"
             >
               <Icons.ExternalLink size={14} /> Live site
-            </Link>
+            </a>
           </div>
         </header>
         <main className="admin-scroll flex-1 overflow-auto p-5 md:p-8">

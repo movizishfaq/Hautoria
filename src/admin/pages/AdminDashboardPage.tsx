@@ -86,21 +86,21 @@ export function AdminDashboardPage() {
       value: stats.pendingOrders ?? pipelineCounts.find((p) => p.key === 'pending')?.count ?? 0,
       meta: `${stats.todayOrders ?? 0} placed today`,
       icon: ShoppingBag,
-      to: '/admin/orders',
+      to: '/orders',
     },
     {
       label: 'Customers',
       value: stats.customers,
       meta: 'Registered shoppers',
       icon: Users,
-      to: '/admin/customers',
+      to: '/customers',
     },
     {
       label: 'Catalog',
       value: catalogCount || stats.products || 0,
       meta: lowStock ? `${lowStock} low stock` : 'Stock healthy',
       icon: Package,
-      to: '/admin/inventory',
+      to: '/inventory',
     },
   ];
 
@@ -114,7 +114,7 @@ export function AdminDashboardPage() {
         title="Dashboard"
         subtitle={`${formatPKR(stats.revenue)} revenue · ${stats.conversion}% conversion`}
         actions={
-          <Link to="/admin/orders">
+          <Link to="/orders">
             <AdminButton>Orders</AdminButton>
           </Link>
         }
@@ -172,7 +172,7 @@ export function AdminDashboardPage() {
             <h2 className="font-serif text-xl text-[var(--admin-fg)]">Fulfillment</h2>
             <p className="text-sm text-[var(--admin-muted)]">Order pipeline at a glance</p>
           </div>
-          <Link to="/admin/orders" className="text-sm text-amber-700 hover:underline">
+          <Link to="/orders" className="text-sm text-amber-700 hover:underline">
             Manage orders
           </Link>
         </div>
@@ -180,7 +180,7 @@ export function AdminDashboardPage() {
           {pipelineCounts.map((step) => (
             <Link
               key={step.key}
-              to="/admin/orders"
+              to="/orders"
               className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-card)] px-4 py-4 transition hover:border-amber-700/30"
             >
               <p className="text-sm text-[var(--admin-muted)]">{step.label}</p>
@@ -220,7 +220,7 @@ export function AdminDashboardPage() {
           title="Latest orders"
           className="xl:col-span-2"
           action={
-            <Link to="/admin/orders" className="text-xs text-amber-700 hover:underline">
+            <Link to="/orders" className="text-xs text-amber-700 hover:underline">
               View all
             </Link>
           }
@@ -230,7 +230,7 @@ export function AdminDashboardPage() {
               {orders.slice(0, 6).map((o) => (
                 <li key={o.id}>
                   <Link
-                    to="/admin/orders"
+                    to="/orders"
                     className="flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-[var(--admin-hover)]"
                   >
                     <div className="min-w-0">

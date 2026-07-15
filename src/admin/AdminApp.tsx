@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AdminAuthProvider } from './AdminAuthContext';
 import { AdminThemeProvider } from './AdminThemeProvider';
@@ -13,6 +13,7 @@ import { AdminCouponsPage } from './pages/AdminCouponsPage';
 import { AdminActivityPage } from './pages/AdminActivityPage';
 import { AdminSettingsPage } from './pages/AdminSettingsPage';
 import { AdminModulePage } from './pages/AdminModulePage';
+import { adminPath } from './paths';
 
 function AdminFallback() {
   return (
@@ -102,7 +103,7 @@ export function AdminApp() {
               <Route path="activity" element={<AdminActivityPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
             </Route>
-            <Route path="*" element={<Navigate to="/admin" replace />} />
+            <Route path="*" element={<Navigate to={adminPath.home} replace />} />
           </Routes>
         </Suspense>
       </AdminAuthProvider>

@@ -43,6 +43,7 @@ type AppState = {
   quantity: number)
   => void;
   removeFromCart: (productId: string, variantId: string) => void;
+  clearCart: () => void;
   toggleWishlist: (productId: string) => void;
   toggleCompare: (productId: string) => void;
   viewProduct: (productId: string) => void;
@@ -216,6 +217,7 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
         );
         notify('Removed from your bag', 'info');
       },
+      clearCart: () => setCart([]),
       toggleWishlist: (productId) =>
       setWishlist((items) =>
       items.some((item) => item.productId === productId) ?

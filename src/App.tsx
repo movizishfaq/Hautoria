@@ -23,6 +23,7 @@ import { AppStateProvider } from './hooks/useAppState';
 import { CatalogProvider } from './context/CatalogContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { HomePage } from './pages/HomePage';
+import { appConfig } from './lib/config';
 
 const ShopPage = lazy(() => import('./pages/ShopPage').then((m) => ({ default: m.ShopPage })));
 const ProductPage = lazy(() => import('./pages/ProductPage').then((m) => ({ default: m.ProductPage })));
@@ -33,8 +34,32 @@ const AuthPage = lazy(() => import('./pages/AuthPage').then((m) => ({ default: m
 const AccountLayout = lazy(() => import('./pages/AccountPage').then((m) => ({ default: m.AccountLayout })));
 const AccountOverview = lazy(() => import('./pages/AccountPage').then((m) => ({ default: m.AccountOverview })));
 const AccountSection = lazy(() => import('./pages/AccountPage').then((m) => ({ default: m.AccountSection })));
-const AdminApp = lazy(() => import('./admin/AdminApp').then((m) => ({ default: m.AdminApp })));
 const SupportPage = lazy(() => import('./pages/SupportPage').then((m) => ({ default: m.SupportPage })));
+
+function AdminRedirect() {
+  const target = appConfig.adminUrl;
+  React.useEffect(() => {
+    if (target) window.location.replace(target);
+  }, [target]);
+  if (target) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-ivory text-charcoal/60">
+        Opening Hautoria Admin…
+      </div>
+    );
+  }
+  return (
+    <main className="mx-auto max-w-lg px-6 py-28 text-center">
+      <h1 className="font-serif text-4xl">Admin moved</h1>
+      <p className="mt-4 text-charcoal/60">
+        The Command Center is a separate app. Deploy it with{' '}
+        <code className="text-sm">npm run build:admin</code> and set{' '}
+        <code className="text-sm">VITE_ADMIN_URL</code> on the store project.
+      </p>
+      <p className="mt-2 text-sm text-charcoal/50">See admin-app/README.md</p>
+    </main>
+  );
+}
 
 function PageFallback() {
   return (
@@ -46,9 +71,7 @@ function PageFallback() {
 
 function Shell() {
   const location = useLocation();
-  const minimal =
-  location.pathname.startsWith('/auth') ||
-  location.pathname.startsWith('/admin');
+  const minimal = location.pathname.startsWith('/auth');
   return (
     <SmoothScroll>
       <div className="relative min-h-full w-full bg-ivory pb-20 font-sans text-charcoal transition-colors dark:bg-graphite dark:text-ivory lg:pb-0">
@@ -115,7 +138,7 @@ function Shell() {
               <Route path="/legal/privacy" element={<SupportPage />} />
               <Route path="/legal/terms" element={<SupportPage />} />
               <Route path="/legal/shipping" element={<SupportPage />} />
-              <Route path="/admin/*" element={<AdminApp />} />
+              <Route path="/admin/*" element={<AdminRedirect />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

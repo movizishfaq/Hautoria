@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { useAdminAuth } from '../AdminAuthContext';
 import { AdminButton, AdminInput } from '../components/ui';
 import { BrandLogo } from '../../components/BrandLogo';
+import { appConfig } from '../../lib/config';
+import { adminPath } from '../paths';
 
 export function AdminLoginPage() {
   const { login, isAuthenticated } = useAdminAuth();
@@ -11,7 +12,7 @@ export function AdminLoginPage() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  if (isAuthenticated) return <Navigate to="/admin" replace />;
+  if (isAuthenticated) return <Navigate to={adminPath.home} replace />;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +31,7 @@ export function AdminLoginPage() {
     <div className="grid min-h-screen place-items-center bg-[var(--admin-bg)] px-6">
       <div className="w-full max-w-md">
         <div className="mb-6 flex justify-center">
-          <BrandLogo to="/" size="lg" />
+          <BrandLogo to={adminPath.home} size="lg" />
         </div>
         <h1 className="mb-2 text-center text-3xl font-semibold text-[var(--admin-fg)]">
           Command Center
@@ -71,12 +72,12 @@ export function AdminLoginPage() {
             {busy ? 'Signing in...' : 'Enter admin'}
           </AdminButton>
         </form>
-        <Link
-          to="/"
+        <a
+          href={appConfig.storeUrl}
           className="mt-6 block text-center text-xs text-[var(--admin-muted)] hover:text-[var(--admin-fg)]"
         >
           Back to store
-        </Link>
+        </a>
       </div>
     </div>
   );

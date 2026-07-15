@@ -42,6 +42,7 @@ export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
   mongoUri: cleanMongoUri(process.env.MONGODB_URI),
   clientUrl: (process.env.CLIENT_URL ?? 'http://localhost:5173').trim().replace(/\/$/, ''),
+  adminUrl: (process.env.ADMIN_URL ?? 'http://localhost:5174').trim().replace(/\/$/, ''),
   jwtSecret: process.env.JWT_SECRET ?? 'dev-secret-change-me',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
   refreshSecret: process.env.REFRESH_TOKEN_SECRET ?? 'dev-refresh-secret',

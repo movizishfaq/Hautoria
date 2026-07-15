@@ -48,7 +48,7 @@ const deliveryFields: Array<keyof Address> = [
 
 export function CheckoutPage() {
   const navigate = useNavigate();
-  const { cart, user, addOrder, notify } = useAppState();
+  const { cart, user, addOrder, clearCart, notify } = useAppState();
   const { products } = useCatalog();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<CheckoutDraft>({
@@ -115,6 +115,7 @@ export function CheckoutPage() {
         }))
       );
       addOrder(created);
+      clearCart();
       notify(`Order ${created.number} placed`, 'success');
       navigate(`/checkout/success/${created.id}`);
     } catch (err) {

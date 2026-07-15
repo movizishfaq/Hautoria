@@ -79,7 +79,10 @@ Push to `main` or click **Deploy**. Open:
 
 - Store: `https://your-app.vercel.app`
 - Health: `https://your-app.vercel.app/api/health`
-- Admin: `https://your-app.vercel.app/admin/login`
+- Admin: separate project — see `admin-app/README.md` (`npm run build:admin`)
+
+On the store project set `VITE_ADMIN_URL` to the admin deployment URL (so `/admin` redirects there).
+On the admin project set `VITE_API_BASE_URL=https://your-app.vercel.app/api`.
 
 ## Verify after deploy
 
