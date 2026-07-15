@@ -1,13 +1,32 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
-import { User, IUser } from '../models/User.js';
+import { User, IUser, UserRole } from '../models/User.js';
 import { AppError } from './errorHandler.js';
 
 export type AuthRequest = Request & {
   user?: IUser;
   userId?: string;
 };
+
+type AccessTokenPayload = {
+  sub: string;
+  role?: UserRole;
+  email?: string;
+  name?: string;
+  isActive?: boolean;
+};
+
+function userFromClaims(payload: AccessTokenPayload): IUser {
+  return {
+    _id: payload.sub,
+    id: payload.sub,
+    role: payload.role!,
+    email: payload.email ?? '',
+    name: payload.name ?? '',
+    isActive: payload.isActive !== false,
+  } as unknown as IUser;
+}
 
 export async function authenticate(
   req: AuthRequest,
@@ -21,7 +40,17 @@ export async function authenticate(
   if (!token) throw new AppError(401, 'Authentication required', 'AUTH_REQUIRED');
 
   try {
-    const payload = jwt.verify(token, env.jwtSecret) as { sub: string };
+    const payload = jwt.verify(token, env.jwtSecret) as AccessTokenPayload;
+    if (!payload.sub) throw new AppError(401, 'Invalid session', 'INVALID_SESSION');
+
+    // Fast path: role embedded in JWT — no Mongo round-trip on every admin/API call.
+    if (payload.role && payload.isActive !== false) {
+      req.user = userFromClaims(payload);
+      req.userId = payload.sub;
+      return next();
+    }
+
+    // Legacy tokens (sub only) — hydrate once from DB.
     const user = await User.findById(payload.sub).select('-passwordHash');
     if (!user || !user.isActive) {
       throw new AppError(401, 'Invalid session', 'INVALID_SESSION');
@@ -29,7 +58,8 @@ export async function authenticate(
     req.user = user;
     req.userId = user._id.toString();
     next();
-  } catch {
+  } catch (err) {
+    if (err instanceof AppError) throw err;
     throw new AppError(401, 'Invalid or expired token', 'INVALID_TOKEN');
   }
 }
@@ -53,14 +83,25 @@ export function optionalAuth(
   const token =
     header?.startsWith('Bearer ') ? header.slice(7) : req.cookies?.accessToken;
   if (!token) return next();
-  jwt.verify(token, env.jwtSecret, async (err, payload) => {
-    if (!err && payload && typeof payload === 'object' && 'sub' in payload) {
-      const user = await User.findById(payload.sub as string).select('-passwordHash');
-      if (user?.isActive) {
-        req.user = user;
-        req.userId = user._id.toString();
-      }
+
+  try {
+    const payload = jwt.verify(token, env.jwtSecret) as AccessTokenPayload;
+    if (payload.role && payload.isActive !== false) {
+      req.user = userFromClaims(payload);
+      req.userId = payload.sub;
+      return next();
     }
+    void User.findById(payload.sub)
+      .select('-passwordHash')
+      .then((user) => {
+        if (user?.isActive) {
+          req.user = user;
+          req.userId = user._id.toString();
+        }
+        next();
+      })
+      .catch(() => next());
+  } catch {
     next();
-  });
+  }
 }

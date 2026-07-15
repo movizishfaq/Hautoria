@@ -197,6 +197,7 @@ export interface AdminAnalytics {
   orders: number;
   customers: number;
   conversion: number;
+  products?: number;
   series: Array<{label: string;value: number;}>;
   pipeline?: Record<string, number>;
 }

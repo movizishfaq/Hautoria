@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, ShoppingBag, Users, Wallet } from 'lucide-react';
-import { useCatalog } from '../../context/CatalogContext';
 import { adminService } from '../../services/adminService';
 import { formatPKR, cn } from '../utils';
 import { PageHeader, Panel, Badge, AdminButton, Skeleton, EmptyState } from '../components/ui';
@@ -32,11 +31,11 @@ const EMPTY_STATS: AdminAnalytics = {
 };
 
 export function AdminDashboardPage() {
-  const { products } = useCatalog();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<AdminAnalytics>(EMPTY_STATS);
   const [lowStockCount, setLowStockCount] = useState(0);
+  const [catalogCount, setCatalogCount] = useState(0);
 
   useEffect(() => {
     void (async () => {
@@ -45,6 +44,7 @@ export function AdminDashboardPage() {
         setStats(dash.analytics ?? EMPTY_STATS);
         setOrders(dash.recentOrders ?? []);
         setLowStockCount(dash.lowStock?.length ?? 0);
+        setCatalogCount(dash.analytics?.products ?? dash.lowStock?.length ?? 0);
       } finally {
         setLoading(false);
       }
@@ -64,8 +64,7 @@ export function AdminDashboardPage() {
     );
   }
 
-  const catalogLowStock = products.filter((p) => p.stock <= 8).length;
-  const lowStock = lowStockCount || catalogLowStock;
+  const lowStock = lowStockCount;
   const pipelineCounts = PIPELINE.map((p) => ({
     ...p,
     count: stats.pipeline?.[p.key] ?? orders.filter((o) => o.status === p.key).length,
@@ -95,7 +94,7 @@ export function AdminDashboardPage() {
     },
     {
       label: 'Catalog',
-      value: products.length,
+      value: catalogCount || stats.products || 0,
       meta: lowStock ? `${lowStock} low stock` : 'Stock healthy',
       icon: Package,
       to: '/admin/inventory',

@@ -15,36 +15,51 @@ type AdminAuthState = {
 
 const Context = createContext<AdminAuthState | undefined>(undefined);
 
+function readCachedAdmin(): User | null {
+  const raw = localStorage.getItem('hautoria_user');
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as User;
+    if (parsed.role && ADMIN_ROLES.includes(parsed.role)) return parsed;
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(() => readCachedAdmin());
+  // If we already have a cached admin session, don't block the shell on /auth/me.
+  const [loading, setLoading] = useState(() => {
+    try {
+      return !readCachedAdmin();
+    } catch {
+      return true;
+    }
+  });
 
   useEffect(() => {
     void (async () => {
-      const raw = localStorage.getItem('hautoria_user');
-      if (isApiEnabled()) {
-        try {
-          const { authService } = await import('../services/authService');
-          const me = await authService.getMe();
-          if (me?.role && ADMIN_ROLES.includes(me.role)) {
-            setUser(me);
-            localStorage.setItem('hautoria_user', JSON.stringify(me));
-            setLoading(false);
-            return;
-          }
-        } catch {
-          /* fall through */
-        }
+      if (!isApiEnabled()) {
+        setLoading(false);
+        return;
       }
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw) as User;
-          if (parsed.role && ADMIN_ROLES.includes(parsed.role)) setUser(parsed);
-        } catch {
-          /* ignore */
+      try {
+        const { authService } = await import('../services/authService');
+        const me = await authService.getMe();
+        if (me?.role && ADMIN_ROLES.includes(me.role)) {
+          setUser(me);
+          localStorage.setItem('hautoria_user', JSON.stringify(me));
+        } else {
+          setUser(null);
+          localStorage.removeItem('hautoria_user');
         }
+      } catch {
+        // Keep cached admin for offline-feel; only clear if we never had one.
+        if (!readCachedAdmin()) setUser(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
   }, []);
 

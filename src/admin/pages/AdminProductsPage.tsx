@@ -49,8 +49,7 @@ export function AdminProductsPage() {
         notify('Product updated');
       }
       setEditor(undefined);
-      await load();
-      await refresh();
+      await Promise.all([adminService.getProducts({ force: true }).then((r) => setProducts(r.products ?? [])), refresh()]);
     } catch (err) {
       notify(err instanceof Error ? err.message : 'Save failed', 'error');
     } finally {
@@ -64,8 +63,7 @@ export function AdminProductsPage() {
     try {
       await adminService.deleteProduct(product.slug);
       notify('Product deactivated');
-      await load();
-      await refresh();
+      await Promise.all([adminService.getProducts({ force: true }).then((r) => setProducts(r.products ?? [])), refresh()]);
     } catch {
       notify('Could not deactivate', 'error');
     } finally {

@@ -125,4 +125,7 @@ const orderSchema = new Schema<IOrder>(
   { timestamps: true }
 );
 
+orderSchema.index({ createdAt: -1 });
+orderSchema.index({ status: 1, createdAt: -1 });
+
 export const Order = mongoose.model<IOrder>('Order', orderSchema);

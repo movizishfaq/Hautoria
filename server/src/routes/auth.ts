@@ -13,11 +13,15 @@ import { sendEmail, emailTemplates } from '../services/email.js';
 
 const router = Router();
 
-function signTokens(userId: string) {
-  const accessToken = jwt.sign({ sub: userId }, env.jwtSecret, {
-    expiresIn: env.jwtExpiresIn as jwt.SignOptions['expiresIn'],
-  });
-  const refreshToken = jwt.sign({ sub: userId }, env.refreshSecret, {
+function signTokens(user: { _id: { toString(): string }; role: string; email: string; name: string }) {
+  const sub = user._id.toString();
+  // Embed role so admin/API auth can skip a User.findById on every request.
+  const accessToken = jwt.sign(
+    { sub, role: user.role, email: user.email, name: user.name, isActive: true },
+    env.jwtSecret,
+    { expiresIn: env.jwtExpiresIn as jwt.SignOptions['expiresIn'] }
+  );
+  const refreshToken = jwt.sign({ sub }, env.refreshSecret, {
     expiresIn: env.refreshExpiresIn as jwt.SignOptions['expiresIn'],
   });
   return { accessToken, refreshToken };
@@ -85,7 +89,7 @@ router.post(
       addresses: [],
     });
 
-    const tokens = signTokens(user._id.toString());
+    const tokens = signTokens(user);
     setAuthCookies(res, tokens);
     await logActivity({ userId: user._id.toString(), action: 'register', entity: 'user' });
     const welcome = emailTemplates.welcome(user.name);
@@ -113,7 +117,7 @@ router.post(
     user.lastLoginAt = new Date();
     await user.save();
 
-    const tokens = signTokens(user._id.toString());
+    const tokens = signTokens(user);
     setAuthCookies(res, tokens);
     await logActivity({ userId: user._id.toString(), action: 'login', entity: 'user', ip: req.ip });
 
@@ -134,7 +138,12 @@ router.get(
   '/me',
   authenticate,
   asyncHandler(async (req: AuthRequest, res) => {
-    res.json({ user: sanitizeUser(req.user!) });
+    // Always hydrate from DB so profile fields stay fresh (auth itself may use JWT claims).
+    const user = await User.findById(req.userId).select('-passwordHash');
+    if (!user || !user.isActive) {
+      throw new AppError(401, 'Invalid session', 'INVALID_SESSION');
+    }
+    res.json({ user: sanitizeUser(user) });
   })
 );
 

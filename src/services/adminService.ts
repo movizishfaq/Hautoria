@@ -11,6 +11,7 @@ import {
   loadLocalOrders,
   updateLocalOrderStatus,
 } from '../lib/adminOrdersStore';
+import { adminDataCache } from '../lib/adminDataCache';
 
 export type AdminProduct = Product & {
   isActive?: boolean;
@@ -35,6 +36,12 @@ export type ProductInput = {
   isActive?: boolean;
   rating?: number;
   reviewCount?: number;
+};
+
+type DashboardPayload = {
+  analytics: AdminAnalytics;
+  recentOrders: Order[];
+  lowStock: AdminProduct[];
 };
 
 const EMPTY_ANALYTICS: AdminAnalytics = {
@@ -66,7 +73,7 @@ function filterOrders(orders: Order[], status?: string) {
   return orders.filter((o) => o.status === status);
 }
 
-function localDashboard() {
+function localDashboard(): DashboardPayload {
   const products = loadAdminCatalog();
   const orders = loadLocalOrders();
   const analytics = buildLocalAnalytics(orders);
@@ -82,19 +89,22 @@ function localDashboard() {
 }
 
 export const adminService = {
-  getDashboard: async () => {
+  getDashboard: async (opts?: { force?: boolean }) => {
+    if (!opts?.force) {
+      const cached = adminDataCache.getDashboard<DashboardPayload>();
+      if (cached) return cached;
+    }
     if (!isApiEnabled()) {
-      return mockRequest(localDashboard());
+      const local = await mockRequest(localDashboard());
+      adminDataCache.setDashboard(local);
+      return local;
     }
     try {
-      const dash = await apiRequest<{
-        analytics: AdminAnalytics;
-        recentOrders: Order[];
-        lowStock: AdminProduct[];
-      }>('/admin/dashboard');
+      const dash = await apiRequest<DashboardPayload>('/admin/dashboard');
+      let result = dash;
       if ((dash.recentOrders?.length ?? 0) === 0 && loadLocalOrders().length) {
         const local = localDashboard();
-        return {
+        result = {
           ...dash,
           analytics: {
             ...dash.analytics,
@@ -110,23 +120,39 @@ export const adminService = {
           recentOrders: local.recentOrders,
         };
       }
-      return dash;
+      adminDataCache.setDashboard(result);
+      return result;
     } catch {
-      return localDashboard();
+      const local = localDashboard();
+      adminDataCache.setDashboard(local);
+      return local;
     }
   },
 
-  getOrders: async (status?: string) => {
+  getOrders: async (status?: string, opts?: { force?: boolean }) => {
+    const key = status ?? 'all';
+    if (!opts?.force) {
+      const cached = adminDataCache.getOrders<{ orders: Order[] }>(key);
+      if (cached) return cached;
+    }
     if (!isApiEnabled()) {
-      return mockRequest({ orders: filterOrders(loadLocalOrders(), status) });
+      const payload = await mockRequest({ orders: filterOrders(loadLocalOrders(), status) });
+      adminDataCache.setOrders(key, payload);
+      return payload;
     }
     try {
       const qs = status ? `?status=${encodeURIComponent(status)}` : '';
       const res = await apiRequest<{ orders: Order[] }>(`/admin/orders${qs}`);
-      if ((res.orders?.length ?? 0) > 0) return res;
-      return { orders: filterOrders(loadLocalOrders(), status) };
+      const payload =
+        (res.orders?.length ?? 0) > 0
+          ? res
+          : { orders: filterOrders(loadLocalOrders(), status) };
+      adminDataCache.setOrders(key, payload);
+      return payload;
     } catch {
-      return { orders: filterOrders(loadLocalOrders(), status) };
+      const payload = { orders: filterOrders(loadLocalOrders(), status) };
+      adminDataCache.setOrders(key, payload);
+      return payload;
     }
   },
 
@@ -149,32 +175,46 @@ export const adminService = {
     if (!isApiEnabled()) {
       const updated = updateLocalOrderStatus(orderId, status as OrderStatus);
       if (!updated) throw new ApiError(404, 'Order not found');
+      adminDataCache.invalidate('orders');
       return mockRequest({ order: updated });
     }
     try {
-      return await apiRequest(`/admin/orders/${orderId}/status`, {
+      const res = await apiRequest(`/admin/orders/${orderId}/status`, {
         method: 'PATCH',
         body: JSON.stringify({ status, note }),
       });
+      adminDataCache.invalidate('orders');
+      return res;
     } catch {
       const updated = updateLocalOrderStatus(orderId, status as OrderStatus);
       if (!updated) throw new ApiError(404, 'Order not found');
+      adminDataCache.invalidate('orders');
       return { order: updated };
     }
   },
 
-  getProducts: async () => {
+  getProducts: async (opts?: { force?: boolean }) => {
+    if (!opts?.force) {
+      const cached = adminDataCache.getProducts<{ products: AdminProduct[] }>();
+      if (cached) return cached;
+    }
     if (!isApiEnabled()) {
-      return mockRequest({
+      const payload = await mockRequest({
         products: loadAdminCatalog().map((p) => ({ ...p, isActive: true })),
       });
+      adminDataCache.setProducts(payload);
+      return payload;
     }
     try {
-      return await apiRequest<{ products: AdminProduct[] }>('/admin/products');
+      const res = await apiRequest<{ products: AdminProduct[] }>('/admin/products');
+      adminDataCache.setProducts(res);
+      return res;
     } catch {
-      return {
+      const payload = {
         products: loadAdminCatalog().map((p) => ({ ...p, isActive: true })),
       };
+      adminDataCache.setProducts(payload);
+      return payload;
     }
   },
 
@@ -212,12 +252,15 @@ export const adminService = {
         isActive: input.isActive ?? true,
       };
       upsertAdminProduct(product);
+      adminDataCache.invalidate('products');
       return mockRequest({ product });
     }
-    return apiRequest<{ product: AdminProduct }>('/admin/products', {
+    const res = await apiRequest<{ product: AdminProduct }>('/admin/products', {
       method: 'POST',
       body: JSON.stringify(input),
     });
+    adminDataCache.invalidate('products');
+    return res;
   },
 
   updateProduct: async (slug: string, input: Partial<ProductInput>) => {
@@ -241,34 +284,43 @@ export const adminService = {
         isActive: input.isActive ?? true,
       };
       upsertAdminProduct(updated);
+      adminDataCache.invalidate('products');
       return mockRequest({ product: updated });
     }
-    return apiRequest<{ product: AdminProduct }>(`/admin/products/${slug}`, {
+    const res = await apiRequest<{ product: AdminProduct }>(`/admin/products/${slug}`, {
       method: 'PATCH',
       body: JSON.stringify(input),
     });
+    adminDataCache.invalidate('products');
+    return res;
   },
 
   updateStock: async (slug: string, stock: number) => {
     if (!isApiEnabled()) {
       const updated = updateAdminStock(slug, stock);
       if (!updated) throw new ApiError(404, 'Product not found');
+      adminDataCache.invalidate('products');
       return mockRequest({ product: { ...updated, isActive: true } });
     }
-    return apiRequest<{ product: AdminProduct }>(`/admin/products/${slug}/stock`, {
+    const res = await apiRequest<{ product: AdminProduct }>(`/admin/products/${slug}/stock`, {
       method: 'PATCH',
       body: JSON.stringify({ stock }),
     });
+    adminDataCache.invalidate('products');
+    return res;
   },
 
   deleteProduct: async (slug: string) => {
     if (!isApiEnabled()) {
       removeAdminProduct(slug);
+      adminDataCache.invalidate('products');
       return mockRequest({ ok: true });
     }
-    return apiRequest<{ product: AdminProduct }>(`/admin/products/${slug}`, {
+    const res = await apiRequest<{ product: AdminProduct }>(`/admin/products/${slug}`, {
       method: 'DELETE',
     });
+    adminDataCache.invalidate('products');
+    return res;
   },
 
   getCustomers: async () => {

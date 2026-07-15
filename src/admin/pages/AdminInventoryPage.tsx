@@ -34,8 +34,7 @@ export function AdminInventoryPage() {
     try {
       await adminService.updateStock(slug, stock);
       notify('Stock updated');
-      await load();
-      await refresh();
+      await Promise.all([load(), refresh()]);
     } catch {
       notify('Stock update failed', 'error');
     } finally {

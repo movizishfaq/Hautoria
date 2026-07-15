@@ -51,54 +51,77 @@ const couponSchema = z.object({
   active: z.boolean().optional(),
 });
 
-function buildRevenueSeries() {
+function emptyRevenueSeries() {
   const series: Array<{ label: string; value: number }> = [];
   const now = new Date();
   for (let i = 6; i >= 0; i -= 1) {
     const day = new Date(now);
     day.setHours(0, 0, 0, 0);
     day.setDate(day.getDate() - i);
-    const next = new Date(day);
-    next.setDate(next.getDate() + 1);
-    series.push({
-      label: DAY_LABELS[day.getDay()],
-      value: 0,
-      _start: day,
-      _end: next,
-    } as { label: string; value: number; _start: Date; _end: Date });
+    series.push({ label: DAY_LABELS[day.getDay()], value: 0 });
   }
   return series;
 }
 
+const ORDER_LIST_SELECT =
+  'number status createdAt total subtotal tax shipping discount paymentProvider paymentStatus trackingNumber courier guestEmail items shippingAddress notes';
+
 router.get(
   '/dashboard',
   asyncHandler(async (_req, res) => {
-    const [orderCount, revenueAgg, customers, products, recentOrders, lowStock, statusAgg, recentWeekOrders] =
+    const weekStart = new Date();
+    weekStart.setHours(0, 0, 0, 0);
+    weekStart.setDate(weekStart.getDate() - 6);
+
+    const [orderCount, revenueAgg, customers, products, recentOrders, lowStock, statusAgg, weekRevenue] =
       await Promise.all([
         Order.countDocuments(),
         Order.aggregate([{ $group: { _id: null, total: { $sum: '$total' } } }]),
         User.countDocuments({ role: 'customer' }),
         Product.countDocuments({ isActive: true }),
-        Order.find().sort({ createdAt: -1 }).limit(10),
-        Product.find({ stock: { $lte: 8 }, isActive: true }).limit(10),
+        Order.find()
+          .select(ORDER_LIST_SELECT)
+          .sort({ createdAt: -1 })
+          .limit(10)
+          .lean(),
+        Product.find({ stock: { $lte: 8 }, isActive: true })
+          .select(
+            'slug name tagline description category brand concerns price compareAtPrice rating reviewCount stock image gallery accent badges ingredients featured isActive sku variants lowStockThreshold createdAt updatedAt'
+          )
+          .limit(10)
+          .lean(),
         Order.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
-        Order.find({
-          createdAt: {
-            $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        Order.aggregate([
+          { $match: { createdAt: { $gte: weekStart } } },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: '$createdAt',
+                  timezone: 'Asia/Karachi',
+                },
+              },
+              total: { $sum: '$total' },
+            },
           },
-        }),
+        ]),
       ]);
 
-    const series = buildRevenueSeries();
-    for (const order of recentWeekOrders) {
-      const created = new Date(order.createdAt);
-      for (const bucket of series as Array<{ label: string; value: number; _start: Date; _end: Date }>) {
-        if (created >= bucket._start && created < bucket._end) {
-          bucket.value += order.total;
-          break;
-        }
-      }
-    }
+    const byDay = new Map(
+      weekRevenue.map((row: { _id: string; total: number }) => [row._id, row.total])
+    );
+    const series = emptyRevenueSeries().map((bucket, index) => {
+      const day = new Date();
+      day.setHours(0, 0, 0, 0);
+      day.setDate(day.getDate() - (6 - index));
+      const key = [
+        day.getFullYear(),
+        String(day.getMonth() + 1).padStart(2, '0'),
+        String(day.getDate()).padStart(2, '0'),
+      ].join('-');
+      return { label: bucket.label, value: byDay.get(key) ?? 0 };
+    });
 
     const pipeline = Object.fromEntries(
       statusAgg.map((row: { _id: string; count: number }) => [row._id, row.count])
@@ -111,11 +134,11 @@ router.get(
         customers,
         products,
         conversion: orderCount > 0 ? 4.2 : 0,
-        series: series.map(({ label, value }) => ({ label, value })),
+        series,
         pipeline,
       },
-      recentOrders: recentOrders.map(toClientOrder),
-      lowStock: lowStock.map(toAdminProduct),
+      recentOrders: recentOrders.map((o) => toClientOrder(o as never)),
+      lowStock: lowStock.map((p) => toAdminProduct(p as never)),
     });
   })
 );
@@ -125,8 +148,12 @@ router.get(
   asyncHandler(async (req, res) => {
     const status = req.query.status as string | undefined;
     const filter = status ? { status } : {};
-    const orders = await Order.find(filter).sort({ createdAt: -1 }).limit(100);
-    res.json({ orders: orders.map(toClientOrder) });
+    const orders = await Order.find(filter)
+      .select(ORDER_LIST_SELECT)
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .lean();
+    res.json({ orders: orders.map((o) => toClientOrder(o as never)) });
   })
 );
 
@@ -155,8 +182,13 @@ router.patch(
 router.get(
   '/products',
   asyncHandler(async (_req, res) => {
-    const products = await Product.find().sort({ createdAt: -1 });
-    res.json({ products: products.map(toAdminProduct) });
+    const products = await Product.find()
+      .select(
+        'slug name tagline description category brand concerns price compareAtPrice rating reviewCount stock image gallery accent badges ingredients featured isActive sku variants lowStockThreshold createdAt updatedAt'
+      )
+      .sort({ createdAt: -1 })
+      .lean();
+    res.json({ products: products.map((p) => toAdminProduct(p as never)) });
   })
 );
 

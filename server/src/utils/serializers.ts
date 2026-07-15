@@ -46,31 +46,36 @@ export function toAdminProduct(p: IProduct) {
   };
 }
 
-export function toClientOrder(o: IOrder) {
+export function toClientOrder(o: IOrder | Record<string, unknown>) {
+  const doc = o as IOrder & { _id: { toString(): string } };
+  const createdAt = doc.createdAt;
   return {
-    id: o._id.toString(),
-    number: o.number,
-    status: o.status,
-    createdAt: o.createdAt?.toISOString?.() ?? String(o.createdAt),
-    total: o.total,
-    subtotal: o.subtotal,
-    tax: o.tax,
-    shipping: o.shipping,
-    discount: o.discount,
-    paymentProvider: o.paymentProvider,
-    paymentStatus: o.paymentStatus,
-    trackingNumber: o.trackingNumber,
-    courier: o.courier,
-    guestEmail: o.guestEmail,
-    items: o.items,
-    shippingAddress: o.shippingAddress,
-    events: o.events?.map((e) => ({
+    id: doc._id.toString(),
+    number: doc.number,
+    status: doc.status,
+    createdAt:
+      createdAt instanceof Date
+        ? createdAt.toISOString()
+        : String(createdAt ?? ''),
+    total: doc.total,
+    subtotal: doc.subtotal,
+    tax: doc.tax,
+    shipping: doc.shipping,
+    discount: doc.discount,
+    paymentProvider: doc.paymentProvider,
+    paymentStatus: doc.paymentStatus,
+    trackingNumber: doc.trackingNumber,
+    courier: doc.courier,
+    guestEmail: doc.guestEmail,
+    items: doc.items,
+    shippingAddress: doc.shippingAddress,
+    events: doc.events?.map((e) => ({
       status: e.status,
       label: e.label,
       description: e.description,
       date: e.date instanceof Date ? e.date.toISOString() : e.date,
       completed: e.completed,
     })),
-    notes: o.notes,
+    notes: doc.notes,
   };
 }

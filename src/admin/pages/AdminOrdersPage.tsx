@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { adminService } from '../../services/adminService';
 import { formatPKR } from '../utils';
 import { PageHeader, Panel, AdminButton, AdminInput, AdminSelect, Badge, EmptyState } from '../components/ui';
@@ -28,30 +28,35 @@ export function AdminOrdersPage() {
   const [selected, setSelected] = useState<Order | null>(null);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await adminService.getOrders(status === 'all' ? undefined : status);
-      const fromApi = res.orders ?? [];
-      // Prefer API, but always merge any local checkout orders so none are lost
-      const byId = new Map<string, Order>();
-      for (const o of [...fromApi, ...localOrders]) {
-        if (!o?.id && !o?.number) continue;
-        byId.set(o.id || o.number, o);
-      }
-      let merged = Array.from(byId.values());
-      if (status !== 'all') merged = merged.filter((o) => o.status === status);
-      merged.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
-      setOrders(merged);
-    } finally {
-      setLoading(false);
-    }
-  }, [status, localOrders]);
+  const [apiOrders, setApiOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    let cancelled = false;
+    void (async () => {
+      setLoading(true);
+      try {
+        const res = await adminService.getOrders(status === 'all' ? undefined : status);
+        if (!cancelled) setApiOrders(res.orders ?? []);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
+
+  useEffect(() => {
+    const byId = new Map<string, Order>();
+    for (const o of [...apiOrders, ...localOrders]) {
+      if (!o?.id && !o?.number) continue;
+      byId.set(o.id || o.number, o);
+    }
+    let merged = Array.from(byId.values());
+    if (status !== 'all') merged = merged.filter((o) => o.status === status);
+    merged.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+    setOrders(merged);
+  }, [apiOrders, localOrders, status]);
 
   const filtered = orders.filter(
     (o) =>
