@@ -48,7 +48,13 @@ export async function apiRequest<T>(
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new ApiError(res.status, data.error ?? 'Request failed', data.details);
+    const details = (data as { details?: unknown }).details;
+    let message = (data as { error?: string }).error ?? 'Request failed';
+    if (details && typeof details === 'object') {
+      const first = Object.values(details as Record<string, unknown>).flat()[0];
+      if (typeof first === 'string') message = first;
+    }
+    throw new ApiError(res.status, message, details);
   }
   return data as T;
 }

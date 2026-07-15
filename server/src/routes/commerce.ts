@@ -60,6 +60,23 @@ router.post(
   })
 );
 
+const addressSchema = z
+  .object({
+    firstName: z.string().min(1),
+    lastName: z.string().min(1),
+    line1: z.string().min(1),
+    line2: z.string().optional(),
+    city: z.string().min(1),
+    state: z.string().optional(),
+    postalCode: z.string().min(1),
+    country: z.string().min(1),
+    phone: z.string().min(1),
+    label: z.string().optional(),
+    id: z.string().optional(),
+    isDefault: z.union([z.boolean(), z.string()]).optional(),
+  })
+  .passthrough();
+
 const checkoutSchema = z.object({
   email: z.string().email(),
   items: z
@@ -71,8 +88,8 @@ const checkoutSchema = z.object({
       })
     )
     .min(1),
-  shippingAddress: z.record(z.string()),
-  billingAddress: z.record(z.string()).optional(),
+  shippingAddress: addressSchema,
+  billingAddress: addressSchema.optional(),
   shippingMethod: z.enum(['standard', 'express']).default('standard'),
   paymentProvider: z.string(),
   couponCode: z.string().optional(),

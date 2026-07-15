@@ -38,9 +38,10 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       const list = await catalogService.list({ limit: '100' });
-      setProducts(list.length ? list : loadAdminCatalog());
+      // Never mix local/demo catalog with live API products — wrong IDs break checkout.
+      setProducts(list);
     } catch {
-      setProducts(loadAdminCatalog());
+      setProducts([]);
     } finally {
       setLoading(false);
       setReady(true);

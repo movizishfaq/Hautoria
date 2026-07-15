@@ -95,38 +95,13 @@ export const adminService = {
       if (cached) return cached;
     }
     if (!isApiEnabled()) {
-      const local = await mockRequest(localDashboard());
-      adminDataCache.setDashboard(local);
-      return local;
-    }
-    try {
-      const dash = await apiRequest<DashboardPayload>('/admin/dashboard');
-      let result = dash;
-      if ((dash.recentOrders?.length ?? 0) === 0 && loadLocalOrders().length) {
-        const local = localDashboard();
-        result = {
-          ...dash,
-          analytics: {
-            ...dash.analytics,
-            revenue: dash.analytics.revenue || local.analytics.revenue,
-            orders: dash.analytics.orders || local.analytics.orders,
-            pipeline: Object.keys(dash.analytics.pipeline ?? {}).length
-              ? dash.analytics.pipeline
-              : local.analytics.pipeline,
-            series: dash.analytics.series.some((s) => s.value > 0)
-              ? dash.analytics.series
-              : local.analytics.series,
-          },
-          recentOrders: local.recentOrders,
-        };
-      }
-      adminDataCache.setDashboard(result);
-      return result;
-    } catch {
       const local = localDashboard();
       adminDataCache.setDashboard(local);
       return local;
     }
+    const dash = await apiRequest<DashboardPayload>('/admin/dashboard');
+    adminDataCache.setDashboard(dash);
+    return dash;
   },
 
   getOrders: async (status?: string, opts?: { force?: boolean }) => {
@@ -136,24 +111,12 @@ export const adminService = {
       if (cached) return cached;
     }
     if (!isApiEnabled()) {
-      const payload = await mockRequest({ orders: filterOrders(loadLocalOrders(), status) });
-      adminDataCache.setOrders(key, payload);
-      return payload;
+      return { orders: filterOrders(loadLocalOrders(), status) };
     }
-    try {
-      const qs = status ? `?status=${encodeURIComponent(status)}` : '';
-      const res = await apiRequest<{ orders: Order[] }>(`/admin/orders${qs}`);
-      const payload =
-        (res.orders?.length ?? 0) > 0
-          ? res
-          : { orders: filterOrders(loadLocalOrders(), status) };
-      adminDataCache.setOrders(key, payload);
-      return payload;
-    } catch {
-      const payload = { orders: filterOrders(loadLocalOrders(), status) };
-      adminDataCache.setOrders(key, payload);
-      return payload;
-    }
+    const qs = status ? `?status=${encodeURIComponent(status)}` : '';
+    const res = await apiRequest<{ orders: Order[] }>(`/admin/orders${qs}`);
+    adminDataCache.setOrders(key, res);
+    return res;
   },
 
   getOrder: async (id: string) => {
@@ -199,23 +162,13 @@ export const adminService = {
       if (cached) return cached;
     }
     if (!isApiEnabled()) {
-      const payload = await mockRequest({
-        products: loadAdminCatalog().map((p) => ({ ...p, isActive: true })),
-      });
-      adminDataCache.setProducts(payload);
-      return payload;
-    }
-    try {
-      const res = await apiRequest<{ products: AdminProduct[] }>('/admin/products');
-      adminDataCache.setProducts(res);
-      return res;
-    } catch {
-      const payload = {
+      return {
         products: loadAdminCatalog().map((p) => ({ ...p, isActive: true })),
       };
-      adminDataCache.setProducts(payload);
-      return payload;
     }
+    const res = await apiRequest<{ products: AdminProduct[] }>('/admin/products');
+    adminDataCache.setProducts(res);
+    return res;
   },
 
   createProduct: async (input: ProductInput & { slug: string }) => {

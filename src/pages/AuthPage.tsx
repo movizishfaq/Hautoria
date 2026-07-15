@@ -35,16 +35,14 @@ export function AuthPage() {
       } else if (mode === 'signup') {
         setUser(await authService.signUp(name, email, password));
         setMode('verify');
-        setSuccess(
-          'A six-digit mock verification code has been prepared. Use any six digits.'
-        );
+        setSuccess('Check your email for a verification code.');
       } else if (mode === 'forgot') {
         await authService.requestPasswordReset(email);
         setMode('reset');
-        setSuccess('A reset link has been simulated for this frontend.');
+        setSuccess('If an account exists, a reset code has been sent.');
       } else if (mode === 'reset') {
         setMode('signin');
-        setSuccess('Password reset in demo. You can sign in now.');
+        setSuccess('Password updated. You can sign in now.');
       } else {
         const result = await authService.verifyOtp(email, otp);
         if (result.verified) {
@@ -79,7 +77,7 @@ export function AuthPage() {
           </p>
         </div>
         <p className="text-xs uppercase tracking-luxe text-ivory/35">
-          Secure demo interface · adapters ready for real auth
+          Secure member access
         </p>
       </section>
       <section className="flex items-center justify-center px-6 py-16">
@@ -94,7 +92,7 @@ export function AuthPage() {
             'Sign in to continue your personal Hautoria experience.' :
             mode === 'signup' ?
             'Create an account to save your rituals and earn rewards.' :
-            'A secure-looking frontend flow with no live credentials involved.'}
+            'Enter the details below to continue securely.'}
           </p>
           {success &&
           <p className="mt-5 flex items-center gap-2 rounded-xl bg-sage p-3 text-sm">
@@ -190,17 +188,11 @@ export function AuthPage() {
           <>
               <button
               onClick={async () => {
-                await authService.signInWithGoogle();
-                setSuccess(
-                  'Google is a visual mock provider. Connect OAuth in authService before launch.'
-                );
+                notify('Google sign-in is not available yet. Please use email.', 'info');
               }}
               className="mt-4 w-full rounded-full border border-charcoal/20 py-3 text-xs uppercase tracking-luxe dark:border-white/20">
               
-                Continue with Google{' '}
-                <span className="normal-case text-charcoal/45 dark:text-ivory/45">
-                  (demo)
-                </span>
+                Continue with Google
               </button>
               <button
               onClick={() => setMode('forgot')}

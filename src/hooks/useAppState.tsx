@@ -71,33 +71,12 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
     'hautoria_recent',
     []
   );
-  const [user, setUser] = usePersistedState<User | null>(
-    'hautoria_user',
-    isApiEnabled() ? null : {
-      id: 'usr_demo',
-      name: 'Amara Laurent',
-      email: 'amara@example.com',
-      loyaltyPoints: 1240,
-      tier: 'Gold',
-      addresses: [],
-    }
-  );
-  const [orders, setOrders] = usePersistedState<Order[]>(
-    'hautoria_orders',
-    []
-  );
+  const [user, setUser] = usePersistedState<User | null>('hautoria_user', null);
+  const [orders, setOrders] = usePersistedState<Order[]>('hautoria_orders', []);
   const [authReady, setAuthReady] = useState(!isApiEnabled());
-  const [notifications, setNotifications] = usePersistedState<
-    AppNotification[]>(
-    'hautoria_notifications', [
-    {
-      id: 'n1',
-      title: 'Gold tier unlocked',
-      body: 'You have 1,240 points ready for your next ritual.',
-      read: false,
-      createdAt: 'Today',
-      kind: 'reward'
-    }]
+  const [notifications, setNotifications] = usePersistedState<AppNotification[]>(
+    'hautoria_notifications',
+    []
   );
   const [theme, setTheme] = usePersistedState<'light' | 'dark'>(
     'hautoria_theme',
@@ -111,6 +90,18 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
+  // Purge old demo identities left in localStorage from earlier builds.
+  useEffect(() => {
+    const isDemoUser =
+      user &&
+      (user.id === 'usr_demo' ||
+        user.email?.endsWith('@example.com') ||
+        user.email?.endsWith('@hautoria.demo') ||
+        user.name === 'Amara Laurent' ||
+        user.name === 'Camille Laurent');
+    if (isDemoUser) setUser(null);
+  }, [user, setUser]);
+
   useEffect(() => {
     if (!isApiEnabled()) {
       setAuthReady(true);
@@ -122,9 +113,10 @@ export function AppStateProvider({ children }: {children: React.ReactNode;}) {
         const me = await authService.getMe();
         if (!active) return;
         if (me) setUser(me);
-        const remoteOrders = await userService.getOrders();
+        else setUser(null);
+        const remoteOrders = await userService.getOrders().catch(() => []);
         if (active && remoteOrders.length) setOrders(remoteOrders);
-        const remoteNotes = await userService.getNotifications();
+        const remoteNotes = await userService.getNotifications().catch(() => []);
         if (active && remoteNotes.length) setNotifications(remoteNotes);
       } finally {
         if (active) setAuthReady(true);

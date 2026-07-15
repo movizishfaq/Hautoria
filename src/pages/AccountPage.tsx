@@ -239,21 +239,9 @@ export function AccountSection() {
     <section>
         <h2 className="font-serif text-3xl">Payment methods</h2>
         <div className="mt-6 rounded-2xl border border-charcoal/10 p-5 dark:border-white/10">
-          <p className="font-medium">Visa ending in 4242</p>
-          <p className="mt-1 text-sm text-charcoal/60 dark:text-ivory/60">
-            Expiry 08/29 · Default
+          <p className="text-sm text-charcoal/60 dark:text-ivory/60">
+            Saved cards are not required. Checkout supports bank transfer, JazzCash, and cash on delivery.
           </p>
-          <button
-          onClick={() =>
-          notify(
-            'Payment method manager is mock-only until a provider adapter is connected',
-            'info'
-          )
-          }
-          className="mt-4 text-xs uppercase tracking-luxe text-gold">
-          
-            Manage method
-          </button>
         </div>
       </section>);
 

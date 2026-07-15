@@ -80,8 +80,7 @@ function Shell() {
                       Payment needs another moment.
                     </h1>
                     <p className="mt-4 text-charcoal/60 dark:text-ivory/60">
-                      No payment was attempted in this demo. Review your details and
-                      retry when ready.
+                      Please review your payment details and try again when ready.
                     </p>
                     <a
                     href="/checkout"

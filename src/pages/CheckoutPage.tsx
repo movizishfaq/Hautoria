@@ -8,7 +8,6 @@ import { commerceService } from '../services/commerceService';
 import type {
   Address,
   CheckoutDraft,
-  Order,
   PaymentProvider } from
 '../types/domain';
 
@@ -87,63 +86,25 @@ export function CheckoutPage() {
     }));
 
   const place = async () => {
-    if (!draft.email.includes('@') || !draft.address?.line1) {
+    const addr = draft.address;
+    const missing =
+      !draft.email.includes('@') ||
+      !addr?.firstName?.trim() ||
+      !addr?.lastName?.trim() ||
+      !addr?.line1?.trim() ||
+      !addr?.city?.trim() ||
+      !addr?.postalCode?.trim() ||
+      !addr?.phone?.trim();
+    if (missing) {
       notify('Complete contact and delivery details', 'error');
       setStep(0);
       return;
     }
+    if (!lines.length) {
+      notify('Your bag is empty or products failed to load. Refresh and try again.', 'error');
+      return;
+    }
     setProcessing(true);
-    const order: Order = {
-      id: `ord_${Date.now()}`,
-      number: `HT-${String(Date.now()).slice(-5)}`,
-      status: 'confirmed',
-      createdAt: new Date().toISOString().slice(0, 10),
-      total,
-      subtotal,
-      tax: 0,
-      shipping,
-      discount: pointsDiscount,
-      paymentProvider: draft.paymentProvider,
-      shippingAddress: draft.address,
-      items: lines.map((line) => ({
-        productId: line.product.id,
-        productName: line.product.name,
-        image: line.product.image,
-        variantName: line.variant.name,
-        quantity: line.quantity,
-        unitPrice: line.variant.price,
-      })),
-      events: [
-        {
-          status: 'confirmed',
-          label: 'Order confirmed',
-          description: 'Your order has been reserved.',
-          date: 'Just now',
-          completed: true,
-        },
-        {
-          status: 'packed',
-          label: 'Prepared with care',
-          description: 'We will begin preparing your order shortly.',
-          date: 'Next',
-          completed: false,
-        },
-        {
-          status: 'shipped',
-          label: 'On its way',
-          description: 'Tracking will appear here.',
-          date: 'Next',
-          completed: false,
-        },
-        {
-          status: 'delivered',
-          label: 'Delivered',
-          description: 'Enjoy your products.',
-          date: 'Next',
-          completed: false,
-        },
-      ],
-    };
     try {
       const created = await commerceService.createOrder(
         draft,
@@ -151,10 +112,10 @@ export function CheckoutPage() {
           productId: line.product.id,
           variantId: line.variant.id,
           quantity: line.quantity,
-        })),
-        order
+        }))
       );
       addOrder(created);
+      notify(`Order ${created.number} placed`, 'success');
       navigate(`/checkout/success/${created.id}`);
     } catch (err) {
       notify(err instanceof Error ? err.message : 'Checkout failed', 'error');
@@ -244,7 +205,10 @@ export function CheckoutPage() {
                   autoComplete="email"
                 />
               </label>
-              {user?.email && (
+              {user?.email &&
+                !user.email.includes('example.com') &&
+                !user.email.includes('hautoria.demo') &&
+                user.id !== 'usr_demo' && (
                 <button
                   type="button"
                   onClick={() => setDraft({ ...draft, email: user.email })}

@@ -21,22 +21,35 @@ const STATUSES: OrderStatus[] = [
 ];
 
 export function AdminOrdersPage() {
-  const { notify, orders: localOrders } = useAppState();
+  const { notify } = useAppState();
   const [orders, setOrders] = useState<Order[]>([]);
   const [status, setStatus] = useState('all');
   const [q, setQ] = useState('');
   const [selected, setSelected] = useState<Order | null>(null);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [apiOrders, setApiOrders] = useState<Order[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       setLoading(true);
+      setError(null);
       try {
-        const res = await adminService.getOrders(status === 'all' ? undefined : status);
-        if (!cancelled) setApiOrders(res.orders ?? []);
+        const res = await adminService.getOrders(status === 'all' ? undefined : status, {
+          force: true,
+        });
+        if (!cancelled) {
+          const list = [...(res.orders ?? [])].sort((a, b) =>
+            String(b.createdAt).localeCompare(String(a.createdAt))
+          );
+          setOrders(list);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setOrders([]);
+          setError(err instanceof Error ? err.message : 'Could not load orders');
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -45,18 +58,6 @@ export function AdminOrdersPage() {
       cancelled = true;
     };
   }, [status]);
-
-  useEffect(() => {
-    const byId = new Map<string, Order>();
-    for (const o of [...apiOrders, ...localOrders]) {
-      if (!o?.id && !o?.number) continue;
-      byId.set(o.id || o.number, o);
-    }
-    let merged = Array.from(byId.values());
-    if (status !== 'all') merged = merged.filter((o) => o.status === status);
-    merged.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
-    setOrders(merged);
-  }, [apiOrders, localOrders, status]);
 
   const filtered = orders.filter(
     (o) =>
@@ -129,6 +130,8 @@ export function AdminOrdersPage() {
       <Panel flush>
         {loading ? (
           <p className="p-6 text-sm text-[var(--admin-muted)]">Loading orders...</p>
+        ) : error ? (
+          <EmptyState title="Could not load orders" description={error} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-left text-sm">
