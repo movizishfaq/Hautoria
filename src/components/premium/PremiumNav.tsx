@@ -15,6 +15,7 @@ import {
 import { useAppState } from '../../hooks/useAppState';
 import { Magnetic } from '../Magnetic';
 import { BrandLogo } from '../BrandLogo';
+import { appConfig } from '../../lib/config';
 
 const megaMenu = [
   {
@@ -92,14 +93,14 @@ export function PremiumNav() {
             : 'border-b border-transparent bg-gradient-to-b from-ivory/75 to-transparent dark:from-graphite/55'
         }`}
       >
-        <div className="mx-auto flex h-[4.75rem] max-w-7xl items-center gap-4 px-4 sm:h-[5.5rem] sm:gap-6 sm:px-6 lg:px-10">
-          {/* Left — full logo (mark + Hautoria + tagline) */}
-          <div className="min-w-0 shrink-0">
-            <BrandLogo to="/" size="lg" showName showTagline />
+        <div className="relative mx-auto flex h-[4.75rem] max-w-7xl items-center px-4 sm:h-[5.5rem] sm:px-6 lg:px-10">
+          {/* 1 — Logo */}
+          <div className="relative z-10 shrink-0">
+            <BrandLogo to="/" size="lg" showName={false} />
           </div>
 
-          {/* Desktop links — after logo */}
-          <nav className="ml-2 hidden min-w-0 flex-1 items-center gap-6 lg:flex xl:gap-8">
+          {/* 2 — Nav buttons (after logo) */}
+          <nav className="relative z-10 ml-4 hidden items-center gap-5 lg:flex xl:ml-6 xl:gap-7">
             <div
               className="relative"
               onMouseEnter={() => setMegaOpen(true)}
@@ -162,7 +163,21 @@ export function PremiumNav() {
             ))}
           </nav>
 
-          <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
+          {/* 3 — Brand name (center) */}
+          <Link
+            to="/"
+            className="pointer-events-auto absolute left-1/2 top-1/2 z-[5] flex max-w-[42%] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center transition-opacity hover:opacity-85 sm:max-w-none"
+          >
+            <span className="font-serif text-xl font-medium leading-none tracking-[-0.02em] text-charcoal sm:text-2xl md:text-3xl dark:text-ivory">
+              {appConfig.brandName}
+            </span>
+            <span className="mt-1 text-[0.45rem] uppercase tracking-[0.16em] text-gold sm:mt-1.5 sm:text-[0.55rem] sm:tracking-[0.2em]">
+              {appConfig.brandTagline}
+            </span>
+          </Link>
+
+          {/* 4 — Icons */}
+          <div className="relative z-10 ml-auto flex items-center gap-0.5 sm:gap-1">
             <Magnetic strength={0.22}>
               <button
                 type="button"
