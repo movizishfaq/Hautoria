@@ -7,21 +7,34 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 dotenv.config();
 
 /** Strip quotes/whitespace that break Atlas URIs when pasted into Vercel. */
-function cleanMongoUri(raw: string | undefined) {
+export function cleanMongoUri(raw: string | undefined) {
   if (!raw) return 'mongodb://127.0.0.1:27017/hautoria';
-  let value = raw.trim();
-  // Remove wrapping quotes: "mongodb+srv://..." or 'mongodb+srv://...'
-  if (
-    (value.startsWith('"') && value.endsWith('"')) ||
-    (value.startsWith("'") && value.endsWith("'"))
-  ) {
-    value = value.slice(1, -1).trim();
-  }
+  let value = raw
+    .replace(/^\uFEFF/, '') // BOM
+    .replace(/[\u200B-\u200D\uFEFF]/g, '') // zero-width chars
+    .trim();
+
+  // Straight + smart + backtick wrappers
+  value = value.replace(/^["'`“”‘’]+/, '').replace(/["'`“”‘’]+$/, '').trim();
+
   // Accidental `MONGODB_URI=mongodb+srv://...` paste
-  if (value.toLowerCase().startsWith('mongodb_uri=')) {
-    value = value.slice('mongodb_uri='.length).trim();
+  if (/^mongodb_uri\s*=/i.test(value)) {
+    value = value.replace(/^mongodb_uri\s*=/i, '').trim();
+    value = value.replace(/^["'`“”‘’]+/, '').replace(/["'`“”‘’]+$/, '').trim();
   }
+
   return value;
+}
+
+/** Safe prefix for health diagnostics (never includes password). */
+export function mongoUriDebug(raw: string | undefined) {
+  const cleaned = cleanMongoUri(raw);
+  const redacted = cleaned.replace(/:\/\/([^:/@]+):([^@]+)@/, '://$1:***@');
+  return {
+    startsOk: cleaned.startsWith('mongodb://') || cleaned.startsWith('mongodb+srv://'),
+    prefix: redacted.slice(0, 48),
+    length: cleaned.length,
+  };
 }
 
 export const env = {

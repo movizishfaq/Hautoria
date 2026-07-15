@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
-import { env } from './config/env.js';
+import { env, mongoUriDebug } from './config/env.js';
 import { errorHandler, AppError, asyncHandler } from './middleware/errorHandler.js';
 import { connectDb, isDbReady, getLastMongoError } from './config/db.js';
 import authRoutes from './routes/auth.js';
@@ -58,6 +58,7 @@ function corsOrigin(
 
 function mountApi(router: express.Router) {
   router.get('/health', (_req, res) => {
+    const uriDebug = mongoUriDebug(process.env.MONGODB_URI);
     res.json({
       status: 'ok',
       store: env.storeName,
@@ -67,6 +68,7 @@ function mountApi(router: express.Router) {
       mongoState: mongoose.connection.readyState,
       hasMongoUri: Boolean(process.env.MONGODB_URI),
       mongoError: getLastMongoError() || null,
+      mongoUriDebug: uriDebug,
     });
   });
 
