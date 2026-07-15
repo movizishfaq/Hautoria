@@ -38,7 +38,10 @@ export function CinematicHero() {
   const y = useTransform(scrollYProgress, [0, 1], [0, 80]);
 
   const heroProduct =
-    products.find((p) => p.id === 'fit-me-matte-tube-foundation-18ml') ?? products[0];
+    products.find((p) => p.id === 'fit-me-matte-tube-foundation-18ml') ??
+    products.find((p) => p.slug === 'fit-me-matte-tube-foundation-18ml') ??
+    products.find((p) => p.featured) ??
+    products[0];
   const spotlight = products.filter((p) => p.featured).slice(0, 4);
   const orbitProducts = products.slice(1, 5);
   const discount = heroProduct ? discountPercent(heroProduct.price, heroProduct.compareAtPrice) : null;
@@ -56,12 +59,15 @@ export function CinematicHero() {
   };
 
   const handleAdd = () => {
-    if (!heroProduct) return;
+    if (!heroProduct) {
+      notify('Products are still loading — try again in a moment', 'info');
+      return;
+    }
     addToCart(heroProduct);
     notify(`${heroProduct.name} added to your bag`);
   };
 
-  if (!heroProduct) return null;
+  const productCountLabel = products.length > 0 ? `${products.length}+` : 'Curated';
 
   return (
     <section
@@ -134,7 +140,7 @@ export function CinematicHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               className="mt-5 max-w-lg text-base leading-relaxed text-charcoal/65 dark:text-ivory/65">
-              {products.length}+ authenticated skincare &amp; cosmetics. Real prices in PKR,
+              {productCountLabel} authenticated skincare &amp; cosmetics. Real prices in PKR,
               fast delivery, secure checkout &amp; cash on delivery.
             </motion.p>
 
@@ -274,7 +280,9 @@ export function CinematicHero() {
                     <span className="inline-flex rounded-full bg-gold/15 px-3 py-1 text-[0.55rem] uppercase tracking-luxe text-gold">
                       Featured deal
                     </span>
-                    <h2 className="mt-3 font-serif text-2xl leading-tight">{heroProduct.name}</h2>
+                    <h2 className="mt-3 font-serif text-2xl leading-tight">
+                      {heroProduct?.name ?? 'Fit Me Matte Tube Foundation'}
+                    </h2>
                   </div>
                   {discount && (
                     <span className="shrink-0 rounded-full bg-charcoal px-3 py-1.5 text-[0.58rem] font-medium uppercase tracking-luxe text-ivory dark:bg-gold dark:text-charcoal">
@@ -287,7 +295,7 @@ export function CinematicHero() {
                   <div className="absolute inset-x-8 top-1/2 h-32 -translate-y-1/2 rounded-full bg-gold/10 blur-2xl" />
                   <img
                     src={appConfig.heroImage}
-                    alt={heroProduct.name}
+                    alt={heroProduct?.name ?? 'Featured product'}
                     width={400}
                     height={600}
                     decoding="async"
@@ -299,34 +307,48 @@ export function CinematicHero() {
                 <div className="mt-2 flex items-center justify-between border-t border-charcoal/8 pt-4 dark:border-white/8">
                   <div>
                     <div className="flex items-baseline gap-2">
-                      <span className="font-serif text-3xl text-gold">{formatPrice(heroProduct.price)}</span>
-                      {heroProduct.compareAtPrice && heroProduct.compareAtPrice > heroProduct.price && (
+                      <span className="font-serif text-3xl text-gold">
+                        {heroProduct ? formatPrice(heroProduct.price) : '—'}
+                      </span>
+                      {heroProduct?.compareAtPrice &&
+                        heroProduct.compareAtPrice > heroProduct.price && (
                         <span className="text-sm text-charcoal/40 line-through dark:text-ivory/40">
                           {formatPrice(heroProduct.compareAtPrice)}
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 flex items-center gap-2">
-                      <RatingStars rating={heroProduct.rating} />
-                      <span className="text-xs text-charcoal/50 dark:text-ivory/50">
-                        ({heroProduct.reviewCount})
-                      </span>
-                    </div>
+                    {heroProduct && (
+                      <div className="mt-1 flex items-center gap-2">
+                        <RatingStars rating={heroProduct.rating} />
+                        <span className="text-xs text-charcoal/50 dark:text-ivory/50">
+                          ({heroProduct.reviewCount})
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-right text-[0.58rem] uppercase tracking-luxe text-charcoal/50 dark:text-ivory/50">
-                    {heroProduct.stock} in stock
-                  </p>
+                  {heroProduct && (
+                    <p className="text-right text-[0.58rem] uppercase tracking-luxe text-charcoal/50 dark:text-ivory/50">
+                      {heroProduct.stock} in stock
+                    </p>
+                  )}
                 </div>
 
                 <div className="mt-5 grid grid-cols-2 gap-3">
                   <button
                     onClick={handleAdd}
-                    className="flex items-center justify-center gap-2 rounded-full bg-charcoal py-3.5 text-[0.62rem] uppercase tracking-luxe text-ivory transition-colors hover:bg-gold hover:text-charcoal dark:bg-ivory dark:text-charcoal">
+                    disabled={!heroProduct}
+                    className="flex items-center justify-center gap-2 rounded-full bg-charcoal py-3.5 text-[0.62rem] uppercase tracking-luxe text-ivory transition-colors hover:bg-gold hover:text-charcoal disabled:opacity-50 dark:bg-ivory dark:text-charcoal">
                     <ShoppingBagIcon className="h-4 w-4" />
                     Add to bag
                   </button>
                   <button
-                    onClick={() => navigate(`/products/${heroProduct.slug}`)}
+                    onClick={() =>
+                      navigate(
+                        heroProduct
+                          ? `/products/${heroProduct.slug}`
+                          : '/shop'
+                      )
+                    }
                     className="rounded-full border border-charcoal/15 py-3.5 text-[0.62rem] uppercase tracking-luxe transition-colors hover:border-gold hover:text-gold dark:border-white/15">
                     Buy now
                   </button>
@@ -338,7 +360,7 @@ export function CinematicHero() {
                 transition={{ duration: 4, repeat: Infinity }}
                 className="absolute -right-2 -top-2 z-30 rounded-2xl border border-gold/30 bg-charcoal px-4 py-3 text-ivory shadow-luxe dark:bg-ivory dark:text-charcoal">
                 <p className="text-[0.55rem] uppercase tracking-luxe text-gold">Live store</p>
-                <p className="font-serif text-xl">{products.length}+</p>
+                <p className="font-serif text-xl">{productCountLabel}</p>
                 <p className="text-[0.55rem] uppercase tracking-luxe opacity-70">Products</p>
               </motion.div>
             </motion.div>

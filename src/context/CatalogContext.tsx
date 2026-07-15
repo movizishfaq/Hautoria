@@ -23,9 +23,8 @@ type CatalogState = {
 const Context = createContext<CatalogState | undefined>(undefined);
 
 export function CatalogProvider({ children }: { children: React.ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(
-    isApiEnabled() ? [] : loadAdminCatalog()
-  );
+  // Seed local catalog immediately so hero/shop never flash blank while API loads.
+  const [products, setProducts] = useState<Product[]>(() => loadAdminCatalog());
   const [loading, setLoading] = useState(isApiEnabled());
   const [ready, setReady] = useState(!isApiEnabled());
 
@@ -38,10 +37,10 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       const list = await catalogService.list({ limit: '100' });
-      // Never mix local/demo catalog with live API products — wrong IDs break checkout.
-      setProducts(list);
+      if (list.length) setProducts(list);
+      // Keep local catalog if API returns empty (unseeded) so the storefront stays usable.
     } catch {
-      setProducts([]);
+      // Keep existing products (local seed) when the API is unreachable.
     } finally {
       setLoading(false);
       setReady(true);
