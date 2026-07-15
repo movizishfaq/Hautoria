@@ -144,7 +144,7 @@ export function CheckoutPage() {
     payments.find((entry) => entry.id === draft.paymentProvider)?.label ?? '';
 
   return (
-    <main className="mx-auto max-w-6xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">
+    <main className="mx-auto max-w-6xl px-4 pb-10 pt-32 sm:px-6 sm:pt-36">
       <div className="mb-8 flex items-start justify-between gap-4 sm:mb-10">
         <div className="min-w-0">
           <p className="text-[.62rem] uppercase tracking-luxe text-gold">

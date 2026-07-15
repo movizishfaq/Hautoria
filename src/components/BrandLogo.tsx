@@ -8,20 +8,22 @@ type BrandLogoProps = {
   className?: string;
   showName?: boolean;
   showTagline?: boolean;
+  /** Stack logo above name (brand bar). Default: side-by-side. */
+  stacked?: boolean;
 };
 
 const heights: Record<NonNullable<BrandLogoProps['size']>, string> = {
   sm: 'h-8',
   md: 'h-11',
   lg: 'h-14',
-  xl: 'h-20',
+  xl: 'h-[4.5rem]',
 };
 
 const nameSizes: Record<NonNullable<BrandLogoProps['size']>, string> = {
-  sm: 'text-base',
-  md: 'text-xl',
-  lg: 'text-2xl',
-  xl: 'text-3xl',
+  sm: 'text-lg',
+  md: 'text-2xl',
+  lg: 'text-3xl',
+  xl: 'text-4xl',
 };
 
 export function BrandLogo({
@@ -30,25 +32,52 @@ export function BrandLogo({
   className = '',
   showName = true,
   showTagline = false,
+  stacked = false,
 }: BrandLogoProps) {
-  const content = (
-    <span className="inline-flex items-center gap-3.5 sm:gap-4 lg:gap-5">
+  const content = stacked ? (
+    <span className="inline-flex flex-col items-center gap-2 text-center">
       <img
         src={appConfig.logoUrl}
         alt=""
         width={320}
         height={120}
-        className={`${heights[size]} w-auto shrink-0 object-contain dark:brightness-0 dark:invert ${className}`.trim()}
+        className={`${heights[size]} w-auto object-contain object-center dark:brightness-0 dark:invert ${className}`.trim()}
       />
       {showName && (
-        <span className="flex min-w-0 flex-col justify-center leading-none">
+        <span className="flex flex-col items-center">
           <span
-            className={`block font-serif font-medium tracking-tight text-charcoal dark:text-ivory ${nameSizes[size]}`}
+            className={`font-serif font-medium leading-none tracking-tight text-charcoal dark:text-ivory ${nameSizes[size]}`}
           >
             {appConfig.brandName}
           </span>
           {showTagline && (
-            <span className="mt-1 hidden text-[0.52rem] uppercase tracking-luxe text-charcoal/45 dark:text-ivory/45 sm:block">
+            <span className="mt-1.5 text-[0.55rem] uppercase tracking-luxe text-charcoal/45 dark:text-ivory/45">
+              {appConfig.brandTagline}
+            </span>
+          )}
+        </span>
+      )}
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-4 sm:gap-5">
+      <img
+        src={appConfig.logoUrl}
+        alt=""
+        width={320}
+        height={120}
+        className={`${heights[size]} w-auto shrink-0 object-contain object-center dark:brightness-0 dark:invert ${className}`.trim()}
+      />
+      {showName && (
+        <span
+          className={`flex ${heights[size]} flex-col justify-center leading-none`}
+        >
+          <span
+            className={`font-serif font-medium leading-none tracking-tight text-charcoal dark:text-ivory ${nameSizes[size]}`}
+          >
+            {appConfig.brandName}
+          </span>
+          {showTagline && (
+            <span className="mt-1.5 text-[0.52rem] uppercase tracking-luxe text-charcoal/45 dark:text-ivory/45">
               {appConfig.brandTagline}
             </span>
           )}

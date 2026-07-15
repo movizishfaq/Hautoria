@@ -83,22 +83,30 @@ export function PremiumNav() {
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
           scrolled
             ? 'glass shadow-glass dark:glass-dark'
-            : 'bg-transparent'
-        }`}>
-        <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-2 px-4 sm:h-[5rem] sm:gap-4 sm:px-5 lg:h-[4.5rem] lg:px-10">
-          <BrandLogo
-            to="/"
-            size="md"
-            showTagline={false}
-            showName
-            className="!h-9 sm:!h-11 lg:!h-12"
-          />
+            : 'bg-ivory/80 backdrop-blur-md dark:bg-graphite/80'
+        }`}
+      >
+        {/* Brand bar — logo + name centered, own section */}
+        <div className="border-b border-charcoal/8 dark:border-white/8">
+          <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-3 sm:py-3.5 lg:py-4">
+            <BrandLogo
+              to="/"
+              size="lg"
+              showName
+              showTagline={false}
+              className="!h-12 sm:!h-14 lg:!h-[3.75rem]"
+            />
+          </div>
+        </div>
 
+        {/* Utility / links row */}
+        <div className="mx-auto flex h-11 max-w-7xl items-center justify-end gap-2 px-4 sm:h-12 sm:px-5 lg:justify-between lg:px-10">
           <nav className="hidden items-center gap-8 lg:flex">
             <div
               className="relative"
               onMouseEnter={() => setMegaOpen(true)}
-              onMouseLeave={() => setMegaOpen(false)}>
+              onMouseLeave={() => setMegaOpen(false)}
+            >
               <button className="flex items-center gap-1 text-[0.65rem] uppercase tracking-luxe text-charcoal/70 transition-colors hover:text-charcoal dark:text-ivory/70 dark:hover:text-ivory">
                 Shop <ChevronDownIcon className="h-3 w-3" />
               </button>
@@ -109,7 +117,8 @@ export function PremiumNav() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.25 }}
-                    className="absolute left-1/2 top-full z-50 mt-4 w-[520px] -translate-x-1/2 rounded-2xl glass p-8 shadow-luxe dark:glass-dark">
+                    className="absolute left-0 top-full z-50 mt-3 w-[520px] rounded-2xl glass p-8 shadow-luxe dark:glass-dark"
+                  >
                     <div className="grid grid-cols-3 gap-8">
                       {megaMenu.map((col) => (
                         <div key={col.title}>
@@ -121,7 +130,8 @@ export function PremiumNav() {
                               <li key={link.to}>
                                 <NavLink
                                   to={link.to}
-                                  className="text-sm text-charcoal/75 transition-colors hover:text-gold dark:text-ivory/75">
+                                  className="text-sm text-charcoal/75 transition-colors hover:text-gold dark:text-ivory/75"
+                                >
                                   {link.label}
                                 </NavLink>
                               </li>
@@ -132,7 +142,8 @@ export function PremiumNav() {
                     </div>
                     <Link
                       to="/shop"
-                      className="mt-6 block text-center text-[0.62rem] uppercase tracking-luxe text-gold">
+                      className="mt-6 block text-center text-[0.62rem] uppercase tracking-luxe text-gold"
+                    >
                       View all products →
                     </Link>
                   </motion.div>
@@ -147,7 +158,8 @@ export function PremiumNav() {
               <NavLink
                 key={link.to}
                 to={link.to}
-                className="text-[0.65rem] uppercase tracking-luxe text-charcoal/70 transition-colors hover:text-charcoal dark:text-ivory/70 dark:hover:text-ivory">
+                className="text-[0.65rem] uppercase tracking-luxe text-charcoal/70 transition-colors hover:text-charcoal dark:text-ivory/70 dark:hover:text-ivory"
+              >
                 {link.label}
               </NavLink>
             ))}
@@ -158,14 +170,16 @@ export function PremiumNav() {
               <button
                 onClick={() => setSearchOpen(true)}
                 aria-label="Search"
-                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10">
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10"
+              >
                 <SearchIcon className="h-4 w-4" />
               </button>
             </Magnetic>
             <button
               onClick={toggleTheme}
               aria-label="Toggle theme"
-              className="hidden rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10 sm:block">
+              className="hidden rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10 sm:block"
+            >
               {theme === 'light' ? (
                 <MoonIcon className="h-4 w-4" />
               ) : (
@@ -175,14 +189,16 @@ export function PremiumNav() {
             <Link
               to="/account"
               aria-label="Account"
-              className="hidden rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10 sm:block">
+              className="hidden rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10 sm:block"
+            >
               <UserRoundIcon className="h-4 w-4" />
             </Link>
             <Magnetic strength={0.25}>
               <button
                 onClick={() => setWishlistOpen(true)}
                 aria-label="Wishlist"
-                className="relative hidden rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10 sm:block">
+                className="relative hidden rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10 sm:block"
+              >
                 <HeartIcon className="h-4 w-4" />
                 {wishlist.length > 0 && (
                   <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-gold" />
@@ -193,13 +209,15 @@ export function PremiumNav() {
               <button
                 onClick={() => setCartOpen(true)}
                 aria-label="Cart"
-                className="relative rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10">
+                className="relative rounded-full p-2.5 transition-colors hover:bg-beige/80 dark:hover:bg-white/10"
+              >
                 <ShoppingBagIcon className="h-4 w-4" />
                 {itemCount > 0 && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[9px] font-medium text-charcoal">
+                    className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[9px] font-medium text-charcoal"
+                  >
                     {itemCount}
                   </motion.span>
                 )}
@@ -208,7 +226,8 @@ export function PremiumNav() {
             <button
               onClick={() => setMenuOpen(true)}
               aria-label="Menu"
-              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2.5 lg:hidden">
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2.5 lg:hidden"
+            >
               <MenuIcon className="h-5 w-5" />
             </button>
           </div>
@@ -221,10 +240,16 @@ export function PremiumNav() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[80] glass-dark lg:hidden">
+            className="fixed inset-0 z-[80] glass-dark lg:hidden"
+          >
             <div className="flex h-full flex-col p-6 text-ivory">
               <div className="flex items-center justify-between">
-                <BrandLogo to="/" size="md" className="brightness-0 invert" />
+                <BrandLogo
+                  to="/"
+                  size="lg"
+                  showName
+                  className="brightness-0 invert"
+                />
                 <button
                   onClick={() => setMenuOpen(false)}
                   aria-label="Close"
@@ -247,7 +272,8 @@ export function PremiumNav() {
                         navigate(item.to!);
                         setMenuOpen(false);
                       }}
-                      className="border-b border-white/10 py-5 text-left font-serif text-3xl">
+                      className="border-b border-white/10 py-5 text-left font-serif text-3xl"
+                    >
                       {item.label}
                     </button>
                   ) : (
@@ -257,7 +283,8 @@ export function PremiumNav() {
                         item.action?.();
                         setMenuOpen(false);
                       }}
-                      className="border-b border-white/10 py-5 text-left font-serif text-3xl">
+                      className="border-b border-white/10 py-5 text-left font-serif text-3xl"
+                    >
                       {item.label}
                     </button>
                   )

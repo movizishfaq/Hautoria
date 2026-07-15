@@ -73,7 +73,7 @@ export function CinematicHero() {
     <section
       ref={ref}
       onMouseMove={onMove}
-      className="relative min-h-[100svh] overflow-hidden bg-ivory pt-24 dark:bg-graphite lg:pt-28">
+      className="relative min-h-[100svh] overflow-hidden bg-ivory pt-32 dark:bg-graphite lg:pt-36">
       <FloatingBlobs />
       <MouseGlow />
       <Particles count={24} />

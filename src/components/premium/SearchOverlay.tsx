@@ -38,7 +38,7 @@ export function SearchOverlay() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[90] flex flex-col bg-charcoal/95 backdrop-blur-xl">
-          <div className="mx-auto w-full max-w-3xl px-6 pt-24">
+          <div className="mx-auto w-full max-w-3xl px-6 pt-32">
             <div className="flex items-center gap-4 border-b border-white/15 pb-6">
               <SearchIcon className="h-6 w-6 text-ivory/50" />
               <input
