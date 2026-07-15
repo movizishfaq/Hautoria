@@ -6,69 +6,50 @@ type BrandLogoProps = {
   to?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
-  /**
-   * Full logo file already includes mark + “Hautoria” + tagline.
-   * Use this in the main nav so text is not duplicated beside the image.
-   */
-  fullLockup?: boolean;
   showName?: boolean;
   showTagline?: boolean;
 };
 
-const mark: Record<NonNullable<BrandLogoProps['size']>, string> = {
-  sm: 'h-9',
-  md: 'h-11',
-  lg: 'h-14',
-  xl: 'h-16',
-};
-
-/** Full artwork heights (mark + wordmark + tagline in one PNG). */
-const lockup: Record<NonNullable<BrandLogoProps['size']>, string> = {
-  sm: 'h-10',
-  md: 'h-12 sm:h-14',
-  lg: 'h-14 sm:h-16',
-  xl: 'h-16 sm:h-[4.5rem]',
+const markBox: Record<NonNullable<BrandLogoProps['size']>, string> = {
+  sm: 'h-9 w-9',
+  md: 'h-11 w-11',
+  lg: 'h-12 w-12 sm:h-14 sm:w-14',
+  xl: 'h-16 w-16',
 };
 
 const wordmark: Record<NonNullable<BrandLogoProps['size']>, string> = {
   sm: 'text-xl',
-  md: 'text-[1.65rem] sm:text-[1.85rem]',
-  lg: 'text-3xl',
+  md: 'text-2xl sm:text-[1.85rem]',
+  lg: 'text-[1.85rem] sm:text-3xl',
   xl: 'text-4xl',
 };
 
 const taglineSize: Record<NonNullable<BrandLogoProps['size']>, string> = {
-  sm: 'text-[0.48rem]',
-  md: 'text-[0.52rem] sm:text-[0.55rem]',
-  lg: 'text-[0.58rem]',
-  xl: 'text-[0.62rem]',
+  sm: 'text-[0.5rem]',
+  md: 'text-[0.55rem] sm:text-[0.58rem]',
+  lg: 'text-[0.58rem] sm:text-[0.62rem]',
+  xl: 'text-[0.65rem]',
 };
 
 export function BrandLogo({
   to = '/',
   size = 'md',
   className = '',
-  fullLockup = false,
   showName = true,
   showTagline = false,
 }: BrandLogoProps) {
-  const content = fullLockup ? (
-    <img
-      src={appConfig.logoUrl}
-      alt={`${appConfig.brandName} — ${appConfig.brandTagline}`}
-      width={640}
-      height={240}
-      className={`${lockup[size]} w-auto max-w-[min(52vw,16rem)] object-contain object-left dark:brightness-0 dark:invert sm:max-w-[18rem] lg:max-w-[20rem] ${className}`.trim()}
-    />
-  ) : (
+  // PNG is a tall lockup (art + name + tagline). Crop to the mark so HTML name stays readable.
+  const content = (
     <span className="inline-flex items-center gap-3 sm:gap-3.5">
-      <img
-        src={appConfig.logoUrl}
-        alt=""
-        width={320}
-        height={120}
-        className={`${mark[size]} w-auto shrink-0 object-contain object-center dark:brightness-0 dark:invert ${className}`.trim()}
-      />
+      <span className={`${markBox[size]} relative shrink-0 overflow-hidden rounded-sm`}>
+        <img
+          src={appConfig.logoUrl}
+          alt=""
+          width={320}
+          height={320}
+          className={`absolute inset-0 h-[220%] w-full object-cover object-top dark:brightness-0 dark:invert ${className}`.trim()}
+        />
+      </span>
       {showName && (
         <span className="flex min-w-0 flex-col justify-center">
           <span
@@ -78,7 +59,7 @@ export function BrandLogo({
           </span>
           {showTagline && (
             <span
-              className={`mt-1.5 uppercase tracking-[0.22em] text-gold ${taglineSize[size]}`}
+              className={`mt-1.5 font-sans uppercase tracking-[0.18em] text-gold ${taglineSize[size]}`}
             >
               {appConfig.brandTagline}
             </span>

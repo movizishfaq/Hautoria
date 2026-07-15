@@ -94,8 +94,8 @@ export function PremiumNav() {
       >
         <div className="mx-auto flex h-[4.75rem] max-w-7xl items-center gap-4 px-4 sm:h-[5.5rem] sm:gap-6 sm:px-6 lg:px-10">
           {/* Left — full logo (mark + Hautoria + tagline) */}
-          <div className="shrink-0">
-            <BrandLogo to="/" size="lg" fullLockup />
+          <div className="min-w-0 shrink-0">
+            <BrandLogo to="/" size="lg" showName showTagline />
           </div>
 
           {/* Desktop links — after logo */}
@@ -246,7 +246,7 @@ export function PremiumNav() {
           >
             <div className="flex h-full flex-col px-6 pb-10 pt-6 text-ivory">
               <div className="flex items-center justify-between gap-4">
-                <BrandLogo to="/" size="md" fullLockup className="brightness-0 invert" />
+                <BrandLogo to="/" size="md" showName showTagline className="brightness-0 invert" />
                 <button
                   type="button"
                   onClick={() => setMenuOpen(false)}
