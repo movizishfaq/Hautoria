@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /checkout
+Disallow: /cart
+Disallow: /auth
+Disallow: /orders/
+
+Sitemap: https://hautoria.vercel.app/sitemap.xml

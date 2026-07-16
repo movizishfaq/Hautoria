@@ -8,7 +8,7 @@
     "dev:admin": "npx vite --config vite.admin.config.ts",
     "dev:server": "npx tsx watch server/src/index.ts",
     "dev:all": "npx concurrently -n web,api -c cyan,magenta \"npm run dev\" \"npm run dev:server\"",
-    "build": "npx vite build",
+    "build": "npx tsx scripts/generate-sitemap.ts && npx vite build",
     "build:admin": "npx vite build --config vite.admin.config.ts",
     "build:server": "npm run build --prefix server",
     "seed": "npx tsx server/scripts/seed.ts",

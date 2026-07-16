@@ -24,6 +24,9 @@ export const appConfig = {
   stripePublishableKey: runtimeEnvironment.VITE_STRIPE_PUBLISHABLE_KEY ?? '',
   paypalClientId: runtimeEnvironment.VITE_PAYPAL_CLIENT_ID ?? '',
   gaId: runtimeEnvironment.VITE_GA_ID ?? '',
+  gtmId: runtimeEnvironment.VITE_GTM_ID ?? '',
+  gscVerification: runtimeEnvironment.VITE_GSC_VERIFICATION ?? '',
+  bingVerification: runtimeEnvironment.VITE_BING_VERIFICATION ?? '',
   metaPixelId: runtimeEnvironment.VITE_META_PIXEL_ID ?? '',
   whatsappNumber: runtimeEnvironment.VITE_WHATSAPP_NUMBER ?? '',
   currency: 'PKR'

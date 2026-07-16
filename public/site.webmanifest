@@ -1,0 +1,18 @@
+{
+  "name": "Hautoria — Premium Beauty",
+  "short_name": "Hautoria",
+  "description": "Crafted for Timeless Skin. Premium authentic skincare & cosmetics in Pakistan.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/hautoria-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

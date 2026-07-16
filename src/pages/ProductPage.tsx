@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HeartIcon,
@@ -25,6 +25,16 @@ import { BlurReveal } from '../components/premium/BlurReveal';
 import { discountPercent, formatPrice } from '../lib/formatPrice';
 import { FAQS } from '../lib/data';
 import { getProductReviews } from '../lib/productReviews';
+import { useSeo } from '../hooks/useSeo';
+import { Breadcrumbs } from '../components/seo/Breadcrumbs';
+import { JsonLd } from '../components/seo/JsonLd';
+import {
+  breadcrumbSchema,
+  globalSchemas,
+  productSchema,
+  webPageSchema,
+} from '../lib/seoSchemas';
+import { absoluteAsset, metaDescription, pageTitle, seoConfig } from '../lib/seoConfig';
 
 export function StickyAddToCart({
   product,
@@ -47,7 +57,7 @@ export function StickyAddToCart({
           className="fixed inset-x-0 bottom-[calc(3.75rem+env(safe-area-inset-bottom))] z-[60] border-t border-charcoal/10 glass px-4 py-3 shadow-luxe-lg dark:glass-dark lg:bottom-6 lg:left-auto lg:right-6 lg:z-40 lg:max-w-md lg:rounded-2xl lg:border">
           <div className="mx-auto flex max-w-7xl items-center gap-3 sm:gap-4">
             <div className={`hidden h-12 w-12 shrink-0 rounded-xl sm:block ${product.accent} p-1.5`}>
-              <img src={product.image} alt="" className="h-full object-contain" />
+              <img src={product.image} alt={product.name} className="h-full object-contain" loading="lazy" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate font-serif text-sm">{product.name}</p>
@@ -101,6 +111,48 @@ export function ProductPage() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const breadcrumbItems = useMemo(
+    () => [
+      { name: 'Home', path: '/' },
+      { name: 'Shop', path: '/shop' },
+      { name: product?.category ?? 'Product', path: `/shop?category=${product?.category ?? 'all'}` },
+      { name: product?.name ?? 'Product', path: `/products/${product?.slug ?? slug ?? ''}` },
+    ],
+    [product, slug]
+  );
+
+  const productSeo = useMemo(() => {
+    if (!product) return null;
+    const description = metaDescription(
+      product.description ||
+        `${product.name} — authentic premium ${product.category} from Hautoria. ${product.tagline}. Shop now with fast delivery across Pakistan.`
+    );
+    return {
+      title: pageTitle([product.name]),
+      description,
+      keywords: `${seoConfig.defaultKeywords}, ${product.name}, ${product.category}, ${product.concerns.join(', ')}`,
+      canonicalPath: `/products/${product.slug}`,
+      ogImage: absoluteAsset(product.image),
+      ogType: 'product',
+    };
+  }, [product]);
+
+  useSeo(productSeo);
+
+  const productJsonLd = useMemo(() => {
+    if (!product || !productSeo) return globalSchemas();
+    return [
+      ...globalSchemas(),
+      webPageSchema({
+        name: productSeo.title,
+        description: productSeo.description,
+        path: `/products/${product.slug}`,
+      }),
+      breadcrumbSchema(breadcrumbItems),
+      productSchema(product),
+    ];
+  }, [product, productSeo, breadcrumbItems]);
+
   if (!product) {
     return (
       <main className="mx-auto max-w-5xl px-6 py-28 flex justify-center">
@@ -125,10 +177,9 @@ export function ProductPage() {
 
   return (
     <>
+      <JsonLd data={productJsonLd} />
       <main className="mx-auto max-w-7xl px-4 pb-44 pt-28 sm:px-6 lg:pb-20 lg:pt-32">
-        <p className="mb-8 text-[.58rem] uppercase tracking-luxe text-charcoal/40 dark:text-ivory/40">
-          <Link to="/shop">Shop</Link> / <span className="capitalize">{product.category}</span>
-        </p>
+        <Breadcrumbs items={breadcrumbItems} />
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           <div>
@@ -146,6 +197,8 @@ export function ProductPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 src={gallery[image]}
                 alt={product.name}
+                loading="lazy"
+                decoding="async"
                 className="h-full w-full cursor-zoom-in object-contain p-10"
                 onClick={() => setZoom(true)}
               />
@@ -163,7 +216,13 @@ export function ProductPage() {
                   className={`h-20 w-20 rounded-xl p-2 transition-all ${
                     image === i ? 'ring-2 ring-gold' : 'bg-beige/50 dark:bg-white/5'
                   }`}>
-                  <img src={src} alt="" className="h-full w-full object-contain" loading="lazy" />
+                  <img
+                    src={src}
+                    alt={`${product.name} view ${i + 1}`}
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </button>
               ))}
             </div>

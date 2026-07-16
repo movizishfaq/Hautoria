@@ -7,25 +7,43 @@ import {
   ArrowRightIcon,
   CheckIcon } from
 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Reveal, RevealWords } from '../components/Reveal';
 import { Magnetic } from '../components/Magnetic';
 import { BrandLogo } from '../components/BrandLogo';
-import { COLLECTIONS } from '../lib/data';
 import { appConfig } from '../lib/config';
 const LUXE = [0.22, 1, 0.36, 1] as const;
-const COLS = [
-{
-  title: 'Shop',
-  links: COLLECTIONS.slice(0, 5)
-},
-{
-  title: 'About',
-  links: ['Our Story', 'Ingredients', 'Sustainability', 'Journal', 'Careers']
-},
-{
-  title: 'Care',
-  links: ['Contact', 'Shipping', 'Returns', 'FAQ', 'VIP Club']
-}];
+const FOOTER_LINKS = [
+  {
+    title: 'Shop',
+    links: [
+      { label: 'All Products', to: '/shop' },
+      { label: 'Serums', to: '/shop?category=serum' },
+      { label: 'Moisturizers', to: '/shop?category=moisturizer' },
+      { label: 'Cleansers', to: '/shop?category=cleanser' },
+      { label: 'Treatments', to: '/shop?category=treatment' },
+    ],
+  },
+  {
+    title: 'About',
+    links: [
+      { label: 'Our Story', to: '/#story' },
+      { label: 'Ingredients', to: '/shop' },
+      { label: 'Journal', to: '/shop' },
+      { label: 'Membership', to: '/#membership' },
+    ],
+  },
+  {
+    title: 'Care',
+    links: [
+      { label: 'Contact', to: '/help' },
+      { label: 'Shipping', to: '/legal/shipping' },
+      { label: 'Returns', to: '/legal/shipping' },
+      { label: 'FAQ', to: '/#faq' },
+      { label: 'Privacy', to: '/legal/privacy' },
+    ],
+  },
+];
 
 export function Footer() {
   const [email, setEmail] = useState('');
@@ -163,21 +181,21 @@ export function Footer() {
             </div>
           </div>
 
-          {COLS.map((col) =>
+          {FOOTER_LINKS.map((col) =>
           <div key={col.title}>
               <h3 className="mb-5 text-[0.62rem] uppercase tracking-luxe text-ivory/40">
                 {col.title}
               </h3>
               <ul className="space-y-3">
                 {col.links.map((l) =>
-              <li key={l}>
-                    <a
-                  href="#"
+              <li key={l.label}>
+                    <Link
+                  to={l.to}
                   className="group relative inline-block text-sm font-light text-ivory/70 transition-colors hover:text-ivory">
                   
-                      {l}
+                      {l.label}
                       <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-gold transition-all duration-500 ease-luxe group-hover:w-full" />
-                    </a>
+                    </Link>
                   </li>
               )}
               </ul>
@@ -213,12 +231,12 @@ export function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-ivory/10 px-6 py-8 text-[0.62rem] uppercase tracking-luxe text-ivory/40 sm:flex-row lg:px-10">
         <p>© {new Date().getFullYear()} {appConfig.brandName} · {appConfig.brandTagline}</p>
         <div className="flex gap-6">
-          <a href="#" className="transition-colors hover:text-ivory">
+          <Link to="/legal/privacy" className="transition-colors hover:text-ivory">
             Privacy
-          </a>
-          <a href="#" className="transition-colors hover:text-ivory">
+          </Link>
+          <Link to="/legal/terms" className="transition-colors hover:text-ivory">
             Terms
-          </a>
+          </Link>
         </div>
       </div>
     </footer>);

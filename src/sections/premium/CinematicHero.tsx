@@ -222,7 +222,13 @@ export function CinematicHero() {
                       to={`/products/${product.slug}`}
                       className="group flex min-w-[140px] shrink-0 items-center gap-3 rounded-2xl border border-charcoal/10 bg-white/80 p-2.5 transition-shadow hover:shadow-luxe dark:border-white/10 dark:bg-white/5">
                       <div className={`h-14 w-14 shrink-0 rounded-xl ${product.accent} p-1.5`}>
-                        <img src={product.image} alt="" className="h-full w-full object-contain" />
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="h-full w-full object-contain"
+                          loading="lazy"
+                          decoding="async"
+                        />
                       </div>
                       <div className="min-w-0">
                         <p className="truncate font-serif text-sm leading-tight">{product.name.split(' ').slice(0, 3).join(' ')}</p>
@@ -256,7 +262,13 @@ export function CinematicHero() {
                     to={`/products/${product.slug}`}
                     className="flex items-center gap-2 rounded-2xl border border-white/60 bg-white/90 px-3 py-2 shadow-luxe backdrop-blur-sm transition-transform hover:scale-105 dark:border-white/10 dark:bg-graphite/90">
                     <div className={`h-10 w-10 rounded-lg ${product.accent} p-1`}>
-                      <img src={product.image} alt="" className="h-full object-contain" />
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="h-full object-contain"
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </div>
                     <span className="max-w-[90px] truncate text-[0.58rem] uppercase tracking-luxe">
                       {formatPrice(product.price)}

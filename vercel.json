@@ -9,8 +9,45 @@
       "destination": "/api"
     },
     {
-      "source": "/((?!api(?:/|$)).*)",
+      "source": "/sitemap.xml",
+      "destination": "/api/seo/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/api/seo/robots.txt"
+    },
+    {
+      "source": "/((?!api(?:/|$)|sitemap\\.xml|robots\\.txt).*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(?:png|jpg|jpeg|webp|svg|ico|woff2?))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/(sitemap\\.xml|robots\\.txt)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
     }
   ],
   "functions": {

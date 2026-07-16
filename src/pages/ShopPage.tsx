@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useCatalog } from '../context/CatalogContext';
 import { LuxuryProductCard } from '../features/catalog/LuxuryProductCard';
 import { EmptyState } from '../components/ui/EmptyState';
+import { Breadcrumbs } from '../components/seo/Breadcrumbs';
 import { appConfig } from '../lib/config';
 export function ShopPage() {
   const { products: catalogProducts, loading } = useCatalog();
@@ -53,6 +54,12 @@ export function ShopPage() {
     <div className="min-h-screen bg-ivory pt-28 dark:bg-graphite">
       <section className="border-b border-charcoal/10 px-6 pb-12 pt-8 dark:border-white/10">
         <div className="mx-auto max-w-7xl">
+          <Breadcrumbs
+            items={[
+              { name: 'Home', path: '/' },
+              { name: 'Shop', path: '/shop' },
+            ]}
+          />
           <p className="text-[.64rem] uppercase tracking-luxe text-gold">
             {appConfig.brandTagline}
           </p>

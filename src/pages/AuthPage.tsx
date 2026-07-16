@@ -67,10 +67,10 @@ export function AuthPage() {
         <BrandLogo to="/" size="lg" className="brightness-0 invert" />
         <div>
           <SparklesIcon className="h-8 w-8 text-gold" />
-          <h1 className="mt-6 max-w-md font-serif text-6xl font-light leading-tight">
+          <h2 className="mt-6 max-w-md font-serif text-6xl font-light leading-tight">
             Considered care, made{' '}
             <i className="text-gradient-gold">personal.</i>
-          </h1>
+          </h2>
           <p className="mt-6 max-w-sm text-sm leading-relaxed text-ivory/60">
             Your profile remembers your rituals, rewards, addresses, and
             delivery history.
