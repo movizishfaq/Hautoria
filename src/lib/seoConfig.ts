@@ -11,7 +11,7 @@ const env =
 export const seoConfig = {
   siteName: appConfig.brandName,
   tagline: appConfig.brandTagline,
-  siteUrl: appConfig.storeUrl,
+  siteUrl: appConfig.siteUrl,
   defaultTitle: `${appConfig.brandName} — Premium Beauty & Skincare`,
   defaultDescription:
     'Hautoria — Crafted for Timeless Skin. Shop authentic premium skincare & cosmetics in Pakistan with secure checkout, fast delivery & COD.',

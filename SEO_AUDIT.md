@@ -1,7 +1,7 @@
 # Hautoria SEO Audit Report
 
 **Date:** July 16, 2026  
-**Site:** https://hautoria.vercel.app  
+**Site:** https://www.hautoria.com  
 **Stack:** Vite + React SPA, Express API on Vercel
 
 ---
@@ -89,7 +89,8 @@ Implemented schemas (validate at [Google Rich Results Test](https://search.googl
 Add to Vercel environment variables (see `.env.example`):
 
 ```env
-VITE_STORE_URL=https://hautoria.vercel.app
+VITE_SITE_URL=https://www.hautoria.com
+CLIENT_URL=https://www.hautoria.com
 VITE_GSC_VERIFICATION=your-google-verification-code
 VITE_BING_VERIFICATION=your-bing-verification-code
 VITE_GA_ID=G-XXXXXXXXXX
@@ -102,7 +103,7 @@ VITE_BUSINESS_EMAIL=hello@hautoria.com
 
 1. Deploy to Vercel
 2. Google Search Console → add property → verify via `VITE_GSC_VERIFICATION`
-3. Submit `https://hautoria.vercel.app/sitemap.xml`
+3. Submit `https://www.hautoria.com/sitemap.xml`
 4. Bing Webmaster Tools → verify via `VITE_BING_VERIFICATION`
 5. Request indexing for homepage + brand query "Hautoria"
 6. Validate structured data in Rich Results Test

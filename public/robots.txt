@@ -7,4 +7,4 @@ Disallow: /cart
 Disallow: /auth
 Disallow: /orders/
 
-Sitemap: https://hautoria.vercel.app/sitemap.xml
+Sitemap: https://www.hautoria.com/sitemap.xml

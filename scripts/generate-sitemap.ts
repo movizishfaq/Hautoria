@@ -1,9 +1,21 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import dotenv from 'dotenv';
+import { DEFAULT_SITE_URL, resolveSiteUrl } from '../src/lib/siteUrl.ts';
+
+dotenv.config({ path: resolve(process.cwd(), '.env') });
 
 type CatalogProduct = { slug: string };
 
-const siteUrl = (process.env.VITE_STORE_URL ?? 'https://hautoria.vercel.app').replace(/\/$/, '');
+const siteUrl = resolveSiteUrl(
+  process.env.VITE_SITE_URL,
+  process.env.VITE_STORE_URL
+);
+
+if (!process.env.VITE_SITE_URL && !process.env.VITE_STORE_URL) {
+  console.log(`No VITE_SITE_URL in env — using default: ${DEFAULT_SITE_URL}`);
+}
+
 const catalogPath = resolve(process.cwd(), 'src/lib/catalog.json');
 const catalog = JSON.parse(readFileSync(catalogPath, 'utf8')) as CatalogProduct[];
 
@@ -38,4 +50,4 @@ ${urls
 
 const outPath = resolve(process.cwd(), 'public/sitemap.xml');
 writeFileSync(outPath, xml, 'utf8');
-console.log(`Sitemap written: ${outPath} (${urls.length} URLs)`);
+console.log(`Sitemap written: ${outPath} (${urls.length} URLs at ${siteUrl})`);

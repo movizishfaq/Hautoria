@@ -1,6 +1,6 @@
 # Hautoria Admin (separate Vercel project)
 
-Admin is **not** on `hautoria.vercel.app/admin`. Deploy it as a second project that talks to the store API.
+Admin is **not** on `www.hautoria.com/admin`. Deploy it as a second project that talks to the store API.
 
 ## Local
 
@@ -16,7 +16,7 @@ Optional `.env` (repo root):
 
 ```
 VITE_API_BASE_URL=http://localhost:3001/api
-VITE_STORE_URL=http://localhost:5173
+VITE_SITE_URL=http://localhost:5173
 ```
 
 ## Vercel (second project)
@@ -29,9 +29,9 @@ VITE_STORE_URL=http://localhost:5173
    - **Output Directory:** `admin-dist`
    - **Install Command:** `npm install`
 5. Environment variables:
-   - `VITE_API_BASE_URL` = `https://hautoria.vercel.app/api`
-   - `VITE_STORE_URL` = `https://hautoria.vercel.app`
-6. Deploy. Open the new URL (e.g. `https://hautoria-admin.vercel.app`).
+   - `VITE_API_BASE_URL` = `https://www.hautoria.com/api`
+   - `VITE_SITE_URL` = `https://www.hautoria.com`
+6. Deploy. Open the new admin URL.
 7. On the **store** project, set:
    - `VITE_ADMIN_URL` = your admin URL (so `/admin` redirects there)
 

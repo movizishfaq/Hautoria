@@ -5,7 +5,7 @@ No Railway/Render needed. Frontend (Vite) + API (Express as one serverless funct
 ## Architecture
 
 ```
-Browser  →  https://your-app.vercel.app
+Browser  →  https://www.hautoria.com
               ├── /*          → Vite SPA (dist/)
               └── /api/*      → api/[...path].ts  → Express app (server/src/app.ts)
                                                     → MongoDB Atlas
@@ -58,7 +58,8 @@ Add these for **Production**, **Preview**, and **Development** (as needed):
 | `MONGODB_URI` | **Yes** | `mongodb+srv://user:pass@cluster.../hautoria?...` |
 | `JWT_SECRET` | **Yes** | Long random string |
 | `REFRESH_TOKEN_SECRET` | **Yes** | Different long random string |
-| `CLIENT_URL` | **Yes** | `https://your-app.vercel.app` (your production domain) |
+| `CLIENT_URL` | **Yes** | `https://www.hautoria.com` (production domain) |
+| `VITE_SITE_URL` | **Yes** | `https://www.hautoria.com` (SEO, sitemap, canonicals) |
 | `NODE_ENV` | Recommended | `production` |
 | `VITE_API_BASE_URL` | Recommended | `/api` (same-origin API) |
 | `STORE_NAME` | Optional | `Hautoria` |
@@ -77,12 +78,12 @@ Add these for **Production**, **Preview**, and **Development** (as needed):
 
 Push to `main` or click **Deploy**. Open:
 
-- Store: `https://your-app.vercel.app`
-- Health: `https://your-app.vercel.app/api/health`
+- Store: `https://www.hautoria.com`
+- Health: `https://www.hautoria.com/api/health`
 - Admin: separate project — see `admin-app/README.md` (`npm run build:admin`)
 
 On the store project set `VITE_ADMIN_URL` to the admin deployment URL (so `/admin` redirects there).
-On the admin project set `VITE_API_BASE_URL=https://your-app.vercel.app/api`.
+On the admin project set `VITE_API_BASE_URL=https://www.hautoria.com/api`.
 
 ## Verify after deploy
 

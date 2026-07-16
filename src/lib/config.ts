@@ -1,3 +1,5 @@
+import { resolveSiteUrl } from './siteUrl';
+
 // Browser-safe integration contract. Populate VITE_* values in .env when connecting real adapters.
 // This standalone preview does not guarantee that `import.meta.env` exists,
 // so read the optional object defensively before accessing individual keys.
@@ -8,6 +10,11 @@ typeof import.meta !== 'undefined' && import.meta.env ?
 import.meta.env as RuntimeEnvironment :
 {};
 
+const siteUrl = resolveSiteUrl(
+  runtimeEnvironment.VITE_SITE_URL,
+  runtimeEnvironment.VITE_STORE_URL
+);
+
 export const appConfig = {
   brandName: 'Hautoria',
   brandTagline: 'Crafted for Timeless Skin.',
@@ -17,8 +24,10 @@ export const appConfig = {
   apiBaseUrl:
     runtimeEnvironment.VITE_API_BASE_URL ??
     (runtimeEnvironment.PROD || runtimeEnvironment.MODE === 'production' ? '/api' : '/api'),
-  /** Customer storefront URL (used by standalone admin “Live site”). */
-  storeUrl: (runtimeEnvironment.VITE_STORE_URL ?? 'https://hautoria.vercel.app').replace(/\/$/, ''),
+  /** Canonical production URL for SEO, sitemap, OG tags, and admin “Live site”. */
+  siteUrl,
+  /** @deprecated Use siteUrl — kept for admin panel compatibility */
+  storeUrl: siteUrl,
   /** Standalone admin panel URL (storefront redirects /admin here). */
   adminUrl: (runtimeEnvironment.VITE_ADMIN_URL ?? '').replace(/\/$/, ''),
   stripePublishableKey: runtimeEnvironment.VITE_STRIPE_PUBLISHABLE_KEY ?? '',

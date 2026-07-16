@@ -1,6 +1,6 @@
 /**
  * Admin routes are rooted at `/` because the Command Center
- * deploys as its own Vercel project (not under hautoria.vercel.app/admin).
+ * deploys as its own Vercel project (not under www.hautoria.com/admin).
  */
 export const adminPath = {
   home: '/',
